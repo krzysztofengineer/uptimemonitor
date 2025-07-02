@@ -1,10 +1,11 @@
-package testutil
+package test
 
 import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"uptimemonitor/app"
+	"uptimemonitor/pkg/testutil"
 	"uptimemonitor/sqlite"
 )
 
@@ -31,11 +32,11 @@ func (t *TestCase) Close() {
 	t.Server.Close()
 }
 
-func (t *TestCase) Get(url string) *AssertableResponse {
+func (t *TestCase) Get(url string) *testutil.AssertableResponse {
 	res, err := t.Client.Get(t.Server.URL + url)
 	if err != nil {
 		t.T.Fatalf("failed to get %s: %v", url, err)
 	}
 
-	return NewAssertableResponse(t.T, res)
+	return testutil.NewAssertableResponse(t.T, res)
 }
