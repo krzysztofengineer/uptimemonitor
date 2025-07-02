@@ -2,7 +2,7 @@ package app
 
 import (
 	"net/http"
-	"uptimemonitor/cmd/uptimemonitor/static"
+	"uptimemonitor/static"
 )
 
 func NewRouter(handler *Handler) *http.ServeMux {
