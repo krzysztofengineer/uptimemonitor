@@ -9,7 +9,7 @@ type Handler struct {
 	handler.SetupHandler
 }
 
-func NewHandler(store *Store) *Handler {
+func NewHandler(store Store) *Handler {
 	return &Handler{
 		HomeHandler:  handler.HomeHandler{UserStore: store},
 		SetupHandler: handler.SetupHandler{},

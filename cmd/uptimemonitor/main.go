@@ -3,10 +3,11 @@ package main
 import (
 	"log/slog"
 	"uptimemonitor/app"
+	"uptimemonitor/sqlite"
 )
 
 func main() {
-	store := app.MustNewStore(":memory:")
+	store := sqlite.New(":memory:")
 	handler := app.NewHandler(store)
 	router := app.NewRouter(handler)
 	server := app.NewServer(":3000", router)
