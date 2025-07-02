@@ -5,7 +5,6 @@ import (
 	"net/http/httptest"
 	"testing"
 	"uptimemonitor/app"
-	"uptimemonitor/database"
 )
 
 type TestCase struct {
@@ -15,8 +14,7 @@ type TestCase struct {
 }
 
 func NewTestCase(t *testing.T) *TestCase {
-	db := database.Must(database.New(":memory:"))
-	store := app.NewStore(db)
+	store := app.MustNewStore(":memory:")
 	handler := app.NewHandler(store)
 	router := app.NewRouter(handler)
 	server := httptest.NewServer(router)

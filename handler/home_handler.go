@@ -2,11 +2,11 @@ package handler
 
 import (
 	"net/http"
-	"uptimemonitor/store"
+	"uptimemonitor"
 )
 
 type HomeHandler struct {
-	UserStore *store.UserStore
+	UserStore uptimemonitor.UserStore
 }
 
 func (h *HomeHandler) HomePage() http.HandlerFunc {

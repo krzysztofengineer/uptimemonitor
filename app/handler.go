@@ -11,9 +11,7 @@ type Handler struct {
 
 func NewHandler(store *Store) *Handler {
 	return &Handler{
-		HomeHandler: handler.HomeHandler{
-			UserStore: store.UserStore,
-		},
+		HomeHandler:  handler.HomeHandler{UserStore: store},
 		SetupHandler: handler.SetupHandler{},
 	}
 }
