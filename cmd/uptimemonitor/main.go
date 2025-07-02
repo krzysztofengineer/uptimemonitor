@@ -8,8 +8,9 @@ import (
 
 func main() {
 	db := database.Must(database.New(":memory:"))
+	store := app.NewStore(db)
 
-	server := app.NewServer(":3000", db)
+	server := app.NewServer(":3000", store)
 
 	slog.Info("http://localhost:3000")
 

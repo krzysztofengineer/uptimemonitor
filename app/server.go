@@ -1,13 +1,12 @@
 package app
 
 import (
-	"database/sql"
 	"net/http"
 )
 
-func NewServer(addr string, db *sql.DB) *http.Server {
+func NewServer(addr string, store *Store) *http.Server {
 	return &http.Server{
 		Addr:    addr,
-		Handler: NewRouter(db),
+		Handler: NewRouter(store),
 	}
 }

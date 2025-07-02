@@ -10,19 +10,18 @@ import (
 
 type TestCase struct {
 	T      *testing.T
-	App    *app.App
 	Server *httptest.Server
 	Client *http.Client
 }
 
 func NewTestCase(t *testing.T) *TestCase {
 	db := database.Must(database.New(":memory:"))
-	router := app.NewRouter(db)
+	store := app.NewStore(db)
+	router := app.NewRouter(store)
 	server := httptest.NewServer(router)
 
 	return &TestCase{
 		T:      t,
-		App:    app.New(db),
 		Server: server,
 		Client: server.Client(),
 	}

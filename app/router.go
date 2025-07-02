@@ -1,15 +1,14 @@
 package app
 
 import (
-	"database/sql"
 	"net/http"
 	"uptimemonitor/cmd/uptimemonitor/static"
 )
 
-func NewRouter(db *sql.DB) *http.ServeMux {
+func NewRouter(store *Store) *http.ServeMux {
 	mux := http.NewServeMux()
 
-	handler := NewHandler(db)
+	handler := NewHandler(store)
 
 	mux.HandleFunc("/", handler.HomePage())
 	mux.HandleFunc("/setup", handler.SetupPage())

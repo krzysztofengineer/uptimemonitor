@@ -1,16 +1,15 @@
 package app
 
 import (
-	"database/sql"
 	"net/http"
 )
 
 type Handler struct {
-	db *sql.DB
+	Store *Store
 }
 
-func NewHandler(db *sql.DB) *Handler {
-	return &Handler{db: db}
+func NewHandler(store *Store) *Handler {
+	return &Handler{Store: store}
 }
 
 func (h *Handler) HomePage() http.HandlerFunc {
