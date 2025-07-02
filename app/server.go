@@ -7,6 +7,6 @@ import (
 func NewServer(addr string, store *Store) *http.Server {
 	return &http.Server{
 		Addr:    addr,
-		Handler: NewRouter(store),
+		Handler: NewRouter(NewHandler(store)),
 	}
 }

@@ -5,10 +5,8 @@ import (
 	"uptimemonitor/cmd/uptimemonitor/static"
 )
 
-func NewRouter(store *Store) *http.ServeMux {
+func NewRouter(handler *Handler) *http.ServeMux {
 	mux := http.NewServeMux()
-
-	handler := NewHandler(store)
 
 	mux.HandleFunc("/", handler.HomePage())
 	mux.HandleFunc("/setup", handler.SetupPage())

@@ -1,24 +1,19 @@
 package app
 
 import (
-	"net/http"
+	"uptimemonitor/handler"
 )
 
 type Handler struct {
-	Store *Store
+	handler.HomeHandler
+	handler.SetupHandler
 }
 
 func NewHandler(store *Store) *Handler {
-	return &Handler{Store: store}
-}
-
-func (h *Handler) HomePage() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/setup", http.StatusSeeOther)
-	}
-}
-
-func (h *Handler) SetupPage() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return &Handler{
+		HomeHandler: handler.HomeHandler{
+			UserStore: store.UserStore,
+		},
+		SetupHandler: handler.SetupHandler{},
 	}
 }

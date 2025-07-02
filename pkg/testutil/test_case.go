@@ -17,7 +17,8 @@ type TestCase struct {
 func NewTestCase(t *testing.T) *TestCase {
 	db := database.Must(database.New(":memory:"))
 	store := app.NewStore(db)
-	router := app.NewRouter(store)
+	handler := app.NewHandler(store)
+	router := app.NewRouter(handler)
 	server := httptest.NewServer(router)
 
 	return &TestCase{
