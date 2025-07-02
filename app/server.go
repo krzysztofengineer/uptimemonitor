@@ -4,9 +4,15 @@ import (
 	"net/http"
 )
 
-func NewServer(addr string, store *Store) *http.Server {
-	return &http.Server{
-		Addr:    addr,
-		Handler: NewRouter(NewHandler(store)),
+type Server struct {
+	*http.Server
+}
+
+func NewServer(addr string, router *Router) *Server {
+	return &Server{
+		Server: &http.Server{
+			Addr:    addr,
+			Handler: router,
+		},
 	}
 }

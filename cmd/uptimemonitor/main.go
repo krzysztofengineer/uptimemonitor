@@ -9,8 +9,9 @@ import (
 func main() {
 	db := database.Must(database.New(":memory:"))
 	store := app.NewStore(db)
-
-	server := app.NewServer(":3000", store)
+	handler := app.NewHandler(store)
+	router := app.NewRouter(handler)
+	server := app.NewServer(":3000", router)
 
 	slog.Info("http://localhost:3000")
 

@@ -5,7 +5,11 @@ import (
 	"uptimemonitor/static"
 )
 
-func NewRouter(handler *Handler) *http.ServeMux {
+type Router struct {
+	*http.ServeMux
+}
+
+func NewRouter(handler *Handler) *Router {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", handler.HomePage())
@@ -13,5 +17,7 @@ func NewRouter(handler *Handler) *http.ServeMux {
 
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
 
-	return mux
+	return &Router{
+		ServeMux: mux,
+	}
 }
