@@ -2,6 +2,7 @@ package test
 
 import (
 	"net/http"
+	"net/url"
 	"testing"
 	"time"
 	"uptimemonitor"
@@ -41,5 +42,14 @@ func TestSetup(t *testing.T) {
 			AssertElementVisible(`input[name="email"]`).
 			AssertElementVisible(`input[name="password"]`).
 			AssertElementVisible(`button[type="submit"]`)
+	})
+
+	t.Run("validates a form", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Post("/setup", url.Values{}).
+			AssertStatusCode(http.StatusBadRequest).
+			AssertElementVisible(`form[hx-swap="outerHTML"]`)
 	})
 }

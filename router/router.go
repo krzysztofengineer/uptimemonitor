@@ -9,8 +9,9 @@ import (
 func New(handler *handler.Handler) *http.ServeMux {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", handler.HomePage())
-	mux.HandleFunc("/setup", handler.SetupPage())
+	mux.HandleFunc("GET /{$}", handler.HomePage())
+	mux.HandleFunc("GET /setup", handler.SetupPage())
+	mux.HandleFunc("POST /setup", handler.SetupForm())
 
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
 

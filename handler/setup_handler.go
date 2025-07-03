@@ -29,3 +29,13 @@ func (h *SetupHandler) SetupPage() http.HandlerFunc {
 		tmpl.Execute(w, nil)
 	}
 }
+
+func (h *SetupHandler) SetupForm() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "setup.html"))
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+
+		tmpl.ExecuteTemplate(w, "setup_form", nil)
+	}
+}

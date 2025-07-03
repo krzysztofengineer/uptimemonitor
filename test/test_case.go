@@ -3,6 +3,8 @@ package test
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 	"uptimemonitor/handler"
 	"uptimemonitor/pkg/testutil"
@@ -36,11 +38,19 @@ func (t *TestCase) Close() {
 	t.Server.Close()
 }
 
-// todo ConfigurableRequest
 func (t *TestCase) Get(url string) *testutil.AssertableResponse {
 	res, err := t.Client.Get(t.Server.URL + url)
 	if err != nil {
 		t.T.Fatalf("failed to get %s: %v", url, err)
+	}
+
+	return testutil.NewAssertableResponse(t.T, res)
+}
+
+func (t *TestCase) Post(url string, data url.Values) *testutil.AssertableResponse {
+	res, err := t.Client.Post(t.Server.URL+url, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	if err != nil {
+		t.T.Fatalf("failed to post %s: %v", url, err)
 	}
 
 	return testutil.NewAssertableResponse(t.T, res)
