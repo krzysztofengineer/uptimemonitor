@@ -1,7 +1,8 @@
-package app
+package router
 
 import (
 	"net/http"
+	"uptimemonitor/handler"
 	"uptimemonitor/static"
 )
 
@@ -9,7 +10,7 @@ type Router struct {
 	*http.ServeMux
 }
 
-func NewRouter(handler *Handler) *Router {
+func New(handler *handler.Handler) *Router {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", handler.HomePage())

@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"uptimemonitor/app"
+	"uptimemonitor/handler"
 	"uptimemonitor/pkg/testutil"
-	"uptimemonitor/sqlite"
+	"uptimemonitor/router"
+	"uptimemonitor/store/sqlite"
 )
 
 type TestCase struct {
@@ -17,8 +18,8 @@ type TestCase struct {
 
 func NewTestCase(t *testing.T) *TestCase {
 	store := sqlite.New(":memory:")
-	handler := app.NewHandler(store)
-	router := app.NewRouter(handler)
+	handler := handler.New(store)
+	router := router.New(handler)
 	server := httptest.NewServer(router)
 
 	return &TestCase{

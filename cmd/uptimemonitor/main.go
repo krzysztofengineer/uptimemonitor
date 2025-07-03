@@ -2,15 +2,22 @@ package main
 
 import (
 	"log/slog"
-	"uptimemonitor/app"
-	"uptimemonitor/sqlite"
+	"net/http"
+	"uptimemonitor/handler"
+	"uptimemonitor/router"
+	"uptimemonitor/store/sqlite"
 )
 
 func main() {
+	addr := ":3000"
 	store := sqlite.New(":memory:")
-	handler := app.NewHandler(store)
-	router := app.NewRouter(handler)
-	server := app.NewServer(":3000", router)
+	handler := handler.New(store)
+	router := router.New(handler)
+
+	server := &http.Server{
+		Addr:    addr,
+		Handler: router,
+	}
 
 	slog.Info("http://localhost:3000")
 
