@@ -7,6 +7,7 @@ import (
 	"uptimemonitor/handler"
 	"uptimemonitor/pkg/testutil"
 	"uptimemonitor/router"
+	"uptimemonitor/store"
 	"uptimemonitor/store/sqlite"
 )
 
@@ -14,6 +15,7 @@ type TestCase struct {
 	T      *testing.T
 	Server *httptest.Server
 	Client *http.Client
+	Store  store.Store
 }
 
 func NewTestCase(t *testing.T) *TestCase {
@@ -26,6 +28,7 @@ func NewTestCase(t *testing.T) *TestCase {
 		T:      t,
 		Server: server,
 		Client: server.Client(),
+		Store:  store,
 	}
 }
 

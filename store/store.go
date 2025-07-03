@@ -1,7 +1,15 @@
 package store
 
-import "uptimemonitor"
+import (
+	"context"
+	"uptimemonitor"
+)
 
 type Store interface {
-	uptimemonitor.UserStore
+	UserStore
+}
+
+type UserStore interface {
+	CountUsers(context.Context) (int, error)
+	CreateUser(context.Context, uptimemonitor.User) (uptimemonitor.User, error)
 }

@@ -2,13 +2,12 @@ package sqlite
 
 import (
 	"database/sql"
-	"uptimemonitor"
 
 	_ "modernc.org/sqlite"
 )
 
 type Store struct {
-	uptimemonitor.UserStore
+	*UserStore
 }
 
 func New(dsn string) *Store {
