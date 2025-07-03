@@ -7,11 +7,11 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-type Store struct {
+type Sqlite struct {
 	*UserStore
 }
 
-func New(dsn string) *Store {
+func New(dsn string) *Sqlite {
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		panic(err)
@@ -29,7 +29,7 @@ func New(dsn string) *Store {
 		panic(err)
 	}
 
-	return &Store{
+	return &Sqlite{
 		UserStore: NewUserStore(db),
 	}
 }
