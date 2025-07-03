@@ -15,9 +15,26 @@ func NewUserStore(db *sql.DB) *UserStore {
 }
 
 func (s *UserStore) CountUsers(ctx context.Context) (int, error) {
-	return 0, nil
+	stmt := `SELECT COUNT(*) FROM users`
+
+	var count int
+	if err := s.db.QueryRowContext(ctx, stmt).Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func (s *UserStore) CreateUser(ctx context.Context, user uptimemonitor.User) (uptimemonitor.User, error) {
-	return uptimemonitor.User{}, nil
+	stmt := `INSERT INTO users (name, email, created_at) VALUES (?, ?, ?) RETURNING id`
+
+	row := s.db.QueryRowContext(ctx, stmt, user.Name, user.Email, user.CreatedAt)
+
+	var id int
+	if err := row.Scan(&id); err != nil {
+		return uptimemonitor.User{}, err
+	}
+
+	user.ID = id
+
+	return user, nil
 }

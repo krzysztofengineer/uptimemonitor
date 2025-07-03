@@ -3,6 +3,7 @@ package sqlite
 import (
 	"database/sql"
 
+	"github.com/pressly/goose/v3"
 	_ "modernc.org/sqlite"
 )
 
@@ -17,6 +18,14 @@ func New(dsn string) *Store {
 	}
 
 	if err := db.Ping(); err != nil {
+		panic(err)
+	}
+
+	goose.SetBaseFS(FS)
+	if err := goose.SetDialect("sqlite"); err != nil {
+		panic(err)
+	}
+	if err := goose.Up(db, "migrations"); err != nil {
 		panic(err)
 	}
 
