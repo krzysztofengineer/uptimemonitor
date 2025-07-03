@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
+	"uptimemonitor/html"
 	"uptimemonitor/store"
 )
 
@@ -10,6 +12,8 @@ type SetupHandler struct {
 }
 
 func (h *SetupHandler) SetupPage() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "setup.html"))
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		count, err := h.Store.CountUsers(r.Context())
 		if err != nil {
@@ -19,6 +23,9 @@ func (h *SetupHandler) SetupPage() http.HandlerFunc {
 
 		if count > 0 {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
 		}
+
+		tmpl.Execute(w, nil)
 	}
 }

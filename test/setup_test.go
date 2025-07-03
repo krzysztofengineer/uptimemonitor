@@ -29,4 +29,17 @@ func TestSetup(t *testing.T) {
 		tc.Get("/setup").
 			AssertRedirect(http.StatusSeeOther, "/")
 	})
+
+	t.Run("shows a setup form when no users are found", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Get("/setup").
+			AssertStatusCode(http.StatusOK).
+			AssertElementVisible(`form[hx-post="/setup"]`).
+			AssertElementVisible(`input[name="name"]`).
+			AssertElementVisible(`input[name="email"]`).
+			AssertElementVisible(`input[name="password"]`).
+			AssertElementVisible(`button[type="submit"]`)
+	})
 }

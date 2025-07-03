@@ -1,0 +1,15 @@
+{{ define "body" }}
+<h1>Setup</h1>
+{{template "setup_form" . }}
+{{ end }}
+
+{{ define "setup_form" }}
+<form hx-post="/setup">
+    <input name="name" />
+    <input name="email" />
+    <input name="password" />
+    <button type="submit">
+        Submit
+    </button>
+</form>
+{{ end }}
