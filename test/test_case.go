@@ -33,6 +33,7 @@ func (t *TestCase) Close() {
 	t.Server.Close()
 }
 
+// todo ConfigurableRequest
 func (t *TestCase) Get(url string) *testutil.AssertableResponse {
 	res, err := t.Client.Get(t.Server.URL + url)
 	if err != nil {
