@@ -50,6 +50,9 @@ func TestSetup(t *testing.T) {
 
 		tc.Post("/setup", url.Values{}).
 			AssertStatusCode(http.StatusBadRequest).
-			AssertElementVisible(`form[hx-swap="outerHTML"]`)
+			AssertElementVisible(`form[hx-swap="outerHTML"]`).
+			AssertSeeText("The name field is required").
+			AssertSeeText("The email field is required").
+			AssertSeeText("The password field is required")
 	})
 }

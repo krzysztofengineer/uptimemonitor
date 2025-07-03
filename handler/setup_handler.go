@@ -3,6 +3,7 @@ package handler
 import (
 	"html/template"
 	"net/http"
+	"uptimemonitor/form"
 	"uptimemonitor/html"
 	"uptimemonitor/store"
 )
@@ -12,6 +13,10 @@ type SetupHandler struct {
 }
 
 func (h *SetupHandler) SetupPage() http.HandlerFunc {
+	type data struct {
+		Form form.SetupForm
+	}
+
 	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "setup.html"))
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -26,16 +31,33 @@ func (h *SetupHandler) SetupPage() http.HandlerFunc {
 			return
 		}
 
-		tmpl.Execute(w, nil)
+		tmpl.Execute(w, data{
+			Form: form.SetupForm{},
+		})
 	}
 }
 
 func (h *SetupHandler) SetupForm() http.HandlerFunc {
+	type data struct {
+		Form form.SetupForm
+	}
+
 	tmpl := template.Must(template.ParseFS(html.FS, "setup.html"))
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusBadRequest)
+		r.ParseForm()
 
-		tmpl.ExecuteTemplate(w, "setup_form", nil)
+		f := form.SetupForm{
+			Name:     r.PostFormValue("name"),
+			Email:    r.PostFormValue("email"),
+			Password: r.PostFormValue("password"),
+		}
+
+		if !f.Validate() {
+			w.WriteHeader(http.StatusBadRequest)
+			tmpl.ExecuteTemplate(w, "setup_form", data{
+				Form: f,
+			})
+		}
 	}
 }

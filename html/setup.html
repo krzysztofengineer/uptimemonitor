@@ -6,8 +6,17 @@
 {{ define "setup_form" }}
 <form hx-post="/setup" hx-swap="outerHTML">
     <input name="name" />
+    {{ with .Form.Errors.Name }}
+    <p>{{ . }}</p>
+    {{ end }}
     <input name="email" />
+    {{ with .Form.Errors.Email }}
+    <p>{{ . }}</p>
+    {{ end }}
     <input name="password" />
+    {{ with .Form.Errors.Password }}
+    <p>{{ . }}</p>
+    {{ end }}
     <button type="submit">
         Submit
     </button>
