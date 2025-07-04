@@ -3,9 +3,13 @@ package handler
 import (
 	"html/template"
 	"net/http"
+	"time"
+	"uptimemonitor"
 	"uptimemonitor/form"
 	"uptimemonitor/html"
 	"uptimemonitor/store"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type SetupHandler struct {
@@ -60,6 +64,19 @@ func (h *SetupHandler) SetupForm() http.HandlerFunc {
 			})
 			return
 		}
+
+		hash, err := bcrypt.GenerateFromPassword([]byte(f.Password), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		h.Store.CreateUser(r.Context(), uptimemonitor.User{
+			Name:         f.Name,
+			Email:        f.Email,
+			PasswordHash: string(hash),
+			CreatedAt:    time.Now(),
+		})
 
 		w.Header().Set("HX-Redirect", "/dashboard")
 	}

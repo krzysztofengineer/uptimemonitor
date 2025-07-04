@@ -25,9 +25,9 @@ func (s *UserStore) CountUsers(ctx context.Context) (int, error) {
 }
 
 func (s *UserStore) CreateUser(ctx context.Context, user uptimemonitor.User) (uptimemonitor.User, error) {
-	stmt := `INSERT INTO users (name, email, created_at) VALUES (?, ?, ?) RETURNING id`
+	stmt := `INSERT INTO users (name, email, password_hash, created_at) VALUES (?, ?, ?, ?) RETURNING id`
 
-	row := s.db.QueryRowContext(ctx, stmt, user.Name, user.Email, user.CreatedAt)
+	row := s.db.QueryRowContext(ctx, stmt, user.Name, user.Email, user.PasswordHash, user.CreatedAt)
 
 	var id int
 	if err := row.Scan(&id); err != nil {
