@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -34,24 +35,42 @@ func NewTestCase(t *testing.T) *TestCase {
 	}
 }
 
-func (t *TestCase) Close() {
-	t.Server.Close()
+func (tc *TestCase) Close() {
+	tc.Server.Close()
 }
 
-func (t *TestCase) Get(url string) *testutil.AssertableResponse {
-	res, err := t.Client.Get(t.Server.URL + url)
+func (tc *TestCase) Get(url string) *testutil.AssertableResponse {
+	res, err := tc.Client.Get(tc.Server.URL + url)
 	if err != nil {
-		t.T.Fatalf("failed to get %s: %v", url, err)
+		tc.T.Fatalf("failed to get %s: %v", url, err)
 	}
 
-	return testutil.NewAssertableResponse(t.T, res)
+	return testutil.NewAssertableResponse(tc.T, res)
 }
 
-func (t *TestCase) Post(url string, data url.Values) *testutil.AssertableResponse {
-	res, err := t.Client.Post(t.Server.URL+url, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+func (tc *TestCase) Post(url string, data url.Values) *testutil.AssertableResponse {
+	res, err := tc.Client.Post(tc.Server.URL+url, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 	if err != nil {
-		t.T.Fatalf("failed to post %s: %v", url, err)
+		tc.T.Fatalf("failed to post %s: %v", url, err)
 	}
 
-	return testutil.NewAssertableResponse(t.T, res)
+	return testutil.NewAssertableResponse(tc.T, res)
+}
+
+func (tc *TestCase) AssertDatabaseCount(table string, expected int) *TestCase {
+	tc.T.Helper()
+
+	stmt := fmt.Sprintf(`SELECT COUNT(*) FROM %s`, table)
+	var count int
+
+	err := tc.Store.DB().QueryRow(stmt).Scan(&count)
+	if err != nil {
+		tc.T.Fatalf("failed to count rows from table '%s', error: %v", table, err)
+	}
+
+	if count != expected {
+		tc.T.Fatalf("expected to find %d number of rows in a table '%s, but found %d", expected, table, count)
+	}
+
+	return tc
 }

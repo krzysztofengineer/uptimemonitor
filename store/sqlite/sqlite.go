@@ -8,6 +8,7 @@ import (
 )
 
 type Sqlite struct {
+	db *sql.DB
 	*UserStore
 }
 
@@ -30,6 +31,11 @@ func New(dsn string) *Sqlite {
 	}
 
 	return &Sqlite{
+		db:        db,
 		UserStore: NewUserStore(db),
 	}
+}
+
+func (s *Sqlite) DB() *sql.DB {
+	return s.db
 }

@@ -55,10 +55,28 @@ func TestSetup(t *testing.T) {
 			AssertSeeText("The email field is required").
 			AssertSeeText("The password field is required")
 
-		tc.Post("/setup", url.Values{
+		res := tc.Post("/setup", url.Values{
 			"email": []string{"invalid"},
-		}).AssertStatusCode(http.StatusBadRequest).
+		})
+
+		res.AssertStatusCode(http.StatusBadRequest).
 			AssertElementVisible(`form[hx-swap="outerHTML"]`).
 			AssertSeeText("The email format is invalid")
+	})
+
+	t.Run("creates a user", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.AssertDatabaseCount("users", 0)
+
+		res := tc.Post("/setup", url.Values{
+			"name":     []string{"Test"},
+			"email":    []string{"test@example.com"},
+			"password": []string{"password"},
+		})
+
+		res.AssertHeader("HX-Redirect", "/dashboard")
+		tc.AssertDatabaseCount("users", 1)
 	})
 }

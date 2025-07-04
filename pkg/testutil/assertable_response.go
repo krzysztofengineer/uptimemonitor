@@ -85,3 +85,13 @@ func (ar *AssertableResponse) AssertSeeText(text string) *AssertableResponse {
 
 	return ar
 }
+
+func (ar *AssertableResponse) AssertHeader(header string, expected string) *AssertableResponse {
+	ar.T.Helper()
+
+	if value := ar.Response.Header.Get(header); value != expected {
+		ar.T.Fatalf("expected header '%s' to have value of '%s' but got '%s' instead", header, expected, value)
+	}
+
+	return ar
+}

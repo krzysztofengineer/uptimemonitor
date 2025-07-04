@@ -58,6 +58,9 @@ func (h *SetupHandler) SetupForm() http.HandlerFunc {
 			tmpl.ExecuteTemplate(w, "setup_form", data{
 				Form: f,
 			})
+			return
 		}
+
+		w.Header().Set("HX-Redirect", "/dashboard")
 	}
 }

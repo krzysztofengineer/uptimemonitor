@@ -2,10 +2,12 @@ package store
 
 import (
 	"context"
+	"database/sql"
 	"uptimemonitor"
 )
 
 type Store interface {
+	DB() *sql.DB
 	UserStore
 }
 
