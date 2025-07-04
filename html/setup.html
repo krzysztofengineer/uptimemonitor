@@ -5,15 +5,15 @@
 
 {{ define "setup_form" }}
 <form hx-post="/setup" hx-swap="outerHTML">
-    <input name="name" />
+    <input id="setup_form--name" name="name" autofocus hx-preserve />
     {{ with .Form.Errors.Name }}
     <p>{{ . }}</p>
     {{ end }}
-    <input name="email" />
+    <input id="setup_form--email" name="email" type="email" hx-preserve />
     {{ with .Form.Errors.Email }}
     <p>{{ . }}</p>
     {{ end }}
-    <input name="password" />
+    <input id="setup_form--password" name="password" type="password" hx-preserve />
     {{ with .Form.Errors.Password }}
     <p>{{ . }}</p>
     {{ end }}
