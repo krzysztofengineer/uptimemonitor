@@ -78,6 +78,6 @@ func (h *SetupHandler) SetupForm() http.HandlerFunc {
 			CreatedAt:    time.Now(),
 		})
 
-		w.Header().Set("HX-Redirect", "/dashboard")
+		w.Header().Set("HX-Redirect", "/")
 	}
 }

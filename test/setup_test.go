@@ -64,7 +64,7 @@ func TestSetup(t *testing.T) {
 			AssertSeeText("The email format is invalid")
 	})
 
-	t.Run("creates a user", func(t *testing.T) {
+	t.Run("setup", func(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
@@ -76,7 +76,9 @@ func TestSetup(t *testing.T) {
 			"password": []string{"password"},
 		})
 
-		res.AssertHeader("HX-Redirect", "/dashboard")
+		res.AssertHeader("HX-Redirect", "/")
 		tc.AssertDatabaseCount("users", 1)
+
+		tc.Get("/setup").AssertRedirect(http.StatusSeeOther, "/")
 	})
 }

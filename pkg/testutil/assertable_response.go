@@ -45,8 +45,8 @@ func (ar *AssertableResponse) AssertRedirect(statusCode int, expected string) *A
 		ar.T.Fatalf("expected status code %d, got %d", statusCode, ar.Response.Request.Response.StatusCode)
 	}
 
-	if ar.Response.Request.Response.Header.Get("Location") != expected {
-		ar.T.Fatalf("expected redirect to %s, got %s", expected, ar.Response.Header.Get("Location"))
+	if actual := ar.Response.Request.Response.Header.Get("Location"); actual != expected {
+		ar.T.Fatalf("expected redirect to %s, got %s", expected, actual)
 	}
 
 	return ar
