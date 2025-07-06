@@ -1,0 +1,20 @@
+{{ define "body" }}
+<h1>Login</h1>
+{{template "login_form" . }}
+{{ end }}
+
+{{ define "login_form" }}
+<form hx-post="/login" hx-swap="outerHTML">
+    <input id="login_form--email" name="email" type="email" hx-preserve />
+    {{ with .Form.Errors.Email }}
+    <p>{{ . }}</p>
+    {{ end }}
+    <input id="login_form--password" name="password" type="password" hx-preserve />
+    {{ with .Form.Errors.Password }}
+    <p>{{ . }}</p>
+    {{ end }}
+    <button type="submit">
+        Submit
+    </button>
+</form>
+{{ end }}

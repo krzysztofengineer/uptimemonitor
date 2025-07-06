@@ -7,11 +7,14 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"uptimemonitor"
 	"uptimemonitor/handler"
 	"uptimemonitor/pkg/testutil"
 	"uptimemonitor/router"
 	"uptimemonitor/store"
 	"uptimemonitor/store/sqlite"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type TestCase struct {
@@ -19,6 +22,7 @@ type TestCase struct {
 	Server *httptest.Server
 	Client *http.Client
 	Store  store.Store
+	User   *uptimemonitor.User
 }
 
 func NewTestCase(t *testing.T) *TestCase {
@@ -71,6 +75,26 @@ func (tc *TestCase) AssertDatabaseCount(table string, expected int) *TestCase {
 	if count != expected {
 		tc.T.Fatalf("expected to find %d number of rows in a table '%s, but found %d", expected, table, count)
 	}
+
+	return tc
+}
+
+func (tc *TestCase) CreateTestUser(email, password string) *TestCase {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		tc.T.Fatalf("unexpected bcrypt error: %v", err)
+	}
+
+	user, err := tc.Store.CreateUser(tc.T.Context(), uptimemonitor.User{
+		Name:         "Test User",
+		Email:        email,
+		PasswordHash: string(hash),
+	})
+	if err != nil {
+		tc.T.Fatalf("unable to create test user: %v", err)
+	}
+
+	tc.User = &user
 
 	return tc
 }
