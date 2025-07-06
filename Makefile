@@ -4,4 +4,6 @@ run:
 
 .PHONY: test
 test:
-	go test ./...
+	go run gotest.tools/gotestsum@latest \
+		--format testdox \
+		-- ./test
