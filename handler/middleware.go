@@ -9,7 +9,7 @@ type Middleware struct {
 	Store store.Store
 }
 
-func (m *Middleware) InstalledMiddleware(next http.Handler) http.Handler {
+func (m *Middleware) Installed(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		count, err := m.Store.CountUsers(r.Context())
 		if err != nil {
@@ -28,5 +28,11 @@ func (m *Middleware) InstalledMiddleware(next http.Handler) http.Handler {
 		}
 
 		next.ServeHTTP(w, r)
+	})
+}
+
+func (m *Middleware) Authenticated(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	})
 }

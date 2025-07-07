@@ -17,7 +17,7 @@ func TestSetup(t *testing.T) {
 			AssertRedirect(http.StatusSeeOther, "/setup")
 	})
 
-	t.Run("redirects to home page when users are found", func(t *testing.T) {
+	t.Run("redirects to login page when users are found", func(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
@@ -28,7 +28,7 @@ func TestSetup(t *testing.T) {
 		})
 
 		tc.Get("/setup").
-			AssertRedirect(http.StatusSeeOther, "/")
+			AssertRedirect(http.StatusSeeOther, "/login")
 	})
 
 	t.Run("shows a setup form when no users are found", func(t *testing.T) {
@@ -79,6 +79,6 @@ func TestSetup(t *testing.T) {
 		res.AssertHeader("HX-Redirect", "/")
 		tc.AssertDatabaseCount("users", 1)
 
-		tc.Get("/setup").AssertRedirect(http.StatusSeeOther, "/")
+		tc.Get("/setup").AssertRedirect(http.StatusSeeOther, "/login")
 	})
 }
