@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log/slog"
 	"net/http"
 	"uptimemonitor/handler"
@@ -8,9 +9,18 @@ import (
 	"uptimemonitor/store/sqlite"
 )
 
+var (
+	dsn  string
+	addr string
+)
+
 func main() {
-	addr := ":3000"
-	store := sqlite.New(":memory:")
+	flag.StringVar(&dsn, "dsn", "db.sqlite", "database server name")
+	flag.StringVar(&addr, "addr", ":3000", "server address")
+
+	flag.Parse()
+
+	store := sqlite.New(dsn)
 	handler := handler.New(store)
 	router := router.New(handler)
 
