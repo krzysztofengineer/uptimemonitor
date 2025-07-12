@@ -10,14 +10,14 @@
         <label for="login_form--email">E-mail</label>
         <input id="login_form--email" name="email" type="email" hx-preserve />
         {{ with .Form.Errors.Email }}
-        <p>{{ . }}</p>
+        <div class="form-error">{{ . }}</div>
         {{ end }}
     </div>
     <div class="form-field">
         <label for="login_form--password">Password</label>
         <input id="login_form--password" name="password" type="password" hx-preserve />
         {{ with .Form.Errors.Password }}
-        <p>{{ . }}</p>
+        <div class="form-error">{{ . }}</div>
         {{ end }}
     </div>
     <button type="submit">
