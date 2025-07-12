@@ -26,7 +26,11 @@ input:focus-visible {
 }
 
 input:has(+ .form-error) {
-    border-color: rgb(230, 0, 20);
+    border-color: rgba(230, 0, 20, 0.6);
+}
+
+input:has(+ .form-error):focus-visible {
+    box-shadow: rgba(230, 0, 20, 0.3) 0px 0px 0px 3px;
 }
 
 button[type="submit"] {
