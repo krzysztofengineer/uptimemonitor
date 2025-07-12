@@ -1,5 +1,5 @@
 {{ define "title" }}Home{{ end }}
 
 {{define "body"}}
-Hello, world
+<div hx-get="/monitors" hx-trigger="intersect" hx-swap="outerHTML"></div>
 {{ end }}

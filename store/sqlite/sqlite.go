@@ -11,6 +11,7 @@ type Sqlite struct {
 	db *sql.DB
 	*UserStore
 	*SessionStore
+	*MonitorStore
 }
 
 func New(dsn string) *Sqlite {
@@ -35,6 +36,7 @@ func New(dsn string) *Sqlite {
 		db:           db,
 		UserStore:    NewUserStore(db),
 		SessionStore: NewSessionStore(db),
+		MonitorStore: NewMonitorStore(db),
 	}
 }
 

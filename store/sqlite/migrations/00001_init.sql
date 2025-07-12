@@ -17,4 +17,11 @@ CREATE TABLE sessions (
 
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
+
+CREATE TABLE monitors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uuid TEXT NOT NULL UNIQUE,
+    `url` TEXT NOT NULL,
+    created_at DATETIME NOT NULL
+);
 -- +goose StatementEnd

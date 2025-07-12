@@ -10,6 +10,7 @@ type Store interface {
 	DB() *sql.DB
 	UserStore
 	SessionStore
+	MonitorStore
 }
 
 type UserStore interface {
@@ -21,4 +22,9 @@ type UserStore interface {
 type SessionStore interface {
 	CreateSession(context.Context, uptimemonitor.Session) (uptimemonitor.Session, error)
 	GetSessionByUuid(context.Context, string) (uptimemonitor.Session, error)
+}
+
+type MonitorStore interface {
+	CreateMonitor(context.Context, uptimemonitor.Monitor) (uptimemonitor.Monitor, error)
+	ListMonitors(context.Context) ([]uptimemonitor.Monitor, error)
 }
