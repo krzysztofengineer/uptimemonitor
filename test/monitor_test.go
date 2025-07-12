@@ -2,6 +2,7 @@ package test
 
 import (
 	"net/http"
+	"net/url"
 	"testing"
 	"time"
 	"uptimemonitor"
@@ -57,5 +58,48 @@ func TestMonitor_ListMonitors(t *testing.T) {
 			Get("/monitors").
 			AssertSeeText("example.com").
 			AssertSeeText("example.com/123")
+	})
+}
+
+func TestMonitor_CreateMonitor(t *testing.T) {
+	t.Run("setup is required", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Post("/monitors", url.Values{}).
+			AssertStatusCode(http.StatusForbidden)
+	})
+
+	t.Run("user has to be logged in", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.CreateTestUser("test@example.com", "password")
+
+		tc.Post("/monitors", url.Values{}).
+			AssertRedirect(http.StatusSeeOther, "/login")
+	})
+
+	t.Run("url is required", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn().
+			Post("/monitors", url.Values{}).
+			AssertNoRedirect().
+			AssertStatusCode(http.StatusBadRequest).
+			AssertSeeText("The url is required")
+	})
+
+	t.Run("the url has to be a valid url", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn().
+			Post("/monitors", url.Values{
+				"url": []string{"invalid"},
+			}).
+			AssertStatusCode(http.StatusBadRequest).
+			AssertSeeText("The url is invalid")
 	})
 }

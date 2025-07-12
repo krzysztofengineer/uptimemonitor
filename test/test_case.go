@@ -68,7 +68,6 @@ func (tc *TestCase) Get(url string) *testutil.AssertableResponse {
 
 	if len(tc.Cookies) > 0 {
 		for _, c := range tc.Cookies {
-			tc.T.Logf("adding cookie: %v", c)
 			req.AddCookie(c)
 		}
 	}
@@ -82,7 +81,19 @@ func (tc *TestCase) Get(url string) *testutil.AssertableResponse {
 }
 
 func (tc *TestCase) Post(url string, data url.Values) *testutil.AssertableResponse {
-	res, err := tc.Client.Post(tc.Server.URL+url, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	req, err := http.NewRequest(http.MethodPost, tc.Server.URL+url, strings.NewReader(data.Encode()))
+	if err != nil {
+		tc.T.Fatalf("unexpected error: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	if len(tc.Cookies) > 0 {
+		for _, c := range tc.Cookies {
+			req.AddCookie(c)
+		}
+	}
+
+	res, err := tc.Client.Do(req)
 	if err != nil {
 		tc.T.Fatalf("failed to post %s: %v", url, err)
 	}

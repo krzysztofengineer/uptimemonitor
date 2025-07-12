@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"uptimemonitor"
+	"uptimemonitor/form"
 	"uptimemonitor/html"
 	"uptimemonitor/store"
 )
@@ -29,5 +30,27 @@ func (h *MonitorHandler) ListMonitors() http.HandlerFunc {
 		tmpl.ExecuteTemplate(w, "monitor_list", data{
 			Monitors: monitors,
 		})
+	}
+}
+
+func (h *MonitorHandler) CreateMonitor() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "monitor.html"))
+
+	type data struct {
+		Form form.MonitorForm
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+
+		f := form.MonitorForm{
+			Url: r.PostFormValue("url"),
+		}
+
+		if !f.Validate() {
+			w.WriteHeader(http.StatusBadRequest)
+			tmpl.ExecuteTemplate(w, "monitor_form", data{Form: f})
+			return
+		}
 	}
 }

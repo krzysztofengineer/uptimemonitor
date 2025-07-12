@@ -56,7 +56,7 @@ func (ar *AssertableResponse) AssertNoRedirect() *AssertableResponse {
 	ar.T.Helper()
 
 	if ar.Response.Request.Response != nil {
-		ar.T.Fatalf("unexpected redirect")
+		ar.T.Fatalf("unexpected redirect: %v", ar.Response.Request.URL)
 	}
 
 	return ar
