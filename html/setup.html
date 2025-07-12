@@ -26,21 +26,23 @@
     <hr />
     <div class="form-field">
         <label for="setup_form--name">Name</label>
-        <input id="setup_form--name" name="name" autofocus hx-preserve placeholder="John Doe" />
+        <input id="setup_form--name" name="name" autofocus autocomplete="name" hx-preserve placeholder="John Doe" />
         {{ with .Form.Errors.Name }}
         <div class="form-error">{{ . }}</div>
         {{ end }}
     </div>
     <div class="form-field">
         <label for="setup_form--email">E-mail</label>
-        <input id="setup_form--email" name="email" type="email" hx-preserve placeholder="email@example.com" />
+        <input id="setup_form--email" name="email" type="email" autocomplete="email" hx-preserve
+            placeholder="email@example.com" />
         {{ with .Form.Errors.Email }}
         <div class="form-error">{{ . }}</div>
         {{ end }}
     </div>
     <div class="form-field">
         <label for="setup_form--password">Password</label>
-        <input id="setup_form--password" name="password" type="password" hx-preserve placeholder="••••••••" />
+        <input id="setup_form--password" name="password" type="password" autocomplete="new-password" hx-preserve
+            placeholder="••••••••" />
         {{ with .Form.Errors.Password }}
         <div class="form-error">{{ . }}</div>
         {{ end }}

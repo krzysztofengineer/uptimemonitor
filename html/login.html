@@ -26,14 +26,14 @@
     <hr />
     <div class="form-field">
         <label for="login_form--email">E-mail</label>
-        <input id="login_form--email" name="email" type="email" hx-preserve />
+        <input id="login_form--email" name="email" type="email" autocomplete="email" hx-preserve />
         {{ with .Form.Errors.Email }}
         <div class="form-error">{{ . }}</div>
         {{ end }}
     </div>
     <div class="form-field">
         <label for="login_form--password">Password</label>
-        <input id="login_form--password" name="password" type="password" hx-preserve />
+        <input id="login_form--password" name="password" type="password" autocomplete="current-password" hx-preserve />
         {{ with .Form.Errors.Password }}
         <div class="form-error">{{ . }}</div>
         {{ end }}
