@@ -1,0 +1,30 @@
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+input {
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    width: 100%;
+    font-size: 1rem;
+    outline-color: oklch(.708 0 0);
+    outline-style: none;
+}
+
+
+button[type="submit"] {
+    width: 100%;
+    border-radius: 12px;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+}
