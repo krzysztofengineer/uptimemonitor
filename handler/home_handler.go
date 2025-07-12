@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
+	"uptimemonitor/html"
 	"uptimemonitor/store"
 )
 
@@ -10,7 +12,9 @@ type HomeHandler struct {
 }
 
 func (h *HomeHandler) HomePage() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "home.html"))
 
+	return func(w http.ResponseWriter, r *http.Request) {
+		tmpl.Execute(w, nil)
 	}
 }
