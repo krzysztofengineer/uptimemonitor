@@ -17,14 +17,19 @@ func New(handler *handler.Handler) *http.ServeMux {
 
 		{
 			loginMux := http.NewServeMux()
+
 			loginMux.HandleFunc("GET /", handler.LoginPage())
 			loginMux.HandleFunc("POST /", handler.LoginForm())
+
 			mux.Handle("/login", handler.Guest(loginMux))
 		}
 
 		{
 			authenticatedMux := http.NewServeMux()
+
 			authenticatedMux.HandleFunc("GET /{$}", handler.HomePage())
+			authenticatedMux.HandleFunc("GET /monitors", handler.ListMonitors())
+
 			mux.Handle("/", handler.Authenticated(authenticatedMux))
 		}
 

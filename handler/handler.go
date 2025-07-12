@@ -9,13 +9,15 @@ type Handler struct {
 	HomeHandler
 	SetupHandler
 	LoginHandler
+	MonitorHandler
 }
 
 func New(store store.Store) *Handler {
 	return &Handler{
-		Middleware:   Middleware{Store: store},
-		HomeHandler:  HomeHandler{Store: store},
-		SetupHandler: SetupHandler{Store: store},
-		LoginHandler: LoginHandler{Store: store},
+		Middleware:     Middleware{Store: store},
+		HomeHandler:    HomeHandler{Store: store},
+		SetupHandler:   SetupHandler{Store: store},
+		LoginHandler:   LoginHandler{Store: store},
+		MonitorHandler: MonitorHandler{Store: store},
 	}
 }
