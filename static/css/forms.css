@@ -10,11 +10,11 @@ label {
 }
 
 input {
-    padding: 12px 16px;
+    padding: 10px 14px;
     border: 1px solid #ddd;
     border-radius: 12px;
     width: 100%;
-    font-size: 1.1rem;
+    font-size: 1rem;
     outline-style: none;
     box-shadow: 0px 2px 1px #eee;
     transition: all ease-in-out 0.3s;
@@ -36,7 +36,7 @@ input:has(+ .form-error):focus-visible {
 button[type="submit"] {
     width: 100%;
     border-radius: 12px;
-    padding: 12px 12px;
+    padding: 10px 12px;
     background-color: black;
     color: white;
     border: none;

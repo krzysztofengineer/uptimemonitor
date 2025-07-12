@@ -7,17 +7,20 @@
 
 form {
     width: 100%;
-    max-width: 400px;
+    max-width: 360px;
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
 h1 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: 8px;
-    line-height: 24px;
+    line-height: 16px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
 }
 
 hr {
