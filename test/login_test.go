@@ -103,4 +103,13 @@ func TestLogin(t *testing.T) {
 			AssertNoRedirect().
 			AssertStatusCode(http.StatusOK)
 	})
+
+	t.Run("logged in users are redirected to home page", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn().
+			Get("/login").
+			AssertRedirect(http.StatusSeeOther, "/")
+	})
 }

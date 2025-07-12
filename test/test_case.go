@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 	"uptimemonitor"
 	"uptimemonitor/handler"
 	"uptimemonitor/pkg/testutil"
@@ -125,4 +126,29 @@ func (tc *TestCase) CreateTestUser(email, password string) *TestCase {
 	tc.User = &user
 
 	return tc
+}
+
+func (tc *TestCase) LogIn() *TestCase {
+	tc.CreateTestUser("test@example.com", "password")
+
+	session, err := tc.Store.CreateSession(tc.T.Context(), uptimemonitor.Session{
+		User:      *tc.User,
+		UserID:    tc.User.ID,
+		CreatedAt: time.Now(),
+		ExpiresAt: time.Now().Add(time.Hour),
+	})
+	if err != nil {
+		tc.T.Fatalf("unexpected error: %v", err)
+	}
+
+	c := &http.Cookie{
+		Name:     "session",
+		Value:    session.Uuid,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Secure:   false,
+		Expires:  session.ExpiresAt,
+	}
+
+	return tc.WithCookie(c)
 }

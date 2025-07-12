@@ -7,31 +7,33 @@ import (
 )
 
 func New(handler *handler.Handler) *http.ServeMux {
-	mux := http.NewServeMux()
+	r := http.NewServeMux()
 
-	mux.HandleFunc("GET /setup", handler.SetupPage())
-	mux.HandleFunc("POST /setup", handler.SetupForm())
+	r.HandleFunc("GET /setup", handler.SetupPage())
+	r.HandleFunc("POST /setup", handler.SetupForm())
 
 	{
-		installedMux := http.NewServeMux()
-		installedMux.HandleFunc("GET /login", handler.LoginPage())
-		installedMux.HandleFunc("POST /login", handler.LoginForm())
+		mux := http.NewServeMux()
+
+		{
+			loginMux := http.NewServeMux()
+			loginMux.HandleFunc("GET /", handler.LoginPage())
+			loginMux.HandleFunc("POST /", handler.LoginForm())
+			mux.Handle("/login", handler.Guest(loginMux))
+		}
 
 		{
 			authenticatedMux := http.NewServeMux()
 			authenticatedMux.HandleFunc("GET /{$}", handler.HomePage())
-
-			installedMux.Handle("/",
-				handler.UserFromCookie(
-					handler.Authenticated(authenticatedMux),
-				),
-			)
+			mux.Handle("/", handler.Authenticated(authenticatedMux))
 		}
 
-		mux.Handle("/", handler.Installed(installedMux))
+		r.Handle("/", handler.UserFromCookie(
+			handler.Installed(mux),
+		))
 	}
 
-	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
+	r.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
 
-	return mux
+	return r
 }
