@@ -27,4 +27,5 @@ type SessionStore interface {
 type MonitorStore interface {
 	CreateMonitor(context.Context, uptimemonitor.Monitor) (uptimemonitor.Monitor, error)
 	ListMonitors(context.Context) ([]uptimemonitor.Monitor, error)
+	GetMonitorByID(context.Context, int) (uptimemonitor.Monitor, error)
 }

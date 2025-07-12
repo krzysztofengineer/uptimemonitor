@@ -3,6 +3,7 @@ package handler
 import (
 	"html/template"
 	"net/http"
+	"time"
 	"uptimemonitor"
 	"uptimemonitor/form"
 	"uptimemonitor/html"
@@ -52,5 +53,16 @@ func (h *MonitorHandler) CreateMonitor() http.HandlerFunc {
 			tmpl.ExecuteTemplate(w, "monitor_form", data{Form: f})
 			return
 		}
+
+		m, err := h.Store.CreateMonitor(r.Context(), uptimemonitor.Monitor{
+			Url:       f.Url,
+			CreatedAt: time.Now(),
+		})
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("HX-Redirect", m.URI())
 	}
 }

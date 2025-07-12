@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"testing"
@@ -101,5 +102,26 @@ func TestMonitor_CreateMonitor(t *testing.T) {
 			}).
 			AssertStatusCode(http.StatusBadRequest).
 			AssertSeeText("The url is invalid")
+	})
+
+	t.Run("the url can be created", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		res := tc.LogIn().
+			Post("/monitors", url.Values{
+				"url": []string{"https://example.com"},
+			}).
+			AssertStatusCode(http.StatusOK)
+
+		m, err := tc.Store.GetMonitorByID(t.Context(), 1)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		res.AssertHeader("HX-Redirect", fmt.Sprintf("/m/%s", m.Uuid))
+
+		tc.AssertDatabaseCount("monitors", 1)
+		tc.Get("/monitors").AssertSeeText("example.com")
 	})
 }
