@@ -7,4 +7,14 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     created_at DATETIME NOT NULL
 );
+
+CREATE TABLE sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uuid TEXT NOT NULL UNIQUE,
+    user_id INTEGER,
+    created_at DATETIME NOT NULL,
+    expires_at DATETIME NOT NULL,
+
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
 -- +goose StatementEnd

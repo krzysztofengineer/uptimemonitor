@@ -3,9 +3,13 @@ package handler
 import (
 	"html/template"
 	"net/http"
+	"time"
+	"uptimemonitor"
 	"uptimemonitor/form"
 	"uptimemonitor/html"
 	"uptimemonitor/store"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginHandler struct {
@@ -48,5 +52,50 @@ func (h *LoginHandler) LoginForm() http.HandlerFunc {
 			})
 			return
 		}
+
+		user, err := h.Store.GetUserByEmail(r.Context(), f.Email)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			f.Errors["Email"] = "The credentials do not match our records"
+			tmpl.ExecuteTemplate(w, "login_form", data{
+				Form: f,
+			})
+			return
+		}
+
+		if err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(f.Password)); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			f.Errors["Email"] = "The credentials do not match our records"
+			tmpl.ExecuteTemplate(w, "login_form", data{
+				Form: f,
+			})
+			return
+		}
+
+		session, err := h.Store.CreateSession(r.Context(), uptimemonitor.Session{
+			UserID:    user.ID,
+			CreatedAt: time.Now(),
+			ExpiresAt: time.Now().Add(time.Hour * 24 * 30),
+			User:      user,
+		})
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			f.Errors["Email"] = "Something went wrong, try again later"
+			tmpl.ExecuteTemplate(w, "login_form", data{
+				Form: f,
+			})
+			return
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session",
+			Value:    session.Uuid,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+			Secure:   false, // todo
+			Expires:  session.ExpiresAt,
+		})
+
+		w.Header().Set("HX-Redirect", "/")
 	}
 }

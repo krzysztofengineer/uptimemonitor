@@ -38,3 +38,18 @@ func (s *UserStore) CreateUser(ctx context.Context, user uptimemonitor.User) (up
 
 	return user, nil
 }
+
+func (s *UserStore) GetUserByEmail(ctx context.Context, email string) (uptimemonitor.User, error) {
+	stmt := `SELECT id, name, email, password_hash, created_at FROM users WHERE email = ? LIMIT 1`
+
+	row := s.db.QueryRowContext(ctx, stmt, email)
+
+	var user uptimemonitor.User
+	if err := row.Scan(
+		&user.ID, &user.Name, &user.Email, &user.PasswordHash, &user.CreatedAt,
+	); err != nil {
+		return user, err
+	}
+
+	return user, nil
+}

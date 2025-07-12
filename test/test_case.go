@@ -18,11 +18,13 @@ import (
 )
 
 type TestCase struct {
-	T      *testing.T
-	Server *httptest.Server
-	Client *http.Client
-	Store  store.Store
-	User   *uptimemonitor.User
+	T       *testing.T
+	Server  *httptest.Server
+	Client  *http.Client
+	Store   store.Store
+	User    *uptimemonitor.User
+	Headers map[string]string
+	Cookies []*http.Cookie
 }
 
 func NewTestCase(t *testing.T) *TestCase {
@@ -32,10 +34,12 @@ func NewTestCase(t *testing.T) *TestCase {
 	server := httptest.NewServer(router)
 
 	return &TestCase{
-		T:      t,
-		Server: server,
-		Client: server.Client(),
-		Store:  store,
+		T:       t,
+		Server:  server,
+		Client:  server.Client(),
+		Store:   store,
+		Headers: map[string]string{},
+		Cookies: []*http.Cookie{},
 	}
 }
 
@@ -43,8 +47,32 @@ func (tc *TestCase) Close() {
 	tc.Server.Close()
 }
 
+func (tc *TestCase) WithHeader(key, value string) *TestCase {
+	tc.Headers[key] = value
+
+	return tc
+}
+
+func (tc *TestCase) WithCookie(c *http.Cookie) *TestCase {
+	tc.Cookies = append(tc.Cookies, c)
+
+	return tc
+}
+
 func (tc *TestCase) Get(url string) *testutil.AssertableResponse {
-	res, err := tc.Client.Get(tc.Server.URL + url)
+	req, err := http.NewRequest(http.MethodGet, tc.Server.URL+url, nil)
+	if err != nil {
+		tc.T.Fatalf("unexpected error: %v", err)
+	}
+
+	if len(tc.Cookies) > 0 {
+		for _, c := range tc.Cookies {
+			tc.T.Logf("adding cookie: %v", c)
+			req.AddCookie(c)
+		}
+	}
+
+	res, err := tc.Client.Do(req)
 	if err != nil {
 		tc.T.Fatalf("failed to get %s: %v", url, err)
 	}

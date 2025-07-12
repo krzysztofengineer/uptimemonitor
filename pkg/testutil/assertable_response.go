@@ -52,6 +52,16 @@ func (ar *AssertableResponse) AssertRedirect(statusCode int, expected string) *A
 	return ar
 }
 
+func (ar *AssertableResponse) AssertNoRedirect() *AssertableResponse {
+	ar.T.Helper()
+
+	if ar.Response.Request.Response != nil {
+		ar.T.Fatalf("unexpected redirect")
+	}
+
+	return ar
+}
+
 func (ar *AssertableResponse) AssertElementVisible(selector string) *AssertableResponse {
 	ar.T.Helper()
 
@@ -92,6 +102,28 @@ func (ar *AssertableResponse) AssertHeader(header string, expected string) *Asse
 	if value := ar.Response.Header.Get(header); value != expected {
 		ar.T.Fatalf("expected header '%s' to have value of '%s' but got '%s' instead", header, expected, value)
 	}
+
+	return ar
+}
+
+func (ar *AssertableResponse) AssertCookieSet(name string) *AssertableResponse {
+	ar.T.Helper()
+
+	for _, c := range ar.Response.Cookies() {
+		if c.Name == name {
+			return ar
+		}
+	}
+
+	if ar.Response.Request != nil && ar.Response.Request.Response != nil {
+		for _, c := range ar.Response.Request.Response.Cookies() {
+			if c.Name == name {
+				return ar
+			}
+		}
+	}
+
+	ar.T.Fatalf("expected to find cookie with a name '%s', but none has been found", name)
 
 	return ar
 }

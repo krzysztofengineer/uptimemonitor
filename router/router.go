@@ -21,7 +21,11 @@ func New(handler *handler.Handler) *http.ServeMux {
 			authenticatedMux := http.NewServeMux()
 			authenticatedMux.HandleFunc("GET /{$}", handler.HomePage())
 
-			installedMux.Handle("/", handler.Authenticated(authenticatedMux))
+			installedMux.Handle("/",
+				handler.UserFromCookie(
+					handler.Authenticated(authenticatedMux),
+				),
+			)
 		}
 
 		mux.Handle("/", handler.Installed(installedMux))

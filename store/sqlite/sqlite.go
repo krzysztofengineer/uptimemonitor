@@ -10,6 +10,7 @@ import (
 type Sqlite struct {
 	db *sql.DB
 	*UserStore
+	*SessionStore
 }
 
 func New(dsn string) *Sqlite {
@@ -31,8 +32,9 @@ func New(dsn string) *Sqlite {
 	}
 
 	return &Sqlite{
-		db:        db,
-		UserStore: NewUserStore(db),
+		db:           db,
+		UserStore:    NewUserStore(db),
+		SessionStore: NewSessionStore(db),
 	}
 }
 

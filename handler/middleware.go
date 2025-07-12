@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"context"
 	"net/http"
+	"uptimemonitor"
 	"uptimemonitor/store"
 )
 
@@ -31,8 +33,41 @@ func (m *Middleware) Installed(next http.Handler) http.Handler {
 	})
 }
 
+func (m *Middleware) UserFromCookie(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		c, err := r.Cookie("session")
+		if err != nil || c.Value == "" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		session, err := m.Store.GetSessionByUuid(r.Context(), c.Value)
+		if err != nil {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), "session", session)
+		ctx = context.WithValue(ctx, "user", session.User)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
 func (m *Middleware) Authenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		value := r.Context().Value("session")
+		if value == nil {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		_, ok := value.(uptimemonitor.Session)
+		if !ok {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		next.ServeHTTP(w, r)
 	})
 }
