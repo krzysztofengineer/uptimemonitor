@@ -18,8 +18,8 @@
         <legend class="fieldset-legend">
             Website URL
         </legend>
-        <input name="url" id="new_form--url" class="input {{ with .Form.Errors.Url }} input-error {{ end }}" autofocus
-            required type="url" placeholder="https://example.com" />
+        <input name="url" id="new_form--url" class="input {{ with .Form.Errors.Url }} input-error {{ end }} w-full"
+            autofocus required type="url" placeholder="https://example.com" />
         {{ with .Form.Errors.Url }}
         <div class="form-error">{{ . }}</div>
         {{ end }}
