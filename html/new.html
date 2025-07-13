@@ -1,0 +1,16 @@
+{{ define "title" }}Create monitor{{end}}
+
+{{ define "body" }}
+<div class="">
+    <h1>Create monitor</h1>
+    {{template "new_form" . }}
+</div>
+{{ end }}
+
+{{ define "new_form" }}
+<form hx-post="/monitors">
+    {{ with .Form.Errors.Url }}
+    {{ . }}
+    {{ end }}
+</form>
+{{ end }}

@@ -1,9 +1,7 @@
 {{ define "title" }}Log in{{end}}
 
-{{ define "body" }}
-<div class="auth-layout">
-    {{template "login_form" . }}
-</div>
+{{ define "content" }}
+{{template "login_form" . }}
 {{ end }}
 
 {{ define "login_form" }}

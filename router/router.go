@@ -28,8 +28,9 @@ func New(handler *handler.Handler) *http.ServeMux {
 			authenticatedMux := http.NewServeMux()
 
 			authenticatedMux.HandleFunc("GET /{$}", handler.HomePage())
+			authenticatedMux.HandleFunc("GET /new", handler.CreateMonitorPage())
 			authenticatedMux.HandleFunc("GET /monitors", handler.ListMonitors())
-			authenticatedMux.HandleFunc("POST /monitors", handler.CreateMonitor())
+			authenticatedMux.HandleFunc("POST /monitors", handler.CreateMonitorForm())
 
 			mux.Handle("/", handler.Authenticated(authenticatedMux))
 		}

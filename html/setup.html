@@ -1,9 +1,7 @@
 {{ define "title" }}Setup{{end}}
 
-{{ define "body" }}
-<div class="auth-layout">
-    {{template "setup_form" . }}
-</div>
+{{ define "content" }}
+{{template "setup_form" . }}
 {{ end }}
 
 {{ define "setup_form" }}

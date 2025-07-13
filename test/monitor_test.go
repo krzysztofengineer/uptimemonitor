@@ -81,6 +81,17 @@ func TestMonitor_CreateMonitor(t *testing.T) {
 			AssertRedirect(http.StatusSeeOther, "/login")
 	})
 
+	t.Run("monitor form is visible", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn().
+			Get("/new").
+			AssertNoRedirect().
+			AssertStatusCode(http.StatusOK).
+			AssertElementVisible(`form[hx-post="/monitors"]`)
+	})
+
 	t.Run("url is required", func(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()

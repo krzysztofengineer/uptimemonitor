@@ -34,8 +34,20 @@ func (h *MonitorHandler) ListMonitors() http.HandlerFunc {
 	}
 }
 
-func (h *MonitorHandler) CreateMonitor() http.HandlerFunc {
-	tmpl := template.Must(template.ParseFS(html.FS, "monitor.html"))
+func (h *MonitorHandler) CreateMonitorPage() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "new.html"))
+
+	type data struct {
+		Form form.MonitorForm
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		tmpl.Execute(w, data{Form: form.MonitorForm{}})
+	}
+}
+
+func (h *MonitorHandler) CreateMonitorForm() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "new.html"))
 
 	type data struct {
 		Form form.MonitorForm
@@ -50,7 +62,7 @@ func (h *MonitorHandler) CreateMonitor() http.HandlerFunc {
 
 		if !f.Validate() {
 			w.WriteHeader(http.StatusBadRequest)
-			tmpl.ExecuteTemplate(w, "monitor_form", data{Form: f})
+			tmpl.ExecuteTemplate(w, "new_form", data{Form: f})
 			return
 		}
 

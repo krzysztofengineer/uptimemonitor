@@ -21,7 +21,7 @@ func (h *SetupHandler) SetupPage() http.HandlerFunc {
 		Form form.SetupForm
 	}
 
-	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "setup.html"))
+	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "auth-layout.html", "setup.html"))
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		count, err := h.Store.CountUsers(r.Context())
