@@ -10,10 +10,11 @@
     {{ block "head" .}}{{ end }}
 </head>
 
-<body>
+<body hx-ext="preload">
     {{ block "body" . }}{{ end }}
 
     <script defer src="/static/js/htmx.min.js?v=2.0.6"></script>
+    <script defer src="/static/js/htmx-ext-preload.min.js?v=2.1.0"></script>
     <script defer src="/static/js/main.js?v=1"></script>
 </body>
 

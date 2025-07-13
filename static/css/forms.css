@@ -33,9 +33,8 @@ input:has(+ .form-error):focus-visible {
     box-shadow: rgba(230, 0, 20, 0.3) 0px 0px 0px 3px;
 }
 
-button[type="submit"] {
-    width: 100%;
-    height: 44px;
+button {
+    padding: 12px 12px;
     border-radius: 8px;
     background-color: black;
     color: white;
@@ -43,9 +42,19 @@ button[type="submit"] {
     font-weight: 400;
     cursor: pointer;
     transition: all ease-in-out 0.1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
 }
 
-button[type="submit"]:hover {
+button > svg {
+    height: 16px;
+    width: auto;
+}
+
+button:hover {
     opacity: 0.85;
 }
 

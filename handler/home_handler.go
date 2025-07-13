@@ -12,7 +12,7 @@ type HomeHandler struct {
 }
 
 func (h *HomeHandler) HomePage() http.HandlerFunc {
-	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "home.html"))
+	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "app-layout.html", "home.html"))
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		tmpl.Execute(w, nil)
