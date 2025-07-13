@@ -7,6 +7,13 @@ import (
 	"uptimemonitor/store"
 )
 
+type contextKey string
+
+const (
+	sessionContextKey contextKey = "session"
+	userContextKey    contextKey = "user"
+)
+
 type Middleware struct {
 	Store store.Store
 }
@@ -47,8 +54,8 @@ func (m *Middleware) UserFromCookie(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "session", session)
-		ctx = context.WithValue(ctx, "user", session.User)
+		ctx := context.WithValue(r.Context(), sessionContextKey, session)
+		ctx = context.WithValue(ctx, userContextKey, session.User)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -56,7 +63,7 @@ func (m *Middleware) UserFromCookie(next http.Handler) http.Handler {
 
 func (m *Middleware) Authenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		value := r.Context().Value("session")
+		value := r.Context().Value(sessionContextKey)
 		if value == nil {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
@@ -74,7 +81,7 @@ func (m *Middleware) Authenticated(next http.Handler) http.Handler {
 
 func (m *Middleware) Guest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		value := r.Context().Value("session")
+		value := r.Context().Value(sessionContextKey)
 		if value != nil {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
