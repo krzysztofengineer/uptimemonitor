@@ -17,6 +17,15 @@ func (m Monitor) URI() string {
 	return fmt.Sprintf("/m/%s", m.Uuid)
 }
 
+func (m Monitor) Secure() bool {
+	uri, err := url.ParseRequestURI(m.Url)
+	if err != nil {
+		return false
+	}
+
+	return uri.Scheme == "https"
+}
+
 func (m Monitor) Domain() string {
 	uri, err := url.ParseRequestURI(m.Url)
 	if err != nil {
@@ -26,6 +35,10 @@ func (m Monitor) Domain() string {
 	res, err := url.JoinPath(uri.Host, uri.Path)
 	if err != nil {
 		return uri.Host
+	}
+
+	if uri.RawQuery != "" {
+		res = fmt.Sprintf("%s?%s", res, uri.Query().Encode())
 	}
 
 	return res
