@@ -1,8 +1,12 @@
 {{ define "monitor_list" }}
-<div>
+<div class="p-4 grid gap-4">
     {{ range .Monitors }}
-    <div class="monitor">
-        <div>{{ .Url }}</div>
+    <div class="card card-border bg-base-100 w-full">
+        <div class="card-body">
+            <h2 class="card-title ">
+                <span class="truncate">{{ .Domain }}</span>
+            </h2>
+        </div>
     </div>
     {{ end }}
 </div>
