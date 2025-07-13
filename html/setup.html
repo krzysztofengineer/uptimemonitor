@@ -1,7 +1,10 @@
 {{ define "title" }}Setup{{end}}
 
 {{ define "body" }}
-<div class="flex items-center justify-center min-h-screen p-8">
+<div class="flex items-center justify-center min-h-screen p-8 pt-16">
+    <div class="absolute top-2 left-2">
+        {{ template "logo" . }}
+    </div>
     {{template "setup_form" . }}
 </div>
 {{ end }}

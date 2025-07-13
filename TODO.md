@@ -15,3 +15,6 @@ What's left to do:
 - [ ] Display gray blocks for periods without checks (paused or just created)
 - [ ] Resolve incidents (when a next check succeeds)
 - [ ] Reset password via cli
+- [ ] Loading placeholders (skeletons)
+- [ ] Redirect to new page when no monitors have been added yet
+- [ ] Log out
