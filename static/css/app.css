@@ -1,10 +1,8 @@
 .app-layout {
     display: flex;
     flex-direction: column;
-}
-
-nav {
-    padding: 8px;
+    background-color: #eee;
+    min-height: 100svh;
 }
 
 nav > div {
@@ -13,8 +11,8 @@ nav > div {
     align-items: center;
     width: 100%;
     padding: 8px;
-    background-color: #eee;
-    border-radius: 16px;
+    background-color: #fafafa;
+    border-bottom: 2px solid #ddd;
 }
 
 nav button {
@@ -54,11 +52,15 @@ form {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    background-color: white;
+    padding: 16px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
 }
 
 
 h1 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 600;
     margin-bottom: 8px;
     line-height: 16px;
@@ -68,7 +70,7 @@ h1 {
 }
 
 h5 {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #777;
     font-weight: 400;
 }

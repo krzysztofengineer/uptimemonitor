@@ -1,8 +1,9 @@
 {{ define "monitor_list" }}
 <div>
     {{ range .Monitors }}
-    <div>{{ .Uuid }}</div>
-    <div>{{ .Url }}</div>
+    <div class="monitor">
+        <div>{{ .Url }}</div>
+    </div>
     {{ end }}
 </div>
 {{ end }}

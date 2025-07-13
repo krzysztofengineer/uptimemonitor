@@ -36,10 +36,11 @@ input:has(+ .form-error):focus-visible {
 button {
     padding: 12px 16px;
     border-radius: 8px;
-    background-color: black;
-    color: white;
-    border: none;
+    background-color: #eee;
+    color: black;
+    border: 2px solid #333;
     font-weight: 400;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: all ease-in-out 0.1s;
     display: inline-flex;
@@ -47,6 +48,8 @@ button {
     justify-content: center;
     gap: 8px;
     text-align: center;
+    font-family: monospace;
+    box-shadow: 4px 4px 0px 0px #ccc;
 }
 
 button > svg {
