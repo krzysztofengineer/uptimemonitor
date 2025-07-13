@@ -21,7 +21,7 @@ func (h *LoginHandler) LoginPage() http.HandlerFunc {
 		Form form.LoginForm
 	}
 
-	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "auth-layout.html", "login.html"))
+	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "login.html"))
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		tmpl.Execute(w, data{

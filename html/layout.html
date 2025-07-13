@@ -5,14 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>{{ block "title" .}}{{ end }} - Uptime Monitor</title>
+    <link rel="stylesheet" href="/static/css/daisyui.css?v=5.0.46" />
+    <link rel="stylesheet" href="/static/css/themes.css?v=5.0.46" />
     <link rel="stylesheet" href="/static/css/main.css?v=1" />
-    <link rel="stylesheet" href="/static/css/forms.css?v=1" />
     {{ block "head" .}}{{ end }}
 </head>
 
-<body hx-ext="preload">
+<body hx-ext="preload" data-theme="emerald">
     {{ block "body" . }}{{ end }}
 
+    <script defer src="/static/js/tailwind.min.js?v=5.0.46"></script>
     <script defer src="/static/js/htmx.min.js?v=2.0.6"></script>
     <script defer src="/static/js/htmx-ext-preload.min.js?v=2.1.0"></script>
     <script defer src="/static/js/main.js?v=1"></script>
