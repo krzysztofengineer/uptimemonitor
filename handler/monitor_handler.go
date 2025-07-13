@@ -35,7 +35,7 @@ func (h *MonitorHandler) ListMonitors() http.HandlerFunc {
 }
 
 func (h *MonitorHandler) CreateMonitorPage() http.HandlerFunc {
-	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "app-layout.html", "new.html"))
+	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "app.html", "new.html"))
 
 	type data struct {
 		Form form.MonitorForm

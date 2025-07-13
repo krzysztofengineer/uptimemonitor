@@ -1,31 +1,31 @@
 {{ define "title" }}Create monitor{{end}}
 
 {{ define "content" }}
-<div class="">
+<div class="flex items-center justify-center min-h-[calc(100vh-80px)]">
     {{template "new_form" . }}
 </div>
 {{ end }}
 
 {{ define "new_form" }}
-<form hx-post="/monitors" hx-swap="outerHTML">
+<form hx-post="/monitors" hx-swap="outerHTML" class="flex flex-col gap-4">
     <div>
-        <h1>Create monitor</h1>
-        <h5>
+        <h1 class="font-semibold text-lg">Create monitor</h1>
+        <h5 class="text-sm">
             The url you provide will be monitored every minute.
         </h5>
     </div>
-    <hr />
-    <div class="form-field">
-        <label for="new_form--url">
+    <fieldset class="fieldset">
+        <legend class="fieldset-legend">
             Website URL
-        </label>
-        <input name="url" id="new_form--url" autofocus required type="url" placeholder="https://example.com" />
+        </legend>
+        <input name="url" id="new_form--url" class="input {{ with .Form.Errors.Url }} input-error {{ end }}" autofocus
+            required type="url" placeholder="https://example.com" />
         {{ with .Form.Errors.Url }}
         <div class="form-error">{{ . }}</div>
         {{ end }}
-    </div>
+    </fieldset>
     <div>
-        <button type="submit">
+        <button type="submit" class="btn btn-neutral">
             Submit
         </button>
     </div>

@@ -1,11 +1,9 @@
 {{ define "body" }}
-<div class="app-layout">
-    {{ template "nav" . }}
+{{ template "nav" . }}
 
-    <main>
-        {{ block "content" . }}{{ end }}
-    </main>
-</div>
+<main>
+    {{ block "content" . }}{{ end }}
+</main>
 {{ end }}
 
 {{ define "logo"}}
