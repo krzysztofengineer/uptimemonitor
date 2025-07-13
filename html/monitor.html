@@ -1,13 +1,15 @@
 {{ define "monitor_list" }}
 <div class="p-4 grid gap-4">
     {{ range .Monitors }}
-    <div class="card card-border bg-base-100 w-full">
-        <div class="card-body">
-            <h2 class="card-title ">
-                <span class="truncate">{{ .Domain }}</span>
-            </h2>
+    <a href="{{ .URI }}" hx-boost preload="mouseover">
+        <div class="card card-border bg-base-100 w-full">
+            <div class="card-body">
+                <h2 class="card-title text-base">
+                    <span class="truncate">{{ .Domain }}</span>
+                </h2>
+            </div>
         </div>
-    </div>
+    </a>
     {{ end }}
 </div>
 {{ end }}
