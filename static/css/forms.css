@@ -34,7 +34,7 @@ input:has(+ .form-error):focus-visible {
 }
 
 button {
-    padding: 12px 12px;
+    padding: 12px 16px;
     border-radius: 8px;
     background-color: black;
     color: white;

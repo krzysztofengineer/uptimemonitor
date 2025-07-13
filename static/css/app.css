@@ -14,11 +14,11 @@ nav > div {
     width: 100%;
     padding: 8px;
     background-color: #eee;
-    border-radius: 24px;
+    border-radius: 16px;
 }
 
 nav button {
-    border-radius: 16px;
+    border-radius: 8px;
 }
 
 main {
