@@ -1,7 +1,7 @@
 {{ define "title" }}Setup{{end}}
 
 {{ define "body" }}
-<div class="flex items-center justify-center min-h-screen">
+<div class="flex items-center justify-center min-h-screen p-8">
     {{template "setup_form" . }}
 </div>
 {{ end }}
@@ -27,7 +27,7 @@
         <fieldset class="fieldset">
             <legend class="fieldset-legend">Name</legend>
             <input class="input w-full {{ with .Form.Errors.Name }} input-error {{ end }}" id="setup_form--name"
-                name="name" autofocus autocomplete="name" value="{{ .Form.Name}}" placeholder="John Doe" />
+                name="name" required autofocus autocomplete="name" value="{{ .Form.Name}}" placeholder="John Doe" />
             {{ with .Form.Errors.Name }}
             <div class="label text-red-500">{{ . }}</div>
             {{ end }}
@@ -35,8 +35,8 @@
         <fieldset class="fieldset">
             <legend class="fieldset-legend">E-mail</legend>
             <input class="input w-full {{ with .Form.Errors.Email }} input-error {{ end }}" id="setup_form--email"
-                name="email" type="email" autocomplete="email" value="{{ .Form.Email}}"
-                placeholder="email@example.com" />
+                name="email" type="email" autocomplete="email" value="{{ .Form.Email}}" placeholder="email@example.com"
+                required />
             {{ with .Form.Errors.Email }}
             <div class="label text-red-500">{{ . }}</div>
             {{ end }}
@@ -44,7 +44,7 @@
         <fieldset class="fieldset">
             <legend class="fieldset-legend">Password</legend>
             <input class="input w-full {{ with .Form.Errors.Password }} input-error {{ end }}" id="setup_form--password"
-                name="password" type="password" autocomplete="new-password" placeholder="••••••••" />
+                name="password" type="password" required autocomplete="new-password" placeholder="••••••••" />
             {{ with .Form.Errors.Password }}
             <div class="label text-red-500">{{ . }}</div>
             {{ end }}
