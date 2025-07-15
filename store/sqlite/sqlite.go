@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/pressly/goose/v3"
 	_ "modernc.org/sqlite"
@@ -24,6 +25,11 @@ func New(dsn string) *Sqlite {
 
 	if err := db.Ping(); err != nil {
 		panic(err)
+	}
+
+	_, err = db.Exec("PRAGMA journal_mode=WAL;")
+	if err != nil {
+		panic(fmt.Sprintf("Failed to enable WAL mode: %v", err))
 	}
 
 	goose.SetBaseFS(FS)

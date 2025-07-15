@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"flag"
+	"log"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
 	"uptimemonitor/handler"
@@ -21,7 +21,7 @@ var (
 )
 
 func main() {
-	flag.StringVar(&dsn, "dsn", "db.sqlite", "database server name")
+	flag.StringVar(&dsn, "dsn", "db.sqlite?_journal_mode=WAL&_busy_timeout=500&_synchronous=NORMAL&_txlock=deferred", "database server name")
 	flag.StringVar(&addr, "addr", ":3000", "server address")
 
 	flag.Parse()
@@ -35,9 +35,8 @@ func main() {
 		Handler: router,
 	}
 
-	var wg sync.WaitGroup
 	done := make(chan bool)
-	ticker := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(time.Second * 5)
 
 	go func() {
 		slog.Info("http://localhost:3000")
@@ -52,7 +51,8 @@ func main() {
 				slog.Info("done...")
 				return
 			case <-ticker.C:
-				handler.RunCheck(context.Background(), &wg)
+				log.Println("ticker")
+				handler.RunCheck(context.Background())
 			}
 		}
 	}()
@@ -65,4 +65,6 @@ func main() {
 	slog.Info("quitting...")
 
 	done <- true
+
+	// todo add maximum time to wait
 }

@@ -3,10 +3,10 @@ package handler
 import (
 	"context"
 	"html/template"
+	"log"
 	"log/slog"
 	"net/http"
 	"strconv"
-	"sync"
 	"time"
 	"uptimemonitor"
 	"uptimemonitor/html"
@@ -50,27 +50,56 @@ func (h *CheckHandler) ListChecks() http.HandlerFunc {
 	}
 }
 
-func (h *CheckHandler) RunCheck(ctx context.Context, wg *sync.WaitGroup) error {
+func (h *CheckHandler) RunCheck(ctx context.Context) error {
 	monitors, err := h.Store.ListMonitors(ctx)
 	if err != nil {
 		return err
 	}
 
+	semaphore := make(chan struct{}, 1)
+
+	log.Printf("running check: %d", len(monitors))
+
 	for _, m := range monitors {
-		wg.Add(1)
+		go func(mon uptimemonitor.Monitor) {
+			semaphore <- struct{}{}
+			defer func() {
+				<-semaphore
+			}()
 
-		go func(m uptimemonitor.Monitor) {
-			defer wg.Done()
-
-			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+			c, cancel := context.WithTimeout(context.Background(), time.Minute)
 			defer cancel()
 
-			h.Store.CreateCheck(ctx, uptimemonitor.Check{
-				MonitorID: m.ID,
-				Monitor:   m,
+			log.Printf("CHECK #%d", m.ID)
+
+			check, err := h.Store.CreateCheck(c, uptimemonitor.Check{
+				MonitorID: mon.ID,
+				Monitor:   mon,
 			})
+			if err != nil {
+				log.Printf("err: #%v", err)
+				return
+			}
+
+			log.Printf("CHECK FINISHED WITH ID: #%d", check.ID)
 		}(m)
 	}
 
 	return nil
+}
+
+func runCheckTask(ctx context.Context, s store.Store, m uptimemonitor.Monitor) {
+	log.Printf("runCheckTask: %d\n", m.ID)
+
+	check, err := s.CreateCheck(ctx, uptimemonitor.Check{
+		MonitorID: m.ID,
+		Monitor:   m,
+	})
+
+	if err != nil {
+		log.Printf("err: #%v", err)
+		return
+	}
+
+	log.Printf("CHECK FINISHED WITH ID: #%d", check.ID)
 }

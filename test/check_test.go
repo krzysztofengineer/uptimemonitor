@@ -2,8 +2,8 @@ package test
 
 import (
 	"net/http"
-	"sync"
 	"testing"
+	"time"
 	"uptimemonitor"
 	"uptimemonitor/handler"
 )
@@ -61,26 +61,22 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
-		var wg sync.WaitGroup
-
 		handler := handler.CheckHandler{
 			Store: tc.Store,
 		}
 
-		handler.RunCheck(t.Context(), &wg)
-		wg.Wait()
+		handler.RunCheck(t.Context())
+		time.Sleep(time.Millisecond * 100)
 		tc.AssertDatabaseCount("checks", 0)
 
-		handler.RunCheck(t.Context(), &wg)
-		wg.Wait()
+		handler.RunCheck(t.Context())
+		time.Sleep(time.Millisecond * 100)
 		tc.AssertDatabaseCount("checks", 0)
 	})
 
 	t.Run("it creates checks every minute", func(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
-
-		var wg sync.WaitGroup
 
 		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
 			Url: "https://example.com",
@@ -90,12 +86,12 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 			Store: tc.Store,
 		}
 
-		handler.RunCheck(t.Context(), &wg)
-		wg.Wait()
+		handler.RunCheck(t.Context())
+		time.Sleep(time.Millisecond * 100)
 		tc.AssertDatabaseCount("checks", 1)
 
-		handler.RunCheck(t.Context(), &wg)
-		wg.Wait()
+		handler.RunCheck(t.Context())
+		time.Sleep(time.Millisecond * 100)
 		tc.AssertDatabaseCount("checks", 2)
 	})
 }
