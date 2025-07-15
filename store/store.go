@@ -11,6 +11,7 @@ type Store interface {
 	UserStore
 	SessionStore
 	MonitorStore
+	CheckStore
 }
 
 type UserStore interface {
@@ -28,4 +29,9 @@ type MonitorStore interface {
 	CreateMonitor(context.Context, uptimemonitor.Monitor) (uptimemonitor.Monitor, error)
 	ListMonitors(context.Context) ([]uptimemonitor.Monitor, error)
 	GetMonitorByID(context.Context, int) (uptimemonitor.Monitor, error)
+}
+
+type CheckStore interface {
+	CreateCheck(context.Context, uptimemonitor.Check) (uptimemonitor.Check, error)
+	ListChecks(context.Context, int64, int) ([]uptimemonitor.Check, error)
 }

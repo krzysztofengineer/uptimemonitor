@@ -3,6 +3,7 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	"time"
 	"uptimemonitor"
 )
 
@@ -26,13 +27,14 @@ func (s *UserStore) CountUsers(ctx context.Context) (int, error) {
 
 func (s *UserStore) CreateUser(ctx context.Context, user uptimemonitor.User) (uptimemonitor.User, error) {
 	stmt := `INSERT INTO users (name, email, password_hash, created_at) VALUES (?, ?, ?, ?) RETURNING id`
+	user.CreatedAt = time.Now()
 
-	row := s.db.QueryRowContext(ctx, stmt, user.Name, user.Email, user.PasswordHash, user.CreatedAt)
-
-	var id int
-	if err := row.Scan(&id); err != nil {
+	res, err := s.db.ExecContext(ctx, stmt, user.Name, user.Email, user.PasswordHash, user.CreatedAt)
+	if err != nil {
 		return uptimemonitor.User{}, err
 	}
+
+	id, _ := res.LastInsertId()
 
 	user.ID = id
 

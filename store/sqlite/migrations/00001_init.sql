@@ -24,4 +24,13 @@ CREATE TABLE monitors (
     `url` TEXT NOT NULL,
     created_at DATETIME NOT NULL
 );
+
+CREATE TABLE checks(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uuid TEXT NOT NULL UNIQUE,
+    monitor_id INTEGER,
+    created_at DATETIME NOT NULL,
+    
+    FOREIGN KEY(monitor_id) REFERENCES monitors(id)
+);
 -- +goose StatementEnd

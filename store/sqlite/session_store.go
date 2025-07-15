@@ -3,6 +3,7 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	"time"
 	"uptimemonitor"
 
 	"github.com/google/uuid"
@@ -19,12 +20,16 @@ func NewSessionStore(db *sql.DB) *SessionStore {
 func (s *SessionStore) CreateSession(ctx context.Context, session uptimemonitor.Session) (uptimemonitor.Session, error) {
 	stmt := `INSERT INTO sessions (uuid, user_id, created_at, expires_at) VALUES(?, ?, ?, ?)`
 	uuid := uuid.NewString()
+	session.CreatedAt = time.Now()
 
-	_, err := s.db.ExecContext(ctx, stmt, uuid, session.UserID, session.CreatedAt, session.ExpiresAt)
+	res, err := s.db.ExecContext(ctx, stmt, uuid, session.UserID, session.CreatedAt, session.ExpiresAt)
 	if err != nil {
 		return session, err
 	}
 
+	id, _ := res.LastInsertId()
+
+	session.ID = id
 	session.Uuid = uuid
 	return session, nil
 }

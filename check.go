@@ -2,11 +2,11 @@ package uptimemonitor
 
 import "time"
 
-type Session struct {
+type Check struct {
 	ID        int64
-	UserID    int64
 	Uuid      string
+	MonitorID int64
 	CreatedAt time.Time
-	ExpiresAt time.Time
-	User      User
+
+	Monitor Monitor
 }

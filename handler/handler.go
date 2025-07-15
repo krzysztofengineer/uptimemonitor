@@ -10,6 +10,7 @@ type Handler struct {
 	SetupHandler
 	LoginHandler
 	MonitorHandler
+	CheckHandler
 }
 
 func New(store store.Store) *Handler {
@@ -19,5 +20,6 @@ func New(store store.Store) *Handler {
 		SetupHandler:   SetupHandler{Store: store},
 		LoginHandler:   LoginHandler{Store: store},
 		MonitorHandler: MonitorHandler{Store: store},
+		CheckHandler:   CheckHandler{Store: store},
 	}
 }

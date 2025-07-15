@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
-	"time"
 	"uptimemonitor"
 )
 
@@ -22,9 +21,8 @@ func TestSetup(t *testing.T) {
 		defer tc.Close()
 
 		tc.Store.CreateUser(t.Context(), uptimemonitor.User{
-			Name:      "Test User",
-			Email:     "test@example.com",
-			CreatedAt: time.Now(),
+			Name:  "Test User",
+			Email: "test@example.com",
 		})
 
 		tc.Get("/setup").

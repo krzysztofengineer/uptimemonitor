@@ -1,0 +1,7 @@
+{{ define "check_list" }}
+<div>
+    {{ range .Checks }}
+    <div id="monitors-{{ .MonitorID }}-checks-{{ .ID }}"></div>
+    {{ end }}
+</div>
+{{ end }}

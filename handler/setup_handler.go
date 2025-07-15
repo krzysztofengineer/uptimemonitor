@@ -3,7 +3,6 @@ package handler
 import (
 	"html/template"
 	"net/http"
-	"time"
 	"uptimemonitor"
 	"uptimemonitor/form"
 	"uptimemonitor/html"
@@ -75,7 +74,6 @@ func (h *SetupHandler) SetupForm() http.HandlerFunc {
 			Name:         f.Name,
 			Email:        f.Email,
 			PasswordHash: string(hash),
-			CreatedAt:    time.Now(),
 		})
 
 		w.Header().Set("HX-Redirect", "/")

@@ -7,7 +7,7 @@ import (
 )
 
 type Monitor struct {
-	ID        int
+	ID        int64
 	Uuid      string
 	Url       string
 	CreatedAt time.Time

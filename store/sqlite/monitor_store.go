@@ -3,6 +3,7 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	"time"
 	"uptimemonitor"
 
 	"github.com/google/uuid"
@@ -18,13 +19,17 @@ func NewMonitorStore(db *sql.DB) *MonitorStore {
 
 func (s *MonitorStore) CreateMonitor(ctx context.Context, monitor uptimemonitor.Monitor) (uptimemonitor.Monitor, error) {
 	stmt := `INSERT INTO monitors(url, uuid, created_at) VALUES(?,?,?)`
+	monitor.CreatedAt = time.Now()
 
 	uuid := uuid.NewString()
-	_, err := s.db.ExecContext(ctx, stmt, monitor.Url, uuid, monitor.CreatedAt)
+	res, err := s.db.ExecContext(ctx, stmt, monitor.Url, uuid, monitor.CreatedAt)
 	if err != nil {
 		return monitor, err
 	}
 
+	id, _ := res.LastInsertId()
+
+	monitor.ID = id
 	monitor.Uuid = uuid
 	return monitor, nil
 }

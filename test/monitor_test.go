@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
-	"time"
 	"uptimemonitor"
 )
 
@@ -52,8 +51,8 @@ func TestMonitor_ListMonitors(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
-		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: "https://example.com", CreatedAt: time.Now()})
-		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: "https://example.com/123", CreatedAt: time.Now()})
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: "https://example.com"})
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: "https://example.com/123"})
 
 		tc.LogIn().
 			Get("/monitors").

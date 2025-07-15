@@ -74,7 +74,6 @@ func (h *LoginHandler) LoginForm() http.HandlerFunc {
 
 		session, err := h.Store.CreateSession(r.Context(), uptimemonitor.Session{
 			UserID:    user.ID,
-			CreatedAt: time.Now(),
 			ExpiresAt: time.Now().Add(time.Hour * 24 * 30),
 			User:      user,
 		})

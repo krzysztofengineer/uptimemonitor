@@ -145,7 +145,6 @@ func (tc *TestCase) LogIn() *TestCase {
 	session, err := tc.Store.CreateSession(tc.T.Context(), uptimemonitor.Session{
 		User:      *tc.User,
 		UserID:    tc.User.ID,
-		CreatedAt: time.Now(),
 		ExpiresAt: time.Now().Add(time.Hour),
 	})
 	if err != nil {
