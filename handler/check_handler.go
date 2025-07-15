@@ -56,7 +56,7 @@ func (h *CheckHandler) RunCheck(ctx context.Context) error {
 		return err
 	}
 
-	semaphore := make(chan struct{}, 1)
+	semaphore := make(chan struct{}, 10)
 
 	log.Printf("running check: %d", len(monitors))
 
@@ -86,20 +86,4 @@ func (h *CheckHandler) RunCheck(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func runCheckTask(ctx context.Context, s store.Store, m uptimemonitor.Monitor) {
-	log.Printf("runCheckTask: %d\n", m.ID)
-
-	check, err := s.CreateCheck(ctx, uptimemonitor.Check{
-		MonitorID: m.ID,
-		Monitor:   m,
-	})
-
-	if err != nil {
-		log.Printf("err: #%v", err)
-		return
-	}
-
-	log.Printf("CHECK FINISHED WITH ID: #%d", check.ID)
 }

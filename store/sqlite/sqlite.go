@@ -32,6 +32,10 @@ func New(dsn string) *Sqlite {
 		panic(fmt.Sprintf("Failed to enable WAL mode: %v", err))
 	}
 
+	db.SetMaxOpenConns(1)
+	db.SetMaxIdleConns(1)
+	db.SetConnMaxLifetime(0)
+
 	goose.SetBaseFS(FS)
 	if err := goose.SetDialect("sqlite"); err != nil {
 		panic(err)
