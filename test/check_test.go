@@ -2,8 +2,10 @@ package test
 
 import (
 	"net/http"
+	"sync"
 	"testing"
 	"uptimemonitor"
+	"uptimemonitor/handler"
 )
 
 func TestCheck_ListChecks(t *testing.T) {
@@ -51,5 +53,49 @@ func TestCheck_ListChecks(t *testing.T) {
 			Get("/monitors/1/checks").
 			AssertStatusCode(http.StatusOK).
 			AssertElementVisible(`div[id="monitors-1-checks-1"]`)
+	})
+}
+
+func TestCheck_PeriodicChecks(t *testing.T) {
+	t.Run("it does not create checks if no monitors are defined", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		var wg sync.WaitGroup
+
+		handler := handler.CheckHandler{
+			Store: tc.Store,
+		}
+
+		handler.Run(t.Context(), &wg)
+		wg.Wait()
+		tc.AssertDatabaseCount("checks", 0)
+
+		handler.Run(t.Context(), &wg)
+		wg.Wait()
+		tc.AssertDatabaseCount("checks", 0)
+	})
+
+	t.Run("it creates checks every minute", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		var wg sync.WaitGroup
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "https://example.com",
+		})
+
+		handler := handler.CheckHandler{
+			Store: tc.Store,
+		}
+
+		handler.Run(t.Context(), &wg)
+		wg.Wait()
+		tc.AssertDatabaseCount("checks", 1)
+
+		handler.Run(t.Context(), &wg)
+		wg.Wait()
+		tc.AssertDatabaseCount("checks", 2)
 	})
 }
