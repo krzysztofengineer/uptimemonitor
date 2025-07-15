@@ -19,3 +19,5 @@ What's left to do:
 - [ ] Redirect to new page when no monitors have been added yet
 - [ ] Log out
 - [ ] Log in after setup automatically
+- [ ] Remove old checks
+- [ ] Graceful shutdown grace period
