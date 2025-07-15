@@ -56,17 +56,10 @@ func (h *CheckHandler) RunCheck(ctx context.Context) error {
 		return err
 	}
 
-	semaphore := make(chan struct{}, 10)
-
 	log.Printf("running check: %d", len(monitors))
 
 	for _, m := range monitors {
 		go func(mon uptimemonitor.Monitor) {
-			semaphore <- struct{}{}
-			defer func() {
-				<-semaphore
-			}()
-
 			c, cancel := context.WithTimeout(context.Background(), time.Minute)
 			defer cancel()
 

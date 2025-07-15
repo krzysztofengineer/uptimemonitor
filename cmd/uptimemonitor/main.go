@@ -36,12 +36,16 @@ func main() {
 	}
 
 	done := make(chan bool)
-	ticker := time.NewTicker(time.Second * 5)
+	ticker := time.NewTicker(time.Minute)
 
 	go func() {
 		slog.Info("http://localhost:3000")
 
 		server.ListenAndServe()
+	}()
+
+	go func() {
+		handler.RunCheck(context.Background())
 	}()
 
 	go func() {
