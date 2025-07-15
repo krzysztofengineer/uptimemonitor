@@ -50,7 +50,7 @@ func (h *CheckHandler) ListChecks() http.HandlerFunc {
 	}
 }
 
-func (h *CheckHandler) Run(ctx context.Context, wg *sync.WaitGroup) error {
+func (h *CheckHandler) RunCheck(ctx context.Context, wg *sync.WaitGroup) error {
 	monitors, err := h.Store.ListMonitors(ctx)
 	if err != nil {
 		return err

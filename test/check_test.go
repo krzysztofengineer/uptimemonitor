@@ -67,11 +67,11 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 			Store: tc.Store,
 		}
 
-		handler.Run(t.Context(), &wg)
+		handler.RunCheck(t.Context(), &wg)
 		wg.Wait()
 		tc.AssertDatabaseCount("checks", 0)
 
-		handler.Run(t.Context(), &wg)
+		handler.RunCheck(t.Context(), &wg)
 		wg.Wait()
 		tc.AssertDatabaseCount("checks", 0)
 	})
@@ -90,11 +90,11 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 			Store: tc.Store,
 		}
 
-		handler.Run(t.Context(), &wg)
+		handler.RunCheck(t.Context(), &wg)
 		wg.Wait()
 		tc.AssertDatabaseCount("checks", 1)
 
-		handler.Run(t.Context(), &wg)
+		handler.RunCheck(t.Context(), &wg)
 		wg.Wait()
 		tc.AssertDatabaseCount("checks", 2)
 	})
