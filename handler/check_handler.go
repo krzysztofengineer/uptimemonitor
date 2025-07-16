@@ -1,13 +1,10 @@
 package handler
 
 import (
-	"context"
 	"html/template"
-	"log"
 	"log/slog"
 	"net/http"
 	"strconv"
-	"time"
 	"uptimemonitor"
 	"uptimemonitor/html"
 	"uptimemonitor/store"
@@ -48,35 +45,4 @@ func (h *CheckHandler) ListChecks() http.HandlerFunc {
 			Checks: checks,
 		})
 	}
-}
-
-func (h *CheckHandler) RunCheck(ctx context.Context) error {
-	monitors, err := h.Store.ListMonitors(ctx)
-	if err != nil {
-		return err
-	}
-
-	log.Printf("running check: %d", len(monitors))
-
-	for _, m := range monitors {
-		go func(mon uptimemonitor.Monitor) {
-			c, cancel := context.WithTimeout(context.Background(), time.Minute)
-			defer cancel()
-
-			log.Printf("CHECK #%d", m.ID)
-
-			check, err := h.Store.CreateCheck(c, uptimemonitor.Check{
-				MonitorID: mon.ID,
-				Monitor:   mon,
-			})
-			if err != nil {
-				log.Printf("err: #%v", err)
-				return
-			}
-
-			log.Printf("CHECK FINISHED WITH ID: #%d", check.ID)
-		}(m)
-	}
-
-	return nil
 }

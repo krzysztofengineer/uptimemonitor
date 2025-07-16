@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 	"uptimemonitor"
-	"uptimemonitor/handler"
+	"uptimemonitor/service"
 )
 
 func TestCheck_ListChecks(t *testing.T) {
@@ -61,15 +61,13 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
-		handler := handler.CheckHandler{
-			Store: tc.Store,
-		}
+		service := service.New(tc.Store)
 
-		handler.RunCheck(t.Context())
+		service.RunChecks(t.Context())
 		time.Sleep(time.Millisecond * 100)
 		tc.AssertDatabaseCount("checks", 0)
 
-		handler.RunCheck(t.Context())
+		service.RunChecks(t.Context())
 		time.Sleep(time.Millisecond * 100)
 		tc.AssertDatabaseCount("checks", 0)
 	})
@@ -82,15 +80,13 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 			Url: "https://example.com",
 		})
 
-		handler := handler.CheckHandler{
-			Store: tc.Store,
-		}
+		service := service.New(tc.Store)
 
-		handler.RunCheck(t.Context())
+		service.RunChecks(t.Context())
 		time.Sleep(time.Millisecond * 100)
 		tc.AssertDatabaseCount("checks", 1)
 
-		handler.RunCheck(t.Context())
+		service.RunChecks(t.Context())
 		time.Sleep(time.Millisecond * 100)
 		tc.AssertDatabaseCount("checks", 2)
 	})

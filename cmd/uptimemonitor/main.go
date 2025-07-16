@@ -12,6 +12,7 @@ import (
 	"time"
 	"uptimemonitor/handler"
 	"uptimemonitor/router"
+	"uptimemonitor/service"
 	"uptimemonitor/store/sqlite"
 )
 
@@ -28,6 +29,7 @@ func main() {
 
 	store := sqlite.New(dsn)
 	handler := handler.New(store)
+	service := service.New(store)
 	router := router.New(handler)
 
 	server := &http.Server{
@@ -45,7 +47,7 @@ func main() {
 	}()
 
 	go func() {
-		handler.RunCheck(context.Background())
+		service.RunChecks(context.Background())
 	}()
 
 	go func() {
@@ -56,7 +58,7 @@ func main() {
 				return
 			case <-ticker.C:
 				log.Println("ticker")
-				handler.RunCheck(context.Background())
+				service.RunChecks(context.Background())
 			}
 		}
 	}()
