@@ -47,6 +47,10 @@ func main() {
 	}()
 
 	go func() {
+		service.Start()
+	}()
+
+	go func() {
 		service.RunChecks(context.Background())
 	}()
 
@@ -70,6 +74,7 @@ func main() {
 
 	slog.Info("quitting...")
 
+	service.Done <- true
 	done <- true
 
 	// todo add maximum time to wait

@@ -62,6 +62,7 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 		defer tc.Close()
 
 		service := service.New(tc.Store)
+		go service.Start()
 
 		service.RunChecks(t.Context())
 		time.Sleep(time.Millisecond * 100)
@@ -81,6 +82,7 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 		})
 
 		service := service.New(tc.Store)
+		go service.Start()
 
 		service.RunChecks(t.Context())
 		time.Sleep(time.Millisecond * 100)
