@@ -57,6 +57,7 @@ func main() {
 			case <-done:
 				return
 			case <-ticker.C:
+				slog.Info("ticker time")
 				service.RunChecks(context.Background(), checkCh)
 			}
 		}

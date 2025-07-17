@@ -26,6 +26,7 @@ func (s *CheckService) StartCheck() chan uptimemonitor.Monitor {
 
 	go func() {
 		for m := range ch {
+			fmt.Printf("#%d ", m.ID)
 			s.handleCheck(m)
 		}
 	}()
@@ -40,8 +41,11 @@ func (s *CheckService) RunChecks(ctx context.Context, ch chan uptimemonitor.Moni
 	}
 
 	for _, m := range monitors {
+		fmt.Printf("x")
 		ch <- m
 	}
+
+	fmt.Printf("\n")
 
 	return nil
 }
