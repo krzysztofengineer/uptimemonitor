@@ -2,61 +2,59 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 	"uptimemonitor"
 	"uptimemonitor/store"
+
+	"math/rand/v2"
 )
 
 type CheckService struct {
 	Store store.Store
-
-	channel chan uptimemonitor.Monitor
-	Done    chan bool
 }
 
 func NewCheckService(store store.Store) *CheckService {
 	return &CheckService{
-		Store:   store,
-		channel: make(chan uptimemonitor.Monitor),
-		Done:    make(chan bool),
+		Store: store,
 	}
 }
 
-func (s *CheckService) Start() {
-	for {
-		select {
-		case <-s.Done:
-			return
-		case m := <-s.channel:
-			log.Printf("got m: %v", m)
+func (s *CheckService) StartCheck() chan uptimemonitor.Monitor {
+	ch := make(chan uptimemonitor.Monitor, 10)
+
+	go func() {
+		for m := range ch {
 			s.handleCheck(m)
 		}
-	}
+	}()
+
+	return ch
 }
 
-func (s *CheckService) RunChecks(ctx context.Context) error {
+func (s *CheckService) RunChecks(ctx context.Context, ch chan uptimemonitor.Monitor) error {
 	monitors, err := s.Store.ListMonitors(ctx)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("running check: %d", len(monitors))
-
 	for _, m := range monitors {
-		s.channel <- m
+		ch <- m
 	}
 
 	return nil
 }
 
 func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
+	fmt.Print(".")
+
 	c, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	log.Printf("CHECK #%d", m.ID)
+	time.Sleep(time.Duration(rand.IntN(500)) * time.Millisecond)
 
-	check, err := s.Store.CreateCheck(c, uptimemonitor.Check{
+	_, err := s.Store.CreateCheck(c, uptimemonitor.Check{
 		MonitorID: m.ID,
 		Monitor:   m,
 	})
@@ -64,6 +62,4 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		log.Printf("err: #%v", err)
 		return
 	}
-
-	log.Printf("CHECK FINISHED WITH ID: #%d", check.ID)
 }

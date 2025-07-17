@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -46,23 +45,19 @@ func main() {
 		server.ListenAndServe()
 	}()
 
-	go func() {
-		service.Start()
-	}()
+	checkCh := service.StartCheck()
 
 	go func() {
-		service.RunChecks(context.Background())
+		service.RunChecks(context.Background(), checkCh)
 	}()
 
 	go func() {
 		for {
 			select {
 			case <-done:
-				slog.Info("done...")
 				return
 			case <-ticker.C:
-				log.Println("ticker")
-				service.RunChecks(context.Background())
+				service.RunChecks(context.Background(), checkCh)
 			}
 		}
 	}()
@@ -74,7 +69,6 @@ func main() {
 
 	slog.Info("quitting...")
 
-	service.Done <- true
 	done <- true
 
 	// todo add maximum time to wait
