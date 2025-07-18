@@ -45,10 +45,10 @@ func main() {
 		server.ListenAndServe()
 	}()
 
-	checkCh := service.StartCheck()
+	ch := service.StartCheck()
 
 	go func() {
-		service.RunCheck(context.Background(), checkCh)
+		service.RunCheck(context.Background(), ch)
 	}()
 
 	go func() {
@@ -58,7 +58,7 @@ func main() {
 				return
 			case <-ticker.C:
 				slog.Info("ticker time")
-				service.RunCheck(context.Background(), checkCh)
+				service.RunCheck(context.Background(), ch)
 			}
 		}
 	}()
