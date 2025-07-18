@@ -17,7 +17,8 @@ func (h *MonitorHandler) ListMonitors() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "monitor.html"))
 
 	type data struct {
-		Monitors []uptimemonitor.Monitor
+		Monitors  []uptimemonitor.Monitor
+		Skeletons []int
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +29,8 @@ func (h *MonitorHandler) ListMonitors() http.HandlerFunc {
 		}
 
 		tmpl.ExecuteTemplate(w, "monitor_list", data{
-			Monitors: monitors,
+			Monitors:  monitors,
+			Skeletons: make([]int, 60),
 		})
 	}
 }
