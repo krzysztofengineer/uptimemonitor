@@ -65,10 +65,10 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 		service := service.New(tc.Store)
 		ch := service.StartCheck()
 
-		service.RunChecks(t.Context(), ch)
+		service.RunCheck(t.Context(), ch)
 		tc.AssertDatabaseCount("checks", 0)
 
-		service.RunChecks(t.Context(), ch)
+		service.RunCheck(t.Context(), ch)
 		tc.AssertDatabaseCount("checks", 0)
 	})
 
@@ -90,11 +90,11 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 
 		go func() {
 			defer wg.Done()
-			service.RunChecks(t.Context(), ch)
+			service.RunCheck(t.Context(), ch)
 		}()
 		go func() {
 			defer wg.Done()
-			service.RunChecks(t.Context(), ch)
+			service.RunCheck(t.Context(), ch)
 		}()
 
 		wg.Wait()

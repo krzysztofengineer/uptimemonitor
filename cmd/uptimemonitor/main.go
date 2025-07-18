@@ -48,7 +48,7 @@ func main() {
 	checkCh := service.StartCheck()
 
 	go func() {
-		service.RunChecks(context.Background(), checkCh)
+		service.RunCheck(context.Background(), checkCh)
 	}()
 
 	go func() {
@@ -58,7 +58,7 @@ func main() {
 				return
 			case <-ticker.C:
 				slog.Info("ticker time")
-				service.RunChecks(context.Background(), checkCh)
+				service.RunCheck(context.Background(), checkCh)
 			}
 		}
 	}()

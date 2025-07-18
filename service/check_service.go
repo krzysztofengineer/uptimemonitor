@@ -34,7 +34,7 @@ func (s *CheckService) StartCheck() chan uptimemonitor.Monitor {
 	return ch
 }
 
-func (s *CheckService) RunChecks(ctx context.Context, ch chan uptimemonitor.Monitor) error {
+func (s *CheckService) RunCheck(ctx context.Context, ch chan uptimemonitor.Monitor) error {
 	monitors, err := s.Store.ListMonitors(ctx)
 	if err != nil {
 		return err
