@@ -10,14 +10,20 @@
     {{ end }}
     <div
         class="flex-1 tooltip {{ if gt $i 39 }} {{ else if gt $i 30 }} hidden md:block{{ else }} hidden lg:block{{ end }}">
-        <div class="tooltip-content tooltip-bottom">
+        <div class="tooltip-content tooltip-bottom flex flex-col gap-1 bg-light">
             {{ if $check }}
-            <div>
-                <div class="badge badge-soft {{ $check.BadgeClass }}">{{ $check.StatusCode }} {{ $check.StatusText }}
+            <div class="stats shadow bg-white">
+                <div class="stat flex flex-col gap-1 justify-stretch">
+                    <div class="stat-desc">
+                        <div class="badge badge-soft {{ $check.BadgeClass }} w-full">{{ $check.StatusCode }} {{
+                            $check.StatusText }}</div>
+                    </div>
+                    <div class="stat-value text-center text-sm font-medium">
+                        {{ $check.CreatedAt.Format "15:04" }}, <span class="font-semibold">{{ $check.ResponseTimeMs
+                            }}</span>ms
+                    </div>
                 </div>
             </div>
-            <span class="text-xs">{{ $check.CreatedAt.Format "15:04:05" }}</span>
-            <span class="text-xs">{{ $check.ResponseTimeMs }} ms</span>
             {{ else }}
             <span class="text-xs">No data</span>
             {{ end }}

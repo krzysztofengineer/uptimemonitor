@@ -51,6 +51,7 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 
 	start := time.Now()
 
+	// todo: add timeout
 	res, err := http.Get(m.Url)
 	elapsed := time.Since(start)
 
