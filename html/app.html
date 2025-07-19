@@ -1,18 +1,19 @@
 {{ define "body" }}
-{{ template "nav" . }}
-
-<main>
-    {{ block "content" . }}{{ end }}
-</main>
+<div class="flex flex-col ">
+    {{ template "nav" . }}
+    <main class="">
+        {{ block "content" . }}{{ end }}
+    </main>
+</div>
 {{ end }}
 
 {{ define "nav" }}
-<div class="navbar bg-base-100 shadow-sm">
-    <div class="container mx-auto flex justify-between items-center px-4">
-        <div class="navbar-start">
+<div class="container mx-auto">
+    <div class="flex justify-between items-center p-4">
+        <div>
             {{ template "logo" . }}
         </div>
-        <div class="navbar-end">
+        <div>
             <a class="btn btn-neutral" href="/new" hx-boost preload="mouseover">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                     <path
