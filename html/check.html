@@ -1,6 +1,6 @@
 {{ define "check_list" }}
 <div class="flex justify-between items-center w-full gap-1.5" hx-swap="outerHTML"
-    hx-get="/monitors/{{ .Monitor.ID }}/checks" hx-trigger="every 10s">
+    hx-get="/monitors/{{ .Monitor.ID }}/checks" hx-trigger="every 60s">
     {{ $checkMaxIndex := sub (len $.Checks) 1 }}
     {{ range $i, $v := .Skeletons }}
     {{ $currentIndex := sub 59 $i }}
