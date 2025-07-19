@@ -30,7 +30,7 @@
         </div>
         <div class="relative h-[64px] rounded-full w-full bg-neutral-100 overflow-hidden"
             id="{{ if $check }}monitors-{{ $check.MonitorID }}-checks-{{ $check.ID }}{{ else }}placeholder-{{ $i }}{{ end }}">
-            <div id="monitors-{{ $check.MonitorID }}-index-{{ $currentIndex }}"
+            <div id="{{ if $check }}monitors-{{ $check.MonitorID }}-index-{{ $currentIndex }}{{ end }}"
                 class="absolute w-full bottom-0 rounded-lg transition-all duration-300 ease-in-out {{ if $check }} {{ $check.HeightClass $.MaxTime }} {{ $check.ColorClass }} {{ else }}bg-neutral-200{{ end }}">
             </div>
         </div>
