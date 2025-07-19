@@ -8,8 +8,8 @@
     {{ $check = index $.Checks $currentIndex }}
     {{ end }}
     <div id="{{ if $check }}monitors-{{ $check.MonitorID }}-checks-{{ $check.ID }}{{ else }}placeholder-{{ $i }}{{ end }}"
-        class="h-[64px] rounded-full w-full {{ if $check }}bg-green-200{{ else }}bg-neutral-200{{ end }}
-        {{ if gt $i 40 }} {{ else if gt $i 30 }}hidden md:block{{ else }}hidden sm:block{{ end }}">
+        class="h-[64px] rounded-full w-full {{ if $check }}bg-lime-300{{ else }}bg-neutral-200{{ end }}
+        {{ if gt $i 45 }} {{ else if gt $i 30 }}hidden md:block{{ else }}hidden sm:block{{ end }}">
     </div>
     {{ end }}
 </div>
