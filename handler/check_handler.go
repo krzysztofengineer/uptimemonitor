@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"html/template"
 	"log/slog"
 	"net/http"
@@ -15,10 +16,15 @@ type CheckHandler struct {
 }
 
 func (h *CheckHandler) ListChecks() http.HandlerFunc {
-	tmpl := template.Must(template.ParseFS(html.FS, "check.html"))
+	tmpl := template.Must(template.New("check.html").Funcs(template.FuncMap{
+		"sub": func(a, b int) int {
+			return a - b
+		},
+	}).ParseFS(html.FS, "check.html"))
 
 	type data struct {
-		Checks []uptimemonitor.Check
+		Checks    []uptimemonitor.Check
+		Skeletons []int
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -41,8 +47,15 @@ func (h *CheckHandler) ListChecks() http.HandlerFunc {
 			return
 		}
 
-		tmpl.ExecuteTemplate(w, "check_list", data{
-			Checks: checks,
+		err = tmpl.ExecuteTemplate(w, "check_list", data{
+			Checks:    checks,
+			Skeletons: make([]int, 60),
 		})
+
+		if err != nil {
+			slog.Error("template execution error", "err", err)
+			http.Error(w, fmt.Sprintf("%v", err), http.StatusInternalServerError)
+			return
+		}
 	}
 }

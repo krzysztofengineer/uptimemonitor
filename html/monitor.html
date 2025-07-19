@@ -19,7 +19,8 @@
                     {{ end }}
                     <span class="truncate">{{ .Domain }}</span>
                 </h2>
-                <div class="flex justify-between items-center w-full gap-1.5">
+                <div hx-get="/monitors/{{ .ID }}/checks" hx-swap="outerHTML" hx-trigger="intersect"
+                    class="flex justify-between items-center w-full gap-1.5">
                     {{ range $i, $e := $.Skeletons }}
                     <div {{ if gt $i 40 }} class="h-[64px] rounded-full w-full bg-neutral-200 animate-pulse" {{ else if
                         gt $i 30 }} class="h-[64px] rounded-full w-full bg-neutral-200 hidden md:block animate-pulse" {{

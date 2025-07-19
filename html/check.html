@@ -1,7 +1,16 @@
 {{ define "check_list" }}
-<div>
-    {{ range .Checks }}
-    <div id="monitors-{{ .MonitorID }}-checks-{{ .ID }}"></div>
+<div class="flex justify-between items-center w-full gap-1.5">
+    {{ $checkMaxIndex := sub (len $.Checks) 1 }}
+    {{ range $i, $v := .Skeletons }}
+    {{ $currentIndex := sub 59 $i }}
+    {{ $check := "" }}
+    {{ if lt $currentIndex (len $.Checks) }}
+    {{ $check = index $.Checks $currentIndex }}
+    {{ end }}
+    <div id="{{ if $check }}monitors-{{ $check.MonitorID }}-checks-{{ $check.ID }}{{ else }}placeholder-{{ $i }}{{ end }}"
+        class="h-[64px] rounded-full w-full {{ if $check }}bg-green-200{{ else }}bg-neutral-200{{ end }}
+        {{ if gt $i 40 }} {{ else if gt $i 30 }}hidden md:block{{ else }}hidden sm:block{{ end }}">
+    </div>
     {{ end }}
 </div>
 {{ end }}
