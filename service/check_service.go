@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 	"uptimemonitor"
 	"uptimemonitor/store"
-
-	"math/rand/v2"
 )
 
 type CheckService struct {
@@ -50,11 +49,26 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 	c, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	time.Sleep(time.Duration(rand.IntN(500)) * time.Millisecond)
+	start := time.Now()
 
-	_, err := s.Store.CreateCheck(c, uptimemonitor.Check{
-		MonitorID: m.ID,
-		Monitor:   m,
+	res, err := http.Get(m.Url)
+	elapsed := time.Since(start)
+
+	if err != nil {
+		s.Store.CreateCheck(c, uptimemonitor.Check{
+			MonitorID:      m.ID,
+			Monitor:        m,
+			StatusCode:     http.StatusInternalServerError,
+			ResponseTimeMs: elapsed.Milliseconds(),
+		})
+		return
+	}
+
+	_, err = s.Store.CreateCheck(c, uptimemonitor.Check{
+		MonitorID:      m.ID,
+		Monitor:        m,
+		StatusCode:     res.StatusCode,
+		ResponseTimeMs: elapsed.Milliseconds(),
 	})
 	if err != nil {
 		log.Printf("err: #%v", err)

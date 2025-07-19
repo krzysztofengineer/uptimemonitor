@@ -26,6 +26,7 @@ func (h *CheckHandler) ListChecks() http.HandlerFunc {
 		Monitor   uptimemonitor.Monitor
 		Checks    []uptimemonitor.Check
 		Skeletons []int
+		MaxTime   int64
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -48,10 +49,18 @@ func (h *CheckHandler) ListChecks() http.HandlerFunc {
 			return
 		}
 
+		maxTime := int64(0)
+		for _, check := range checks {
+			if check.ResponseTimeMs > maxTime {
+				maxTime = check.ResponseTimeMs
+			}
+		}
+
 		err = tmpl.ExecuteTemplate(w, "check_list", data{
 			Monitor:   monitor,
 			Checks:    checks,
 			Skeletons: make([]int, 60),
+			MaxTime:   maxTime,
 		})
 
 		if err != nil {

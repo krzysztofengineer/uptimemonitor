@@ -18,11 +18,11 @@ func NewCheckStore(db *sql.DB) *CheckStore {
 }
 
 func (s *CheckStore) CreateCheck(ctx context.Context, check uptimemonitor.Check) (uptimemonitor.Check, error) {
-	stmt := `INSERT INTO checks(uuid, monitor_id, created_at) VALUES(?, ?, ?)`
+	stmt := `INSERT INTO checks(uuid, monitor_id, status_code, response_time_ms, created_at) VALUES(?, ?, ?, ?, ?)`
 	uuid := uuid.NewString()
 	check.CreatedAt = time.Now()
 
-	res, err := s.db.ExecContext(ctx, stmt, uuid, check.MonitorID, check.CreatedAt)
+	res, err := s.db.ExecContext(ctx, stmt, uuid, check.MonitorID, check.StatusCode, check.ResponseTimeMs, check.CreatedAt)
 	if err != nil {
 		return check, err
 	}
@@ -37,6 +37,7 @@ func (s *CheckStore) CreateCheck(ctx context.Context, check uptimemonitor.Check)
 func (s *CheckStore) ListChecks(ctx context.Context, monitorID int64, limit int) ([]uptimemonitor.Check, error) {
 	stmt := `
 		SELECT checks.id, checks.uuid, checks.monitor_id, checks.created_at,
+		checks.status_code, checks.response_time_ms,
 		monitors.id, monitors.uuid, monitors.url, monitors.created_at
 		FROM checks 
 		LEFT JOIN monitors ON monitors.id = checks.monitor_id
@@ -59,6 +60,7 @@ func (s *CheckStore) ListChecks(ctx context.Context, monitorID int64, limit int)
 
 		if err := rows.Scan(
 			&c.ID, &c.Uuid, &c.MonitorID, &c.CreatedAt,
+			&c.StatusCode, &c.ResponseTimeMs,
 			&c.Monitor.ID, &c.Monitor.Uuid, &c.Monitor.Url, &c.Monitor.CreatedAt,
 		); err != nil {
 			return []uptimemonitor.Check{}, err

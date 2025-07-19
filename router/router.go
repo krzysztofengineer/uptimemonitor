@@ -1,6 +1,7 @@
 package router
 
 import (
+	"math/rand"
 	"net/http"
 	"uptimemonitor/handler"
 	"uptimemonitor/static"
@@ -42,6 +43,17 @@ func New(handler *handler.Handler) *http.ServeMux {
 	}
 
 	r.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
+
+	r.Handle("/random", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		randInt := rand.Intn(100)
+
+		if randInt < 5 {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}))
 
 	return r
 }

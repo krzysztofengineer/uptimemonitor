@@ -30,6 +30,8 @@ CREATE TABLE checks(
     uuid TEXT NOT NULL UNIQUE,
     monitor_id INTEGER,
     created_at DATETIME NOT NULL,
+    status_code INTEGER NOT NULL,
+    response_time_ms INTEGER NOT NULL,
     
     FOREIGN KEY(monitor_id) REFERENCES monitors(id)
 );
