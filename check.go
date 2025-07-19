@@ -1,6 +1,9 @@
 package uptimemonitor
 
-import "time"
+import (
+	"net/http"
+	"time"
+)
 
 type Check struct {
 	ID             int64
@@ -52,4 +55,22 @@ func (c Check) HeightClass(maxTime int64) string {
 	} else {
 		return "h-full"
 	}
+}
+
+func (c Check) BadgeClass() string {
+	if c.StatusCode >= 200 && c.StatusCode < 300 {
+		return "badge-success"
+	} else if c.StatusCode >= 300 && c.StatusCode < 400 {
+		return "badge-warning"
+	} else if c.StatusCode >= 400 && c.StatusCode < 500 {
+		return "badge-accent"
+	} else if c.StatusCode >= 500 {
+		return "badge-error"
+	} else {
+		return "badge-neutral"
+	}
+}
+
+func (c Check) StatusText() string {
+	return http.StatusText(c.StatusCode)
 }

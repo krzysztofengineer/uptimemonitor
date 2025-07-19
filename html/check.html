@@ -8,10 +8,25 @@
     {{ if lt $currentIndex (len $.Checks) }}
     {{ $check = index $.Checks $currentIndex }}
     {{ end }}
-    <div class="relative h-[64px] rounded-full w-full bg-neutral-100 overflow-hidden {{ if gt $i 39 }} {{ else if gt $i 30 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
-        id="{{ if $check }}monitors-{{ $check.MonitorID }}-checks-{{ $check.ID }}{{ else }}placeholder-{{ $i }}{{ end }}">
-        <div id="monitors-{{ $check.MonitorID }}-index-{{ $currentIndex }}"
-            class="absolute w-full bottom-0 rounded-lg transition-all duration-300 ease-in-out {{ if $check }} {{ $check.HeightClass $.MaxTime }} {{ $check.ColorClass }} {{ else }}bg-neutral-200{{ end }}">
+    <div
+        class="flex-1 tooltip {{ if gt $i 39 }} {{ else if gt $i 30 }} hidden md:block{{ else }} hidden lg:block{{ end }}">
+        <div class="tooltip-content tooltip-bottom">
+            {{ if $check }}
+            <div>
+                <div class="badge badge-soft {{ $check.BadgeClass }}">{{ $check.StatusCode }} {{ $check.StatusText }}
+                </div>
+            </div>
+            <span class="text-xs">{{ $check.CreatedAt.Format "15:04:05" }}</span>
+            <span class="text-xs">{{ $check.ResponseTimeMs }} ms</span>
+            {{ else }}
+            <span class="text-xs">No data</span>
+            {{ end }}
+        </div>
+        <div class="relative h-[64px] rounded-full w-full bg-neutral-100 overflow-hidden"
+            id="{{ if $check }}monitors-{{ $check.MonitorID }}-checks-{{ $check.ID }}{{ else }}placeholder-{{ $i }}{{ end }}">
+            <div id="monitors-{{ $check.MonitorID }}-index-{{ $currentIndex }}"
+                class="absolute w-full bottom-0 rounded-lg transition-all duration-300 ease-in-out {{ if $check }} {{ $check.HeightClass $.MaxTime }} {{ $check.ColorClass }} {{ else }}bg-neutral-200{{ end }}">
+            </div>
         </div>
     </div>
     {{ end }}
