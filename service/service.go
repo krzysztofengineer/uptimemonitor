@@ -1,6 +1,8 @@
 package service
 
-import "uptimemonitor/store"
+import (
+	"uptimemonitor/store"
+)
 
 type Service struct {
 	CheckService
@@ -8,6 +10,8 @@ type Service struct {
 
 func New(store store.Store) *Service {
 	return &Service{
-		CheckService: CheckService{Store: store},
+		CheckService: CheckService{
+			Store: store,
+		},
 	}
 }

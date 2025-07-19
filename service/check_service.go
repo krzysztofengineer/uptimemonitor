@@ -15,12 +15,6 @@ type CheckService struct {
 	Store store.Store
 }
 
-func NewCheckService(store store.Store) *CheckService {
-	return &CheckService{
-		Store: store,
-	}
-}
-
 func (s *CheckService) StartCheck() chan uptimemonitor.Monitor {
 	ch := make(chan uptimemonitor.Monitor, 10)
 

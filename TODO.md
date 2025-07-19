@@ -21,3 +21,7 @@ What's left to do:
 - [ ] Log in after setup automatically
 - [ ] Remove old checks
 - [ ] Graceful shutdown grace period
+- [ ] Status code and response time
+- [ ] Color status codes and height for response times
+- [ ] On hover tooltips
+- [ ] Css transitions

@@ -27,8 +27,8 @@ func main() {
 	flag.Parse()
 
 	store := sqlite.New(dsn)
-	handler := handler.New(store)
 	service := service.New(store)
+	handler := handler.New(store, service)
 	router := router.New(handler)
 
 	server := &http.Server{
@@ -37,7 +37,7 @@ func main() {
 	}
 
 	done := make(chan bool)
-	ticker := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(time.Second * 10)
 
 	go func() {
 		slog.Info("http://localhost:3000")
@@ -45,12 +45,13 @@ func main() {
 		server.ListenAndServe()
 	}()
 
-	ch := service.StartCheck()
+	checkCh := service.StartCheck()
 
 	go func() {
-		service.RunCheck(context.Background(), ch)
+		service.RunCheck(context.Background(), checkCh)
 	}()
 
+	// todo: move to service
 	go func() {
 		for {
 			select {
@@ -58,7 +59,7 @@ func main() {
 				return
 			case <-ticker.C:
 				slog.Info("ticker time")
-				service.RunCheck(context.Background(), ch)
+				service.RunCheck(context.Background(), checkCh)
 			}
 		}
 	}()

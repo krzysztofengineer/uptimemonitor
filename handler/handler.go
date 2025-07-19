@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"uptimemonitor/service"
 	"uptimemonitor/store"
 )
 
@@ -13,7 +14,7 @@ type Handler struct {
 	CheckHandler
 }
 
-func New(store store.Store) *Handler {
+func New(store store.Store, service *service.Service) *Handler {
 	return &Handler{
 		Middleware:     Middleware{Store: store},
 		HomeHandler:    HomeHandler{Store: store},

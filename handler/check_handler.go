@@ -23,6 +23,7 @@ func (h *CheckHandler) ListChecks() http.HandlerFunc {
 	}).ParseFS(html.FS, "check.html"))
 
 	type data struct {
+		Monitor   uptimemonitor.Monitor
 		Checks    []uptimemonitor.Check
 		Skeletons []int
 	}
@@ -48,6 +49,7 @@ func (h *CheckHandler) ListChecks() http.HandlerFunc {
 		}
 
 		err = tmpl.ExecuteTemplate(w, "check_list", data{
+			Monitor:   monitor,
 			Checks:    checks,
 			Skeletons: make([]int, 60),
 		})
