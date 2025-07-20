@@ -1,6 +1,10 @@
 package uptimemonitor
 
-import "time"
+import (
+	"fmt"
+	"net/http"
+	"time"
+)
 
 const (
 	IncidentStatusOpen     = "open"
@@ -19,4 +23,26 @@ type Incident struct {
 	Status         string
 
 	Monitor Monitor
+}
+
+func (i Incident) URI() string {
+	return fmt.Sprintf("/m/%s/i/%s", i.Monitor.Uuid, i.Uuid)
+}
+
+func (i Incident) BadgeClass() string {
+	if i.StatusCode >= 200 && i.StatusCode < 300 {
+		return "badge-success"
+	} else if i.StatusCode >= 300 && i.StatusCode < 400 {
+		return "badge-warning"
+	} else if i.StatusCode >= 400 && i.StatusCode < 500 {
+		return "badge-accent"
+	} else if i.StatusCode >= 500 {
+		return "badge-error"
+	} else {
+		return "badge-neutral"
+	}
+}
+
+func (i Incident) StatusText() string {
+	return http.StatusText(i.StatusCode)
 }
