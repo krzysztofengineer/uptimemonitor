@@ -23,7 +23,7 @@
                 <div hx-get="/monitors/{{ .ID }}/checks" hx-swap="outerHTML" hx-trigger="intersect"
                     class="flex justify-between items-center w-full gap-1.5">
                     {{ range $i, $e := $.Skeletons }}
-                    <div class="h-[64px] rounded-full w-full bg-neutral-100 animate-pulse stagger {{ if gt $i 39 }} {{ else if gt $i 35 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
+                    <div class="h-[64px] rounded-full w-[6px] bg-neutral-100 animate-pulse stagger {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
                         style="--index: {{ $i }};">
                     </div>
                     {{ end }}
@@ -86,7 +86,7 @@
                     <div hx-get="/monitors/{{ .Monitor.ID }}/checks" hx-swap="outerHTML" hx-trigger="intersect"
                         class="flex justify-between items-center w-full gap-1.5">
                         {{ range $i, $e := .Skeletons }}
-                        <div class="h-[64px] rounded-full w-full bg-neutral-100 animate-pulse stagger {{ if gt $i 39 }} {{ else if gt $i 35 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
+                        <div class="h-[64px] rounded-full w-[6px] bg-neutral-100 animate-pulse stagger {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
                             style="--index: {{ $i }};">
                         </div>
                         {{ end }}
