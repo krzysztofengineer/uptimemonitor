@@ -37,7 +37,7 @@ func main() {
 	}
 
 	done := make(chan bool)
-	ticker := time.NewTicker(time.Second * 5)
+	ticker := time.NewTicker(time.Second * 60)
 
 	go func() {
 		slog.Info("http://localhost:3000")
