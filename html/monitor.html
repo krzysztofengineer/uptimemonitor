@@ -142,7 +142,7 @@
         <table class="table table-auto">
             <tbody>
                 {{ range .Incidents }}
-                <a href="{{ .URI }}" hx-boost preload>
+                <a href="{{ .URI }}" hx-boost preload id="incidents-{{ .ID }}">
                     <tr>
                         <td class="whitespace-nowrap">
                             <div

@@ -97,6 +97,16 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		}
 
 		s.createIncident(m, check, elapsed.Milliseconds(), res.StatusCode, string(body), fmt.Sprintf("%v", res.Header))
+		return
+	}
+
+	latests, err := s.Store.ListMonitorOpenIncidents(c, m.ID)
+	if err != nil {
+		return
+	}
+
+	for _, i := range latests {
+		s.Store.ResolveIncident(c, i)
 	}
 }
 
@@ -121,7 +131,7 @@ func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonit
 }
 
 func (s *CheckService) incidentAlreadyExists(ctx context.Context, m uptimemonitor.Monitor, statusCode int) bool {
-	latest, err := s.Store.LastIncident(ctx, m.ID, uptimemonitor.IncidentStatusOpen, statusCode)
+	latest, err := s.Store.LastIncidentByStatusCode(ctx, m.ID, uptimemonitor.IncidentStatusOpen, statusCode)
 	if err != nil {
 		return false
 	}

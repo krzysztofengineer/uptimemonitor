@@ -113,8 +113,33 @@ func TestIncident(t *testing.T) {
 		service.RunCheck(t.Context(), ch)
 
 		time.Sleep(time.Second)
-
 		tc.AssertDatabaseCount("incidents", 1)
+	})
+
+	t.Run("incidents get resolved", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		service := service.New(tc.Store)
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: tc.Server.URL + "/test/even",
+		})
+
+		ch := service.StartCheck()
+		service.RunCheck(t.Context(), ch)
+
+		time.Sleep(time.Second)
+		tc.AssertDatabaseCount("incidents", 1)
+
+		service.RunCheck(t.Context(), ch)
+		time.Sleep(time.Second)
+		tc.AssertDatabaseCount("incidents", 1)
+
+		incident, err := tc.Store.LastOpenIncident(t.Context(), 1)
+		if err != nil || incident.ID == 0 {
+			t.Fatalf("expected to find a single resolved incident, error: %v", err)
+		}
 	})
 }
 

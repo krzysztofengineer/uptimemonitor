@@ -52,6 +52,17 @@ func NewTestCase(t *testing.T) *TestCase {
 		w.WriteHeader(http.StatusOK)
 	})
 
+	i := 0
+	router.HandleFunc("GET /test/even", func(w http.ResponseWriter, r *http.Request) {
+		if i%2 == 0 {
+			w.WriteHeader(http.StatusInternalServerError)
+			i++
+			return
+		}
+		i++
+		w.WriteHeader(http.StatusOK)
+	})
+
 	return &TestCase{
 		T:       t,
 		Server:  server,
