@@ -3,6 +3,7 @@ package uptimemonitor
 import (
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -32,9 +33,9 @@ func (m Monitor) Domain() string {
 		return m.Url
 	}
 
-	res, err := url.JoinPath(uri.Host, uri.Path)
+	res, err := url.JoinPath(uri.Host, strings.TrimLeft(uri.Path, "/"))
 	if err != nil {
-		return uri.Host + "test"
+		return m.Url
 	}
 
 	if uri.RawQuery != "" {
