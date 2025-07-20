@@ -98,6 +98,24 @@ func TestIncident(t *testing.T) {
 
 		tc.AssertDatabaseCount("incidents", 2)
 	})
+
+	t.Run("invalid domains create incidents", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		service := service.New(tc.Store)
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "http://invalid-url",
+		})
+
+		ch := service.StartCheck()
+		service.RunCheck(t.Context(), ch)
+
+		time.Sleep(time.Second)
+
+		tc.AssertDatabaseCount("incidents", 1)
+	})
 }
 
 func TestIncident_ListIncidents(t *testing.T) {

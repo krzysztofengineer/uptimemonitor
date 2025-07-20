@@ -57,12 +57,21 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 	elapsed := time.Since(start)
 
 	if err != nil {
-		s.Store.CreateCheck(c, uptimemonitor.Check{
+		check, err := s.Store.CreateCheck(c, uptimemonitor.Check{
 			MonitorID:      m.ID,
 			Monitor:        m,
 			StatusCode:     http.StatusInternalServerError,
 			ResponseTimeMs: elapsed.Milliseconds(),
 		})
+		if err != nil || check.ID == 0 {
+			log.Printf("failed to create check: %v", err)
+			return
+		}
+
+		if err := s.createIncident(m, check, elapsed.Milliseconds(), http.StatusInternalServerError, "", ""); err != nil {
+			log.Printf("failed to create incident: %v", err)
+		}
+
 		return
 	}
 
@@ -79,22 +88,20 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 	}
 
 	if res.StatusCode >= 400 {
-		if err := s.createIncident(res, m, check, elapsed.Milliseconds()); err != nil {
-			log.Printf("failed to create incident: %v", err)
+		body, err := io.ReadAll(res.Body)
+		defer res.Body.Close()
+
+		if err != nil {
+			s.createIncident(m, check, elapsed.Milliseconds(), res.StatusCode, "", fmt.Sprintf("%v", res.Header))
+			return
 		}
+
+		s.createIncident(m, check, elapsed.Milliseconds(), res.StatusCode, string(body), fmt.Sprintf("%v", res.Header))
 	}
 }
 
-func (s *CheckService) createIncident(res *http.Response, m uptimemonitor.Monitor, check uptimemonitor.Check, responseTimeMs int64) error {
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return fmt.Errorf("failed to read response body: %w", err)
-	}
-
-	if s.incidentAlreadyExists(context.Background(), m, res.StatusCode) {
-		log.Printf("incident already exists for monitor %d with status code %d", m.ID, res.StatusCode)
+func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonitor.Check, responseTimeMs int64, statusCode int, body string, headers string) error {
+	if s.incidentAlreadyExists(context.Background(), m, statusCode) {
 		return nil
 	}
 
@@ -102,8 +109,8 @@ func (s *CheckService) createIncident(res *http.Response, m uptimemonitor.Monito
 		MonitorID:      m.ID,
 		StatusCode:     check.StatusCode,
 		ResponseTimeMs: responseTimeMs,
-		Body:           string(body),
-		Headers:        fmt.Sprintf("%v", res.Header),
+		Body:           body,
+		Headers:        headers,
 	}
 
 	if _, err := s.Store.CreateIncident(context.Background(), incident); err != nil {
