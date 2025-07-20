@@ -20,7 +20,8 @@ type Incident struct {
 	ResponseTimeMs int64
 	Body           string
 	Headers        string
-	Status         string
+	StatusText     string
+	ResolvedAt     time.Time
 
 	Monitor Monitor
 }
@@ -43,12 +44,12 @@ func (i Incident) BadgeClass() string {
 	}
 }
 
-func (i Incident) StatusText() string {
+func (i Incident) StatusCodeText() string {
 	return http.StatusText(i.StatusCode)
 }
 
 func (i Incident) StatusBadgeClass() string {
-	if i.Status == IncidentStatusOpen {
+	if i.StatusText == IncidentStatusOpen {
 		return "badge-error"
 	}
 
@@ -56,7 +57,7 @@ func (i Incident) StatusBadgeClass() string {
 }
 
 func (i Incident) StatusBadgeText() string {
-	if i.Status == IncidentStatusResolved {
+	if i.StatusText == IncidentStatusResolved {
 		return "Resolved"
 	}
 

@@ -22,9 +22,9 @@ func (s *IncidentStore) CreateIncident(ctx context.Context, incident uptimemonit
 
 	incident.CreatedAt = time.Now()
 	incident.Uuid = uuid.NewString()
-	incident.Status = uptimemonitor.IncidentStatusOpen
+	incident.StatusText = uptimemonitor.IncidentStatusOpen
 
-	res, err := s.db.ExecContext(ctx, stmt, incident.Uuid, incident.MonitorID, incident.Status, incident.StatusCode, incident.ResponseTimeMs, incident.Body, incident.Headers, incident.CreatedAt)
+	res, err := s.db.ExecContext(ctx, stmt, incident.Uuid, incident.MonitorID, incident.StatusText, incident.StatusCode, incident.ResponseTimeMs, incident.Body, incident.Headers, incident.CreatedAt)
 	if err != nil {
 		return uptimemonitor.Incident{}, err
 	}
@@ -49,7 +49,7 @@ func (s *IncidentStore) LastIncidentByStatusCode(ctx context.Context, monitorID 
 	var incident uptimemonitor.Incident
 	if err := row.Scan(
 		&incident.ID, &incident.Uuid, &incident.MonitorID,
-		&incident.Status, &incident.StatusCode, &incident.ResponseTimeMs,
+		&incident.StatusText, &incident.StatusCode, &incident.ResponseTimeMs,
 		&incident.Body, &incident.Headers, &incident.CreatedAt,
 	); err != nil {
 		return uptimemonitor.Incident{}, err
@@ -72,7 +72,7 @@ func (s *IncidentStore) LastOpenIncident(ctx context.Context, monitorID int64) (
 	var incident uptimemonitor.Incident
 	if err := row.Scan(
 		&incident.ID, &incident.Uuid, &incident.MonitorID,
-		&incident.Status, &incident.StatusCode, &incident.ResponseTimeMs,
+		&incident.StatusText, &incident.StatusCode, &incident.ResponseTimeMs,
 		&incident.Body, &incident.Headers, &incident.CreatedAt,
 	); err != nil {
 		return uptimemonitor.Incident{}, err
@@ -104,7 +104,7 @@ func (s *IncidentStore) ListOpenIncidents(ctx context.Context) ([]uptimemonitor.
 		var incident uptimemonitor.Incident
 		if err := rows.Scan(
 			&incident.ID, &incident.Uuid, &incident.MonitorID,
-			&incident.Status, &incident.StatusCode, &incident.ResponseTimeMs,
+			&incident.StatusText, &incident.StatusCode, &incident.ResponseTimeMs,
 			&incident.Body, &incident.Headers, &incident.CreatedAt,
 			&incident.Monitor.ID, &incident.Monitor.Url, &incident.Monitor.Uuid, &incident.Monitor.CreatedAt,
 		); err != nil {
@@ -139,7 +139,7 @@ func (s *IncidentStore) ListMonitorIncidents(ctx context.Context, id int64) ([]u
 		var incident uptimemonitor.Incident
 		if err := rows.Scan(
 			&incident.ID, &incident.Uuid, &incident.MonitorID,
-			&incident.Status, &incident.StatusCode, &incident.ResponseTimeMs,
+			&incident.StatusText, &incident.StatusCode, &incident.ResponseTimeMs,
 			&incident.Body, &incident.Headers, &incident.CreatedAt,
 			&incident.Monitor.ID, &incident.Monitor.Url, &incident.Monitor.Uuid, &incident.Monitor.CreatedAt,
 		); err != nil {
@@ -159,7 +159,7 @@ func (s *IncidentStore) ListMonitorOpenIncidents(ctx context.Context, id int64) 
 			monitors.id, monitors.url, monitors.uuid, monitors.created_at
 		FROM incidents
 		JOIN monitors ON incidents.monitor_id = monitors.id
-		WHERE incidents.monitor_id = ? AND status = ?
+		WHERE incidents.monitor_id = ? AND incidents.status_text = ?
 		ORDER BY incidents.id DESC
 	`
 
@@ -174,7 +174,7 @@ func (s *IncidentStore) ListMonitorOpenIncidents(ctx context.Context, id int64) 
 		var incident uptimemonitor.Incident
 		if err := rows.Scan(
 			&incident.ID, &incident.Uuid, &incident.MonitorID,
-			&incident.Status, &incident.StatusCode, &incident.ResponseTimeMs,
+			&incident.StatusText, &incident.StatusCode, &incident.ResponseTimeMs,
 			&incident.Body, &incident.Headers, &incident.CreatedAt,
 			&incident.Monitor.ID, &incident.Monitor.Url, &incident.Monitor.Uuid, &incident.Monitor.CreatedAt,
 		); err != nil {
@@ -188,10 +188,10 @@ func (s *IncidentStore) ListMonitorOpenIncidents(ctx context.Context, id int64) 
 
 func (s *IncidentStore) ResolveIncident(ctx context.Context, incident uptimemonitor.Incident) error {
 	stmt := `
-		UPDATE incidents SET status = ? WHERE id = ?
+		UPDATE incidents SET status_text = ?, resolved_at = ? WHERE id = ?
 	`
 
-	_, err := s.db.ExecContext(ctx, stmt, uptimemonitor.IncidentStatusResolved, incident.ID)
+	_, err := s.db.ExecContext(ctx, stmt, uptimemonitor.IncidentStatusResolved, time.Now(), incident.ID)
 
 	return err
 }

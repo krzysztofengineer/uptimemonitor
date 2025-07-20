@@ -57,6 +57,8 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 	elapsed := time.Since(start)
 
 	if err != nil {
+		log.Printf("check failed due to invalid url format: %v", m.Url)
+
 		check, err := s.Store.CreateCheck(c, uptimemonitor.Check{
 			MonitorID:      m.ID,
 			Monitor:        m,
@@ -88,6 +90,8 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 	}
 
 	if res.StatusCode >= 400 {
+		log.Printf("check failed. creating incident for: %v", m.Url)
+
 		body, err := io.ReadAll(res.Body)
 		defer res.Body.Close()
 
@@ -100,13 +104,19 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		return
 	}
 
+	log.Printf("looking for latest: %v", m.Url)
 	latests, err := s.Store.ListMonitorOpenIncidents(c, m.ID)
 	if err != nil {
+		log.Printf("err: #%v", err)
 		return
 	}
 
 	for _, i := range latests {
-		s.Store.ResolveIncident(c, i)
+		log.Printf("resolving: %v", i)
+		err := s.Store.ResolveIncident(c, i)
+		if err != nil {
+			log.Printf("err: %v", err)
+		}
 	}
 }
 

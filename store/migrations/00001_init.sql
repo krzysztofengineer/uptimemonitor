@@ -46,6 +46,7 @@ CREATE TABLE incidents(
     body TEXT,
     headers TEXT,
     created_at DATETIME NOT NULL,
+    resolved_at DATETIME,
 
     FOREIGN KEY(monitor_id) REFERENCES monitors(id)
 );
