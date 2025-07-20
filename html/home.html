@@ -1,5 +1,13 @@
 {{ define "title" }}Home{{ end }}
 
 {{define "content"}}
-<div hx-get="/monitors" hx-trigger="intersect" hx-swap="outerHTML"></div>
+<div class="lg:flex gap-4 justify-between max-w-[1600px] mx-auto">
+    <div class="flex-[4]">
+        <div hx-get="/monitors" hx-trigger="intersect" hx-swap="outerHTML"></div>
+    </div>
+
+    <div class="flex-[1]">
+        <div hx-get="/incidents" hx-trigger="intersect" hx-swap="outerHTML">incidents</div>
+    </div>
+</div>
 {{ end }}

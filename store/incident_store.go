@@ -57,3 +57,38 @@ func (s *IncidentStore) LastIncident(ctx context.Context, monitorID int64, statu
 
 	return incident, nil
 }
+
+func (s *IncidentStore) ListOpenIncidents(ctx context.Context) ([]uptimemonitor.Incident, error) {
+	stmt := `
+		SELECT incidents.id, incidents.uuid, incidents.monitor_id,
+			incidents.status_text, incidents.status_code, incidents.response_time_ms,
+			incidents.body, incidents.headers, incidents.created_at,
+			monitors.id, monitors.url, monitors.uuid, monitors.created_at
+		FROM incidents
+		JOIN monitors ON incidents.monitor_id = monitors.id
+		WHERE incidents.status_text = ?
+		ORDER BY incidents.id DESC
+	`
+
+	rows, err := s.db.QueryContext(ctx, stmt, uptimemonitor.IncidentStatusOpen)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var incidents []uptimemonitor.Incident
+	for rows.Next() {
+		var incident uptimemonitor.Incident
+		if err := rows.Scan(
+			&incident.ID, &incident.Uuid, &incident.MonitorID,
+			&incident.Status, &incident.StatusCode, &incident.ResponseTimeMs,
+			&incident.Body, &incident.Headers, &incident.CreatedAt,
+			&incident.Monitor.ID, &incident.Monitor.Url, &incident.Monitor.Uuid, &incident.Monitor.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		incidents = append(incidents, incident)
+	}
+
+	return incidents, nil
+}

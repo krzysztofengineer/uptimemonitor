@@ -21,4 +21,24 @@ func TestHome(t *testing.T) {
 
 		tc.Get("/").AssertRedirect(http.StatusSeeOther, "/login")
 	})
+
+	t.Run("monitors are displayed on home page", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn().
+			Get("/").
+			AssertStatusCode(http.StatusOK).
+			AssertElementVisible(`[hx-get="/monitors"]`)
+	})
+
+	t.Run("incidents are displayed on home page", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn().
+			Get("/").
+			AssertStatusCode(http.StatusOK).
+			AssertElementVisible(`[hx-get="/incidents"]`)
+	})
 }
