@@ -137,3 +137,39 @@ func TestMonitor_CreateMonitor(t *testing.T) {
 		tc.Get("/monitors").AssertSeeText("example.com")
 	})
 }
+
+func TestMonitor_ShowMonitor(t *testing.T) {
+	t.Run("setup is required", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Get("/m/123").AssertRedirect(http.StatusSeeOther, "/setup")
+	})
+
+	t.Run("guests cannot view monitors", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.CreateTestUser("test@example.com", "password")
+
+		tc.Get("/m/123").AssertRedirect(http.StatusSeeOther, "/login")
+	})
+
+	t.Run("monitor has to exist", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn().Get("/m/123").AssertStatusCode(http.StatusNotFound)
+	})
+
+	t.Run("monitor can be viewed", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		m, _ := tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "http://example.com",
+		})
+
+		tc.LogIn().Get(fmt.Sprintf("/m/%s", m.Uuid)).AssertStatusCode(http.StatusOK)
+	})
+}

@@ -78,3 +78,25 @@ func (h *MonitorHandler) CreateMonitorForm() http.HandlerFunc {
 		w.Header().Set("HX-Redirect", m.URI())
 	}
 }
+
+func (h *MonitorHandler) ShowMonitor() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "app.html", "monitor.html"))
+
+	type data struct {
+		Monitor   uptimemonitor.Monitor
+		Skeletons []int
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		m, err := h.Store.GetMonitorByUuid(r.Context(), r.PathValue("monitor"))
+		if err != nil || m.ID == 0 {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		tmpl.Execute(w, data{
+			Monitor:   m,
+			Skeletons: make([]int, 60),
+		})
+	}
+}

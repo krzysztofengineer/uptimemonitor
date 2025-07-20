@@ -76,3 +76,10 @@ func (s *MonitorStore) GetMonitorByID(ctx context.Context, id int) (uptimemonito
 	err := s.db.QueryRowContext(ctx, stmt, id).Scan(&m.ID, &m.Url, &m.Uuid, &m.CreatedAt)
 	return m, err
 }
+
+func (s *MonitorStore) GetMonitorByUuid(ctx context.Context, uuid string) (uptimemonitor.Monitor, error) {
+	stmt := `SELECT id, url, uuid, created_at FROM monitors WHERE uuid = ? LIMIT 1`
+	var m uptimemonitor.Monitor
+	err := s.db.QueryRowContext(ctx, stmt, uuid).Scan(&m.ID, &m.Url, &m.Uuid, &m.CreatedAt)
+	return m, err
+}

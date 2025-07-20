@@ -14,3 +14,5 @@ What's left to do:
 - [ ] Log in after setup automatically
 - [ ] Remove old checks
 - [ ] Graceful shutdown grace period
+- [ ] Secure cookies on prod
+- [ ] Incident webhooks (method, headers, body)
