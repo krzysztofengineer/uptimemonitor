@@ -93,6 +93,9 @@
                     </div>
                 </div>
             </div>
+            <div>
+                <div hx-get="/monitors/{{ .Monitor.ID }}/incidents" hx-trigger="intersect" hx-swap="outerHTML"></div>
+            </div>
         </div>
         <div class="flex-[1] flex flex-col gap-4">
             <div class="stats lg:stats-vertical w-full" hx-get="/monitors/{{ .Monitor.ID }}/stats"
@@ -124,5 +127,46 @@
         <div class="stat-title">Uptime</div>
         <div class="stat-value">{{ .Uptime }}%</div>
     </div>
+</div>
+{{ end }}
+
+{{ define "monitor_incident_list" }}
+<div class="card card-border {{ if .Incidents }} bg-neutral text-neutral-content {{ end }} bg-base-100 w-full w-full rounded-box"
+    hx-get="/monitors/{{ .ID }}/incidents" hx-trigger="every 60s" hx-swap="outerHTML">
+    {{ if .Incidents }}
+    <div class="p-4 pb-2 tracking-wide font-semibold">
+        Incidents
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="table table-auto">
+            <tbody>
+                {{ range .Incidents }}
+                <a href="{{ .URI }}" hx-boost preload>
+                    <tr>
+                        <td class="whitespace-nowrap">
+                            <div
+                                class="badge badge-soft truncate max-w-full inline-block text-xs py-1 {{ .StatusBadgeClass }}">
+                                {{ .StatusBadgeText }}
+                            </div>
+                        </td>
+                        <td class="w-full">
+                            {{ .StatusCode }} {{ .StatusText }}
+                        </td>
+                        <td class="w-auto whitespace-nowrap">{{ .CreatedAt.Format "2006-01-02 15:04" }}</td>
+                    </tr>
+                </a>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+    {{ else }}
+    <div class="p-4 pb-0 tracking-wide font-semibold">
+        Incidents
+    </div>
+    <div class="p-4 tracking-wide opacity-60 text-xs">
+        No incidents to report.
+    </div>
+    {{ end }}
 </div>
 {{ end }}

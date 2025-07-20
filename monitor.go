@@ -34,7 +34,7 @@ func (m Monitor) Domain() string {
 
 	res, err := url.JoinPath(uri.Host, uri.Path)
 	if err != nil {
-		return uri.Host
+		return uri.Host + "test"
 	}
 
 	if uri.RawQuery != "" {

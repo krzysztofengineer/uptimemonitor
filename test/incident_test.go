@@ -164,3 +164,40 @@ func TestIncident_ListIncidents(t *testing.T) {
 			AssertElementVisible(`[id="incidents-2"]`)
 	})
 }
+
+func TestIncident_ListMonitorIncidents(t *testing.T) {
+	t.Run("setup is required", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Get("/monitors/1/incidents").AssertRedirect(http.StatusSeeOther, "/setup")
+	})
+
+	t.Run("guests cannot list incidents", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.CreateTestUser("test@example.com", "password")
+
+		tc.Get("/monitors/1/incidents").AssertRedirect(http.StatusSeeOther, "/login")
+	})
+
+	t.Run("users can list incidents", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "http://example.com",
+		})
+
+		tc.Store.CreateIncident(t.Context(), uptimemonitor.Incident{
+			MonitorID:      1,
+			StatusCode:     404,
+			ResponseTimeMs: 100,
+		})
+
+		tc.LogIn().Get("/monitors/1/incidents").
+			AssertStatusCode(http.StatusOK).
+			AssertElementVisible(`[id="incidents-1"]`)
+	})
+}

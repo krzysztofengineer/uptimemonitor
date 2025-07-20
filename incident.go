@@ -46,3 +46,19 @@ func (i Incident) BadgeClass() string {
 func (i Incident) StatusText() string {
 	return http.StatusText(i.StatusCode)
 }
+
+func (i Incident) StatusBadgeClass() string {
+	if i.Status == IncidentStatusOpen {
+		return "badge-error"
+	}
+
+	return "badge-success"
+}
+
+func (i Incident) StatusBadgeText() string {
+	if i.Status == IncidentStatusResolved {
+		return "Resolved"
+	}
+
+	return "Open"
+}

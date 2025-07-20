@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -108,7 +109,7 @@ func (h *MonitorHandler) MonitorStats() http.HandlerFunc {
 	type data struct {
 		ID              int64
 		AvgResponseTime int64
-		Uptime          float32
+		Uptime          string
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -143,7 +144,35 @@ func (h *MonitorHandler) MonitorStats() http.HandlerFunc {
 		tmpl.ExecuteTemplate(w, "monitor_stats", data{
 			ID:              int64(id),
 			AvgResponseTime: int64(avgResTime),
-			Uptime:          uptime,
+			Uptime:          fmt.Sprintf("%.1f", uptime),
+		})
+	}
+}
+
+func (h *MonitorHandler) ListMonitorIncidents() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "monitor.html"))
+
+	type data struct {
+		ID        int64
+		Incidents []uptimemonitor.Incident
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(r.PathValue("monitor"))
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		incidents, err := h.Store.ListMonitorIncidents(r.Context(), int64(id))
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		tmpl.ExecuteTemplate(w, "monitor_incident_list", data{
+			ID:        int64(id),
+			Incidents: incidents,
 		})
 	}
 }
