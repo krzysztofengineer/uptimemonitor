@@ -3,6 +3,7 @@ package test
 import (
 	"net/http"
 	"testing"
+	"uptimemonitor"
 )
 
 func TestHome(t *testing.T) {
@@ -26,6 +27,10 @@ func TestHome(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "https://example.com",
+		})
+
 		tc.LogIn().
 			Get("/").
 			AssertStatusCode(http.StatusOK).
@@ -36,9 +41,22 @@ func TestHome(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "https://example.com",
+		})
+
 		tc.LogIn().
 			Get("/").
 			AssertStatusCode(http.StatusOK).
 			AssertElementVisible(`[hx-get="/incidents"]`)
+	})
+
+	t.Run("if there are no monitors, user is redirected to the new page", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn().
+			Get("/").
+			AssertRedirect(http.StatusSeeOther, "/new")
 	})
 }

@@ -31,6 +31,8 @@ func TestMonitor_ListMonitors(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: "https://example.com"})
+
 		tc.LogIn().
 			Get("/").
 			AssertStatusCode(http.StatusOK).

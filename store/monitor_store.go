@@ -17,6 +17,15 @@ func NewMonitorStore(db *sql.DB) *MonitorStore {
 	return &MonitorStore{db: db}
 }
 
+func (s *MonitorStore) CountMonitors(ctx context.Context) int {
+	stmt := `SELECT COUNT(*) FROM monitors`
+
+	var count int
+	s.db.QueryRowContext(ctx, stmt).Scan(&count)
+
+	return count
+}
+
 func (s *MonitorStore) CreateMonitor(ctx context.Context, monitor uptimemonitor.Monitor) (uptimemonitor.Monitor, error) {
 	stmt := `INSERT INTO monitors(url, uuid, created_at) VALUES(?,?,?)`
 	monitor.CreatedAt = time.Now()

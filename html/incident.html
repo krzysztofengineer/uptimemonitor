@@ -1,5 +1,7 @@
 {{ define "incident_list" }}
-<ul class="list bg-base-100 w-full rounded-box" hx-get="/incidents" hx-trigger="every 60s" hx-swap="outerHTML">
+<ul class="list card card-border bg-base-100 w-full w-full rounded-box" hx-get="/incidents" hx-trigger="every 60s"
+    hx-swap="outerHTML">
+    {{ if .Incidents }}
     <li class="p-4 pb-2 tracking-wide font-semibold">
         🚨 Open Incidents
     </li>
@@ -24,6 +26,11 @@
             </div>
         </li>
     </a>
+    {{ end }}
+    {{ else }}
+    <li class="p-4 tracking-wide opacity-60">
+        No incidents to report.
+    </li>
     {{ end }}
 </ul>
 {{ end }}
