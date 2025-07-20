@@ -95,23 +95,34 @@
             </div>
         </div>
         <div class="flex-[1] flex flex-col gap-4">
+            <div class="stats lg:stats-vertical w-full" hx-get="/monitors/{{ .Monitor.ID }}/stats"
+                hx-trigger="intersect" hx-swap="outerHTML">
+                <div class="stat place-items-center">
+                    <div class="stat-title">Avg. response time</div>
+                    <div class="stat-value">-</div>
+                </div>
 
-            {{ template "monitor_stats" . }}
+                <div class="stat place-items-center">
+                    <div class="stat-title">Uptime</div>
+                    <div class="stat-value">-</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 {{ end }}
 
 {{ define "monitor_stats" }}
-<div class="stats w-full">
+<div class="stats lg:stats-vertical w-full" hx-get="/monitors/{{ .ID }}/stats" hx-trigger="every 60s"
+    hx-swap="outerHTML">
     <div class="stat place-items-center">
         <div class="stat-title">Avg. response time</div>
-        <div class="stat-value">45ms</div>
+        <div class="stat-value">{{ .AvgResponseTime }}ms</div>
     </div>
 
     <div class="stat place-items-center">
         <div class="stat-title">Uptime</div>
-        <div class="stat-value">99.9%</div>
+        <div class="stat-value">{{ .Uptime }}%</div>
     </div>
 </div>
 {{ end }}

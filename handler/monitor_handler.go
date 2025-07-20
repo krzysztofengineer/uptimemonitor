@@ -3,6 +3,7 @@ package handler
 import (
 	"html/template"
 	"net/http"
+	"strconv"
 	"uptimemonitor"
 	"uptimemonitor/form"
 	"uptimemonitor/html"
@@ -97,6 +98,52 @@ func (h *MonitorHandler) ShowMonitor() http.HandlerFunc {
 		tmpl.Execute(w, data{
 			Monitor:   m,
 			Skeletons: make([]int, 60),
+		})
+	}
+}
+
+func (h *MonitorHandler) MonitorStats() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "monitor.html"))
+
+	type data struct {
+		ID              int64
+		AvgResponseTime int64
+		Uptime          float32
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(r.PathValue("monitor"))
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		checks, err := h.Store.ListChecks(r.Context(), int64(id), 60)
+		if err != nil || id == 0 {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		uptime := float32(0)
+		avgResTime := int64(0)
+
+		for _, ch := range checks {
+			avgResTime += ch.ResponseTimeMs
+
+			if ch.StatusCode < 400 {
+				uptime++
+			}
+		}
+
+		if len(checks) > 0 {
+			avgResTime = avgResTime / int64(len(checks))
+			uptime = uptime / float32(len(checks)) * 100.0
+		}
+
+		tmpl.ExecuteTemplate(w, "monitor_stats", data{
+			ID:              int64(id),
+			AvgResponseTime: int64(avgResTime),
+			Uptime:          uptime,
 		})
 	}
 }
