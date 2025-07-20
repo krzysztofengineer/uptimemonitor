@@ -2,7 +2,6 @@ package test
 
 import (
 	"net/http"
-	"sync"
 	"testing"
 	"time"
 	"uptimemonitor"
@@ -80,25 +79,14 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 			Url: "https://example.com",
 		})
 
-		var wg sync.WaitGroup
-		wg.Add(2)
-
 		service := service.CheckService{
 			Store: tc.Store,
 		}
 		ch := service.StartCheck()
 
-		go func() {
-			defer wg.Done()
-			service.RunCheck(t.Context(), ch)
-		}()
-		go func() {
-			defer wg.Done()
-			service.RunCheck(t.Context(), ch)
-		}()
+		service.RunCheck(t.Context(), ch)
+		service.RunCheck(t.Context(), ch)
 
-		wg.Wait()
-		close(ch)
 		time.Sleep(1 * time.Second)
 		tc.AssertDatabaseCount("checks", 2)
 	})

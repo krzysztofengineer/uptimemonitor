@@ -12,7 +12,7 @@ import (
 )
 
 type CheckHandler struct {
-	Store store.Store
+	Store *store.Store
 }
 
 func (h *CheckHandler) ListChecks() http.HandlerFunc {

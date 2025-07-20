@@ -14,7 +14,6 @@ import (
 	"uptimemonitor/router"
 	"uptimemonitor/service"
 	"uptimemonitor/store"
-	"uptimemonitor/store/sqlite"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -23,18 +22,35 @@ type TestCase struct {
 	T       *testing.T
 	Server  *httptest.Server
 	Client  *http.Client
-	Store   store.Store
+	Store   *store.Store
 	User    *uptimemonitor.User
 	Headers map[string]string
 	Cookies []*http.Cookie
 }
 
 func NewTestCase(t *testing.T) *TestCase {
-	store := sqlite.New(":memory:")
+	store := store.New(":memory:")
 	service := service.New(store)
 	handler := handler.New(store, service)
 	router := router.New(handler)
 	server := httptest.NewServer(router)
+
+	router.HandleFunc("GET /test/200", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	router.HandleFunc("GET /test/404", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	})
+
+	router.HandleFunc("GET /test/500", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	})
+
+	router.HandleFunc("GET /test/timeout", func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(30 * time.Second)
+		w.WriteHeader(http.StatusOK)
+	})
 
 	return &TestCase{
 		T:       t,

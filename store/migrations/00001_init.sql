@@ -35,4 +35,18 @@ CREATE TABLE checks(
     
     FOREIGN KEY(monitor_id) REFERENCES monitors(id)
 );
+
+CREATE TABLE incidents(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uuid TEXT NOT NULL UNIQUE,
+    monitor_id INTEGER,
+    status_text TEXT NOT NULL,
+    status_code INTEGER NOT NULL,
+    response_time_ms INTEGER NOT NULL,
+    body TEXT,
+    headers TEXT,
+    created_at DATETIME NOT NULL,
+
+    FOREIGN KEY(monitor_id) REFERENCES monitors(id)
+);
 -- +goose StatementEnd

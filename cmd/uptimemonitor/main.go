@@ -12,7 +12,7 @@ import (
 	"uptimemonitor/handler"
 	"uptimemonitor/router"
 	"uptimemonitor/service"
-	"uptimemonitor/store/sqlite"
+	"uptimemonitor/store"
 )
 
 var (
@@ -26,7 +26,7 @@ func main() {
 
 	flag.Parse()
 
-	store := sqlite.New(dsn)
+	store := store.New(dsn)
 	service := service.New(store)
 	handler := handler.New(store, service)
 	router := router.New(handler)

@@ -13,7 +13,7 @@ import (
 )
 
 type LoginHandler struct {
-	Store store.Store
+	Store *store.Store
 }
 
 func (h *LoginHandler) LoginPage() http.HandlerFunc {

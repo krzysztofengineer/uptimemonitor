@@ -14,7 +14,7 @@ type Handler struct {
 	CheckHandler
 }
 
-func New(store store.Store, service *service.Service) *Handler {
+func New(store *store.Store, service *service.Service) *Handler {
 	return &Handler{
 		Middleware:     Middleware{Store: store},
 		HomeHandler:    HomeHandler{Store: store},

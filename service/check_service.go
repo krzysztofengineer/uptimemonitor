@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -11,7 +12,7 @@ import (
 )
 
 type CheckService struct {
-	Store store.Store
+	Store *store.Store
 }
 
 func (s *CheckService) StartCheck() chan uptimemonitor.Monitor {
@@ -65,14 +66,58 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		return
 	}
 
-	_, err = s.Store.CreateCheck(c, uptimemonitor.Check{
+	check, err := s.Store.CreateCheck(c, uptimemonitor.Check{
 		MonitorID:      m.ID,
 		Monitor:        m,
 		StatusCode:     res.StatusCode,
 		ResponseTimeMs: elapsed.Milliseconds(),
 	})
+
 	if err != nil {
 		log.Printf("err: #%v", err)
 		return
 	}
+
+	if res.StatusCode >= 400 {
+		if err := s.createIncident(res, m, check, elapsed.Milliseconds()); err != nil {
+			log.Printf("failed to create incident: %v", err)
+		}
+	}
+}
+
+func (s *CheckService) createIncident(res *http.Response, m uptimemonitor.Monitor, check uptimemonitor.Check, responseTimeMs int64) error {
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	if s.incidentAlreadyExists(context.Background(), m, res.StatusCode) {
+		log.Printf("incident already exists for monitor %d with status code %d", m.ID, res.StatusCode)
+		return nil
+	}
+
+	incident := uptimemonitor.Incident{
+		MonitorID:      m.ID,
+		StatusCode:     check.StatusCode,
+		ResponseTimeMs: responseTimeMs,
+		Body:           string(body),
+		Headers:        fmt.Sprintf("%v", res.Header),
+	}
+
+	if _, err := s.Store.CreateIncident(context.Background(), incident); err != nil {
+		return fmt.Errorf("failed to create incident for monitor %d: %w", m.ID, err)
+	}
+
+	return nil
+}
+
+func (s *CheckService) incidentAlreadyExists(ctx context.Context, m uptimemonitor.Monitor, statusCode int) bool {
+	latest, err := s.Store.LastIncident(ctx, m.ID, uptimemonitor.IncidentStatusOpen, statusCode)
+	if err != nil {
+		return false
+	}
+
+	return latest.StatusCode == statusCode
 }

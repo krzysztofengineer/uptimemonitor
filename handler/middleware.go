@@ -15,7 +15,7 @@ const (
 )
 
 type Middleware struct {
-	Store store.Store
+	Store *store.Store
 }
 
 func (m *Middleware) Installed(next http.Handler) http.Handler {

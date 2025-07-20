@@ -8,7 +8,7 @@ import (
 )
 
 type HomeHandler struct {
-	Store store.Store
+	Store *store.Store
 }
 
 func (h *HomeHandler) HomePage() http.HandlerFunc {

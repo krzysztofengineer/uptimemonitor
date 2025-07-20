@@ -12,7 +12,7 @@ import (
 )
 
 type SetupHandler struct {
-	Store store.Store
+	Store *store.Store
 }
 
 func (h *SetupHandler) SetupPage() http.HandlerFunc {

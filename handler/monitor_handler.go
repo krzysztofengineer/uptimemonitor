@@ -10,7 +10,7 @@ import (
 )
 
 type MonitorHandler struct {
-	Store store.Store
+	Store *store.Store
 }
 
 func (h *MonitorHandler) ListMonitors() http.HandlerFunc {
