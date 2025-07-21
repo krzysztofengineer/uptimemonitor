@@ -76,16 +76,19 @@
                 <div class="stat place-items-center">
                     <div class="stat-title">Avg. response time</div>
                     <div class="stat-value">-</div>
+                    <div class="stat-desc">LAST HOUR</div>
                 </div>
 
                 <div class="stat place-items-center">
                     <div class="stat-title">Uptime</div>
                     <div class="stat-value">-</div>
+                    <div class="stat-desc">LAST HOUR</div>
                 </div>
 
                 <div class="stat place-items-center">
                     <div class="stat-title">Incidents</div>
                     <div class="stat-value">-</div>
+                    <div class="stat-desc">ALL TIME</div>
                 </div>
             </div>
             <div>
@@ -131,16 +134,19 @@
     <div class="stat place-items-center">
         <div class="stat-title">Avg. response time</div>
         <div class="stat-value">{{ .AvgResponseTime }}ms</div>
+        <div class="stat-desc">LAST HOUR</div>
     </div>
 
     <div class="stat place-items-center">
         <div class="stat-title">Uptime</div>
         <div class="stat-value">{{ .Uptime }}%</div>
+        <div class="stat-desc">LAST HOUR</div>
     </div>
 
     <div class="stat place-items-center">
         <div class="stat-title">Incidents</div>
         <div class="stat-value">{{ .Count }}</div>
+        <div class="stat-desc">ALL TIME</div>
     </div>
 </div>
 {{ end }}
