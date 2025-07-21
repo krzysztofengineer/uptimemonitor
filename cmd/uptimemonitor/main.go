@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -40,7 +41,7 @@ func main() {
 	ticker := time.NewTicker(time.Second * 60)
 
 	go func() {
-		slog.Info("http://localhost:3000")
+		slog.Info(fmt.Sprintf("http://localhost%s", addr))
 
 		server.ListenAndServe()
 	}()

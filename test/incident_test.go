@@ -1,7 +1,6 @@
 package test
 
 import (
-	"log"
 	"net/http"
 	"testing"
 	"time"
@@ -137,13 +136,9 @@ func TestIncident(t *testing.T) {
 		time.Sleep(time.Second)
 		tc.AssertDatabaseCount("incidents", 1)
 
-		incidents, _ := tc.Store.ListMonitorIncidents(t.Context(), 1)
-		log.Printf("INCIDENTS: ---- %v", incidents)
-		log.Printf("INCIDENTS END")
-		time.Sleep(time.Second)
-		incident, err := tc.Store.LastOpenIncident(t.Context(), 1)
-		if err != nil || incident.ID == 0 {
-			t.Fatalf("expected to find a single resolved incident, error: %v", err)
+		incident, _ := tc.Store.LastOpenIncident(t.Context(), 1)
+		if incident.ID != 0 {
+			t.Fatalf("expected not to found any incidents,found: %v", incident)
 		}
 	})
 }
