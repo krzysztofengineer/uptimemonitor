@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	IncidentStatusOpen     = "open"
-	IncidentStatusResolved = "resolved"
+	IncidentStatusOpen     string = "open"
+	IncidentStatusResolved string = "resolved"
 )
 
 type Incident struct {

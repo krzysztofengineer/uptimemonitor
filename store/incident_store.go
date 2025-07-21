@@ -127,6 +127,7 @@ func (s *IncidentStore) ListMonitorIncidents(ctx context.Context, id int64) ([]u
 		JOIN monitors ON incidents.monitor_id = monitors.id
 		WHERE incidents.monitor_id = ?
 		ORDER BY incidents.id DESC
+		LIMIT 10
 	`
 
 	rows, err := s.db.QueryContext(ctx, stmt, id)
@@ -150,6 +151,18 @@ func (s *IncidentStore) ListMonitorIncidents(ctx context.Context, id int64) ([]u
 	}
 
 	return incidents, nil
+}
+func (s *IncidentStore) CountMonitorIncidents(ctx context.Context, id int64) int64 {
+	stmt := `
+		SELECT COUNT(*)
+		FROM incidents
+		WHERE monitor_id = ?
+	`
+
+	var count int64
+	s.db.QueryRowContext(ctx, stmt, id).Scan(&count)
+
+	return count
 }
 
 func (s *IncidentStore) ListMonitorOpenIncidents(ctx context.Context, id int64) ([]uptimemonitor.Incident, error) {
@@ -194,7 +207,7 @@ func (s *IncidentStore) ResolveIncident(ctx context.Context, incident uptimemoni
 
 	_, err := s.db.ExecContext(ctx, stmt, uptimemonitor.IncidentStatusResolved, time.Now(), incident.ID)
 	if err != nil {
-		log.Printf("resolce incident error: %v", err)
+		log.Printf("resolve incident error: %v", err)
 	}
 
 	return err

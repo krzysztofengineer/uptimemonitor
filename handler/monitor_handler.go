@@ -110,6 +110,7 @@ func (h *MonitorHandler) MonitorStats() http.HandlerFunc {
 		ID              int64
 		AvgResponseTime int64
 		Uptime          string
+		Count           int64
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -118,6 +119,8 @@ func (h *MonitorHandler) MonitorStats() http.HandlerFunc {
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			return
 		}
+
+		count := h.Store.CountMonitorIncidents(r.Context(), int64(id))
 
 		checks, err := h.Store.ListChecks(r.Context(), int64(id), 60)
 		if err != nil || id == 0 {
@@ -145,6 +148,7 @@ func (h *MonitorHandler) MonitorStats() http.HandlerFunc {
 			ID:              int64(id),
 			AvgResponseTime: int64(avgResTime),
 			Uptime:          fmt.Sprintf("%.1f", uptime),
+			Count:           count,
 		})
 	}
 }
