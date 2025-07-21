@@ -131,34 +131,59 @@
 {{ end }}
 
 {{ define "monitor_incident_list" }}
-<div class="card card-border {{ if .Incidents }} bg-neutral text-neutral-content {{ end }} bg-base-100 w-full w-full rounded-box"
+<div class="card card-border  bg-base-100 {{ if .Incidents }} bg-neutral text-neutral-content {{ end }} w-full w-full rounded-box"
     hx-get="/monitors/{{ .ID }}/incidents" hx-trigger="every 60s" hx-swap="outerHTML">
     {{ if .Incidents }}
     <div class="p-4 pb-2 tracking-wide font-semibold">
         Incidents
     </div>
 
-    <div class="overflow-x-auto">
-        <table class="table table-auto">
-            <tbody>
-                {{ range .Incidents }}
-                <a href="{{ .URI }}" hx-boost preload id="incidents-{{ .ID }}">
-                    <tr>
-                        <td class="whitespace-nowrap">
+    <div class="overflow-x-auto flex flex-col gap-4 sm:gap-0 pb-2">
+        {{ range .Incidents }}
+        <div class="collapse p-0">
+            <input type="checkbox" />
+            <div class="collapse-title px-4 py-2">
+                <div class="">
+                    <div class="flex flex-col sm:flex-row gap-1.5 sm:gap-4 sm:items-center justify-between text-sm">
+                        <div>
                             <div
                                 class="badge badge-soft truncate max-w-full inline-block text-xs py-1 {{ .StatusBadgeClass }}">
                                 {{ .StatusBadgeText }}
                             </div>
-                        </td>
-                        <td class="w-full">
+                        </div>
+                        <div class="flex-1">
                             {{ .StatusCode }} {{ .StatusCodeText }}
-                        </td>
-                        <td class="w-auto whitespace-nowrap">{{ .CreatedAt.Format "2006-01-02 15:04" }}</td>
-                    </tr>
-                </a>
-                {{ end }}
-            </tbody>
-        </table>
+                        </div>
+                        <div class="w-auto whitespace-nowrap">
+                            {{ .CreatedAt.Format "2006-01-02 15:04" }}
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-outline btn-accent">Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="collapse-content text-sm">
+                <div class="mockup-browser border border-base-300 w-full bg-base-100 text-neutral-800">
+                    <div class="mockup-browser-toolbar">
+                        <div class="input">{{ $.Monitor.Url }}</div>
+                    </div>
+                    <div class="p-4 max-h-[600px] overflow-y-scroll flex flex-col gap-2">
+                        {{ if .Headers }}
+                        <pre>{{ .Headers }}</pre>
+                        {{ else }}
+                        <pre>Content-Type: -</pre>
+                        {{ end}}
+                        {{ if .Body }}
+                        <pre>{{ .Body }}</pre>
+                        {{ else }}
+                        <pre>&lt;html&gt;&lt;/html&gt;</pre>
+                        {{ end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ end }}
     </div>
     {{ else }}
     <div class="p-4 pb-0 tracking-wide font-semibold">

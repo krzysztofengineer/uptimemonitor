@@ -154,11 +154,18 @@ func (h *MonitorHandler) ListMonitorIncidents() http.HandlerFunc {
 
 	type data struct {
 		ID        int64
+		Monitor   uptimemonitor.Monitor
 		Incidents []uptimemonitor.Incident
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(r.PathValue("monitor"))
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		m, err := h.Store.GetMonitorByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			return
@@ -172,6 +179,7 @@ func (h *MonitorHandler) ListMonitorIncidents() http.HandlerFunc {
 
 		tmpl.ExecuteTemplate(w, "monitor_incident_list", data{
 			ID:        int64(id),
+			Monitor:   m,
 			Incidents: incidents,
 		})
 	}

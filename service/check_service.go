@@ -62,7 +62,7 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		check, err := s.Store.CreateCheck(c, uptimemonitor.Check{
 			MonitorID:      m.ID,
 			Monitor:        m,
-			StatusCode:     http.StatusInternalServerError,
+			StatusCode:     http.StatusNotFound,
 			ResponseTimeMs: elapsed.Milliseconds(),
 		})
 		if err != nil || check.ID == 0 {
@@ -70,7 +70,7 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 			return
 		}
 
-		if err := s.createIncident(m, check, elapsed.Milliseconds(), http.StatusInternalServerError, "", ""); err != nil {
+		if err := s.createIncident(m, check, elapsed.Milliseconds(), http.StatusNotFound, "", ""); err != nil {
 			log.Printf("failed to create incident: %v", err)
 		}
 
@@ -95,12 +95,17 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		body, err := io.ReadAll(res.Body)
 		defer res.Body.Close()
 
+		var headers string
+		for k, v := range res.Header {
+			headers += fmt.Sprintf("%s: %s\n", k, v)
+		}
+
 		if err != nil {
-			s.createIncident(m, check, elapsed.Milliseconds(), res.StatusCode, "", fmt.Sprintf("%v", res.Header))
+			s.createIncident(m, check, elapsed.Milliseconds(), res.StatusCode, "", headers)
 			return
 		}
 
-		s.createIncident(m, check, elapsed.Milliseconds(), res.StatusCode, string(body), fmt.Sprintf("%v", res.Header))
+		s.createIncident(m, check, elapsed.Milliseconds(), res.StatusCode, string(body), headers)
 		return
 	}
 
