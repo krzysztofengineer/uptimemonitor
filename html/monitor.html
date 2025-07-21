@@ -70,6 +70,16 @@
                             </summary>
                             <ul class="menu dropdown-content bg-base-100 rounded-box z-[99999]! w-52 p-2 shadow-sm">
                                 <div
+                                    class="flex items-center gap-2 cursor-pointer hover:bg-neutral-100 p-2 rounded-box">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="size-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                    </svg>
+
+                                    <div>Edit</div>
+                                </div>
+                                <div
                                     class="flex items-center gap-2 cursor-pointer hover:bg-neutral-100 p-2 rounded-box text-error">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor" class="size-5">
@@ -138,13 +148,13 @@
         Incidents
     </div>
 
-    <div class="overflow-x-auto flex flex-col gap-4 sm:gap-0 pb-2">
+    <div class="overflow-x-auto flex flex-col gap-4 md:gap-0 pb-2">
         {{ range .Incidents }}
-        <div class="collapse p-0">
+        <div class="collapse p-0" id="incidents-{{ .ID }}">
             <input type="checkbox" />
             <div class="collapse-title px-4 py-2">
                 <div class="">
-                    <div class="flex flex-col sm:flex-row gap-1.5 sm:gap-4 sm:items-center justify-between text-sm">
+                    <div class="flex flex-col md:flex-row gap-1.5 md:gap-4 md:items-center justify-between text-sm">
                         <div>
                             <div
                                 class="badge badge-soft truncate max-w-full inline-block text-xs py-1 {{ .StatusBadgeClass }}">
@@ -154,8 +164,12 @@
                         <div class="flex-1">
                             {{ .StatusCode }} {{ .StatusCodeText }}
                         </div>
-                        <div class="w-auto whitespace-nowrap">
+                        <div class="w-auto max-w-[350px] text-xs leading-[1.2rem] md:text-right">
                             {{ .CreatedAt.Format "2006-01-02 15:04" }}
+                            {{ if .ResolvedAt }}
+                            <br />
+                            (resolved at {{ .ResolvedAt.Format "2006-01-02 15:04" }})
+                            {{ end }}
                         </div>
                         <div>
                             <button type="button" class="btn btn-sm btn-outline btn-accent">Details</button>

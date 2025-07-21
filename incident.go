@@ -21,7 +21,7 @@ type Incident struct {
 	Body           string
 	Headers        string
 	StatusText     string
-	ResolvedAt     time.Time
+	ResolvedAt     *time.Time
 
 	Monitor Monitor
 }

@@ -12,3 +12,7 @@ What's left to do:
 - [ ] Incident webhooks (method, headers, body)
 - [ ] Remove monitor
 - [ ] Middlewares (recoverer, cache, etc.)
+- [ ] Edit monitor page
+- [ ] Clean incidents
+- [ ] Clean checks
+- [ ] Remove old incidents

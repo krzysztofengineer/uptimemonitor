@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	"log"
 	"time"
 	"uptimemonitor"
 
@@ -120,7 +121,7 @@ func (s *IncidentStore) ListMonitorIncidents(ctx context.Context, id int64) ([]u
 	stmt := `
 		SELECT incidents.id, incidents.uuid, incidents.monitor_id,
 			incidents.status_text, incidents.status_code, incidents.response_time_ms,
-			incidents.body, incidents.headers, incidents.created_at,
+			incidents.body, incidents.headers, incidents.created_at, incidents.resolved_at,
 			monitors.id, monitors.url, monitors.uuid, monitors.created_at
 		FROM incidents
 		JOIN monitors ON incidents.monitor_id = monitors.id
@@ -140,7 +141,7 @@ func (s *IncidentStore) ListMonitorIncidents(ctx context.Context, id int64) ([]u
 		if err := rows.Scan(
 			&incident.ID, &incident.Uuid, &incident.MonitorID,
 			&incident.StatusText, &incident.StatusCode, &incident.ResponseTimeMs,
-			&incident.Body, &incident.Headers, &incident.CreatedAt,
+			&incident.Body, &incident.Headers, &incident.CreatedAt, &incident.ResolvedAt,
 			&incident.Monitor.ID, &incident.Monitor.Url, &incident.Monitor.Uuid, &incident.Monitor.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -192,6 +193,9 @@ func (s *IncidentStore) ResolveIncident(ctx context.Context, incident uptimemoni
 	`
 
 	_, err := s.db.ExecContext(ctx, stmt, uptimemonitor.IncidentStatusResolved, time.Now(), incident.ID)
+	if err != nil {
+		log.Printf("resolce incident error: %v", err)
+	}
 
 	return err
 }

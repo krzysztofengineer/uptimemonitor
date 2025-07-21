@@ -110,13 +110,13 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 	}
 
 	log.Printf("looking for latest: %v", m.Url)
-	latests, err := s.Store.ListMonitorOpenIncidents(c, m.ID)
+	open, err := s.Store.ListMonitorOpenIncidents(c, m.ID)
 	if err != nil {
 		log.Printf("err: #%v", err)
 		return
 	}
 
-	for _, i := range latests {
+	for _, i := range open {
 		log.Printf("resolving: %v", i)
 		err := s.Store.ResolveIncident(c, i)
 		if err != nil {
