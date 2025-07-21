@@ -62,5 +62,9 @@ func New(handler *handler.Handler) *http.ServeMux {
 		w.WriteHeader(http.StatusOK)
 	}))
 
+	r.Handle("GET /redirect", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "https://google.com", http.StatusSeeOther)
+	}))
+
 	return r
 }

@@ -16,3 +16,5 @@ What's left to do:
 - [ ] Clean incidents
 - [ ] Clean checks
 - [ ] Remove old incidents
+- [ ] Monitor status
+- [ ] Add test for redirect incidents
