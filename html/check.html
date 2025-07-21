@@ -9,7 +9,7 @@
     {{ $check = index $.Checks $currentIndex }}
     {{ end }}
     <div
-        class="flex-1 tooltip z-[9999] {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }} {{ if and (not $check) (eq $i 59) }} animate-ping {{ end }} {{ if and ($check) (eq $i 59) }} animate-pulse {{ end }}">
+        class="flex-1 tooltip {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }} {{ if and (not $check) (eq $i 59) }} animate-ping {{ end }} ">
         <div class="tooltip-content tooltip-bottom flex flex-col gap-1 bg-light">
             {{ if $check }}
             <div class="stats shadow bg-white">
@@ -31,7 +31,7 @@
         <div class="relative h-[64px] w-[6px] rounded-full  bg-neutral-100 overflow-hidden"
             id="{{ if $check }}monitors-{{ $check.MonitorID }}-checks-{{ $check.ID }}{{ else }}placeholder-{{ $i }}{{ end }}">
             <div id="{{ if $check }}monitors-{{ $check.MonitorID }}-index-{{ $currentIndex }}{{ end }}"
-                class="absolute w-full bottom-0 rounded-lg transition-all duration-300 ease-in-out {{ if $check }} {{ $check.HeightClass $.MaxTime }} {{ $check.ColorClass }} {{ else }}bg-neutral-200 {{ end }}">
+                class="absolute w-full bottom-0 rounded-lg transition-all duration-300 ease-in-out {{ if $check }} {{ $check.HeightClass $.MaxTime }} {{ $check.ColorClass }} {{ else }}bg-neutral-200 {{ end }} {{ if and ($check) (eq $i 59) }} animate-pulse {{ end }}">
             </div>
         </div>
     </div>
