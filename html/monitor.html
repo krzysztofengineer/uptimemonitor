@@ -2,9 +2,9 @@
 <div class="grid gap-4">
     {{ range .Monitors }}
     <a href="{{ .URI }}" hx-boost preload>
-        <div class="card card-border bg-base-100 w-full">
-            <div class="card-body flex flex-col gap-4">
-                <h2 class="card-title text-sm">
+        <div class="card card-border p-4 flex flex-col gap-4">
+            <h2 class="card-title text-sm">
+                <div class="font-semibold flex gap-1.5 items-center flex-1 h-[30px]">
                     {{ if .Secure }}
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
                         <path fill-rule="evenodd"
@@ -19,15 +19,15 @@
                     </svg>
                     {{ end }}
                     <span class="truncate">{{ .Domain }}</span>
-                </h2>
-                <div hx-get="/monitors/{{ .ID }}/checks" hx-swap="outerHTML" hx-trigger="intersect"
-                    class="flex justify-between items-center w-full gap-1.5">
-                    {{ range $i, $e := $.Skeletons }}
-                    <div class="h-[64px] rounded-full w-[6px] bg-neutral-100 animate-pulse stagger {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
-                        style="--index: {{ $i }};">
-                    </div>
-                    {{ end }}
                 </div>
+            </h2>
+            <div hx-get="/monitors/{{ .ID }}/checks" hx-swap="outerHTML" hx-trigger="intersect"
+                class="flex justify-between items-center w-full gap-1.5">
+                {{ range $i, $e := $.Skeletons }}
+                <div class="h-[64px] rounded-full w-[6px] bg-neutral-100 animate-pulse stagger {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
+                    style="--index: {{ $i }};">
+                </div>
+                {{ end }}
             </div>
         </div>
     </a>
@@ -41,7 +41,7 @@
         <div class="flex-1 flex flex-col gap-4">
             <div class="card card-border p-4 flex flex-col gap-4">
                 <div class="flex items-center justify-between gap-2">
-                    <div class="font-semibold flex gap-1.5 items-center flex-1">
+                    <div class="font-semibold flex gap-1.5 items-center flex-1 h-[30px]">
                         {{ if .Monitor.Secure }}
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
                             <path fill-rule="evenodd"
@@ -61,7 +61,7 @@
                     </div>
                     <div>
                         <details class="dropdown dropdown-end ">
-                            <summary class="btn bg-white text-black border-[#e5e5e5] btn-sm">
+                            <summary class="btn bg-white text-black border-[#e5e5e5] btn-xs">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="currentColor" class="size-5">
                                     <path stroke-linecap="round" stroke-linejoin="round"
