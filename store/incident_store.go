@@ -3,7 +3,6 @@ package store
 import (
 	"context"
 	"database/sql"
-	"log"
 	"time"
 	"uptimemonitor"
 
@@ -206,9 +205,6 @@ func (s *IncidentStore) ResolveIncident(ctx context.Context, incident uptimemoni
 	`
 
 	_, err := s.db.ExecContext(ctx, stmt, uptimemonitor.IncidentStatusResolved, time.Now(), incident.ID)
-	if err != nil {
-		log.Printf("resolve incident error: %v", err)
-	}
 
 	return err
 }

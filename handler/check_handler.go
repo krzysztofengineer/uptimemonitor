@@ -3,7 +3,6 @@ package handler
 import (
 	"fmt"
 	"html/template"
-	"log/slog"
 	"net/http"
 	"strconv"
 	"uptimemonitor"
@@ -44,7 +43,6 @@ func (h *CheckHandler) ListChecks() http.HandlerFunc {
 
 		checks, err := h.Store.ListChecks(r.Context(), int64(monitorID), 60)
 		if err != nil {
-			slog.Error("list checks error", "err", err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -64,7 +62,6 @@ func (h *CheckHandler) ListChecks() http.HandlerFunc {
 		})
 
 		if err != nil {
-			slog.Error("template execution error", "err", err)
 			http.Error(w, fmt.Sprintf("%v", err), http.StatusInternalServerError)
 			return
 		}

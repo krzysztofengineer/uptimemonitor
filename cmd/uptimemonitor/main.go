@@ -59,7 +59,6 @@ func main() {
 			case <-done:
 				return
 			case <-ticker.C:
-				slog.Info("ticker time")
 				service.RunCheck(context.Background(), checkCh)
 			}
 		}
@@ -69,8 +68,6 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	<-quit
-
-	slog.Info("quitting...")
 
 	done <- true
 
