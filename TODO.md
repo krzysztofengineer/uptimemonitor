@@ -19,3 +19,4 @@ What's left to do:
 - [ ] Monitor status
 - [ ] Add test for redirect incidents
 - [ ] Define method, headers and request body
+- [ ] Test check timeout

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"time"
 	"uptimemonitor"
@@ -20,7 +19,6 @@ func (s *CheckService) StartCheck() chan uptimemonitor.Monitor {
 
 	go func() {
 		for m := range ch {
-			fmt.Printf("#%d ", m.ID)
 			s.handleCheck(m)
 		}
 	}()
@@ -35,18 +33,13 @@ func (s *CheckService) RunCheck(ctx context.Context, ch chan uptimemonitor.Monit
 	}
 
 	for _, m := range monitors {
-		fmt.Printf("x")
 		ch <- m
 	}
-
-	fmt.Printf("\n")
 
 	return nil
 }
 
 func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
-	fmt.Print(".")
-
 	c, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
@@ -126,8 +119,6 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		defer res.Body.Close()
 		body = string(resBody)
 	}
-
-	log.Printf("Create incident: %v", statusCode)
 
 	s.createIncident(m, check, elapsed.Milliseconds(), statusCode, string(body), headers)
 }
