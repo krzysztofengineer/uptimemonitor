@@ -18,3 +18,4 @@ What's left to do:
 - [ ] Remove old incidents
 - [ ] Monitor status
 - [ ] Add test for redirect incidents
+- [ ] Define method, headers and request body
