@@ -7,7 +7,7 @@
     </li>
 
     {{ range .Incidents }}
-    <a href="{{ .URI }}" hx-boost preload>
+    <a href="{{ .Monitor.URI }}" hx-boost preload>
         <li class="list-row w-full max-w-full block" id="incidents-{{ .ID }}">
             <div class="flex flex-col gap-1.5">
                 <div class="flex gap-2 justify-between items-center">
