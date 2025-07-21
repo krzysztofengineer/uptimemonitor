@@ -19,8 +19,11 @@ jobs:
     - name: Build Linux
       run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o uptimemonitor-linux-amd64 ./cmd/uptimemonitor
 
-    - name: Build macOS
+    - name: Build macOS Intel
       run: CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o uptimemonitor-darwin-amd64 ./cmd/uptimemonitor
+
+    - name: Build macOS Apple Silicon
+      run: CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o uptimemonitor-darwin-arm64 ./cmd/uptimemonitor
 
     - name: Release
       uses: softprops/action-gh-release@v2
@@ -29,6 +32,7 @@ jobs:
         files: |
           uptimemonitor-linux-amd64
           uptimemonitor-darwin-amd64
+          uptimemonitor-darwin-arm64
 
     - name: Test
       run: go run gotest.tools/gotestsum@latest --format testdox -- ./test
