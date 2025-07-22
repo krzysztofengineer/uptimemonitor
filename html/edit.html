@@ -19,7 +19,7 @@
                 <select class="select join-item" name="http_method">
                     <option {{ if eq .Form.HttpMethod "GET" }}selected{{ end }}>GET</option>
                     <option {{ if eq .Form.HttpMethod "POST" }}selected{{ end }}>POST</option>
-                    <option {{ if eq .Form.HttpMethod "GPATCHET" }}selected{{ end }}>PATCH</option>
+                    <option {{ if eq .Form.HttpMethod "PATCH" }}selected{{ end }}>PATCH</option>
                     <option {{ if eq .Form.HttpMethod "PUT" }}selected{{ end }}>PUT</option>
                     <option {{ if eq .Form.HttpMethod "DELETE" }}selected{{ end }}>DELETE</option>
                 </select>
