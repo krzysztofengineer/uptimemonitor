@@ -200,7 +200,7 @@
                 <div class="text-sm">
                     <div class="mockup-browser w-full bg-base-100 text-neutral-800">
                         <div class="mockup-browser-toolbar">
-                            <div class="input">{{ $.Monitor.Url }}</div>
+                            <div class="input">{{ $.Monitor.HttpMethod }} {{ $.Monitor.Url }}</div>
                         </div>
                         <div class="p-4 max-h-[600px] overflow-y-scroll overflow-x-scroll flex flex-col gap-2">
                             {{ if .Headers }}
