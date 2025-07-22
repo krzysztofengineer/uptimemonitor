@@ -49,7 +49,7 @@
                 </label>
             </div>
             <div class="hidden peer-has-checked:block">
-                <textarea class="textarea w-full textarea" placeholder="{}"
+                <textarea class="textarea w-full textarea bg-neutral text-neutral-content" placeholder="{}"
                     name="http_headers">{{ .Form.HttpHeaders }}</textarea>
                 {{ with .Form.Errors.HttpHeaders }}
                 <div class="form-error">{{ . }}</div>
@@ -66,7 +66,7 @@
                 </label>
             </div>
             <div class="hidden peer-has-checked:block">
-                <textarea class="textarea w-full textarea" placeholder="{}"
+                <textarea class="textarea w-full textarea bg-neutral text-neutral-content" placeholder="{}"
                     name="http_body">{{ .Form.HttpBody }}</textarea>
                 {{ with .Form.Errors.HttpBody }}
                 <div class="form-error">{{ . }}</div>
