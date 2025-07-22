@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"time"
 	"uptimemonitor"
 	"uptimemonitor/html"
 )
@@ -21,6 +22,8 @@ func (h *Handler) ListChecks() http.HandlerFunc {
 		Checks    []uptimemonitor.Check
 		Skeletons []int
 		MaxTime   int64
+		StartTime string
+		EndTime   string
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -54,6 +57,8 @@ func (h *Handler) ListChecks() http.HandlerFunc {
 			Checks:    checks,
 			Skeletons: make([]int, 60),
 			MaxTime:   maxTime,
+			StartTime: time.Now().Add(-1 * time.Hour).Format("15:04"),
+			EndTime:   time.Now().Format("15:04"),
 		})
 
 		if err != nil {

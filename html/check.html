@@ -1,46 +1,52 @@
 {{ define "check_list" }}
-<div class="flex justify-between items-center w-full gap-1.5 relative" hx-swap="outerHTML"
-    hx-get="/monitors/{{ .Monitor.ID }}/checks" hx-trigger="every 60s">
-    {{ $checkMaxIndex := sub (len $.Checks) 1 }}
-    {{ range $i, $v := .Skeletons }}
-    {{ $currentIndex := sub 59 $i }}
-    {{ $check := "" }}
-    {{ if lt $currentIndex (len $.Checks) }}
-    {{ $check = index $.Checks $currentIndex }}
-    {{ end }}
-    <div
-        class="flex-1 tooltip {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }} {{ if and (not $check) (eq $i 59) }} animate-ping {{ end }} ">
-        <div class="tooltip-content tooltip-bottom flex flex-col gap-1 bg-light">
-            {{ if $check }}
-            <div class="stats shadow bg-white">
-                <div class="stat flex flex-col gap-1 justify-stretch">
-                    <div class="stat-desc">
-                        <div class="badge badge-soft {{ $check.BadgeClass }} w-full">{{ $check.StatusCode }} {{
-                            $check.StatusText }}</div>
-                    </div>
-                    <div class="stat-value text-center text-sm font-medium">
-                        {{ $check.CreatedAt.Format "2006-01-02 15:04" }}, <span class="font-semibold">{{
-                            $check.ResponseTimeMs
-                            }}</span>ms
+<div class="flex flex-col gap-1" hx-swap="outerHTML" hx-get="/monitors/{{ .Monitor.ID }}/checks" hx-trigger="every 60s">
+    <div class="flex justify-between items-center w-full gap-1.5 relative">
+        {{ $checkMaxIndex := sub (len $.Checks) 1 }}
+        {{ range $i, $v := .Skeletons }}
+        {{ $currentIndex := sub 59 $i }}
+        {{ $check := "" }}
+        {{ if lt $currentIndex (len $.Checks) }}
+        {{ $check = index $.Checks $currentIndex }}
+        {{ end }}
+        <div
+            class="flex-1 tooltip inline-flex justify-center items-center {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }} {{ if and (not $check) (eq $i 59) }} animate-ping {{ end }} ">
+            <div class="tooltip-content tooltip-bottom flex flex-col gap-1 bg-light">
+                {{ if $check }}
+                <div class="stats shadow bg-white">
+                    <div class="stat flex flex-col gap-1 justify-stretch">
+                        <div class="stat-desc">
+                            <div class="badge badge-soft {{ $check.BadgeClass }} w-full">{{ $check.StatusCode }} {{
+                                $check.StatusText }}</div>
+                        </div>
+                        <div class="stat-value text-center text-sm font-medium">
+                            {{ $check.CreatedAt.Format "2006-01-02 15:04" }}, <span class="font-semibold">{{
+                                $check.ResponseTimeMs
+                                }}</span>ms
+                        </div>
                     </div>
                 </div>
+                {{ else }}
+                {{ end }}
             </div>
-            {{ else }}
-            {{ end }}
-        </div>
-        <div class="relative h-[64px] w-[6px] rounded-full  bg-neutral-100 overflow-hidden"
-            id="{{ if $check }}monitors-{{ $check.MonitorID }}-checks-{{ $check.ID }}{{ else }}placeholder-{{ $i }}{{ end }}">
-            <div id="{{ if $check }}monitors-{{ $check.MonitorID }}-index-{{ $currentIndex }}{{ end }}"
-                class="absolute w-full bottom-0 rounded-lg transition-all duration-300 ease-in-out {{ if $check }} {{ $check.HeightClass $.MaxTime }} {{ $check.ColorClass }} {{ else }}bg-neutral-200 {{ end }} {{ if and ($check) (eq $i 59) }} animate-pulse {{ end }}">
+            <div class="relative h-[64px] w-[6px] rounded-full bg-neutral-100 overflow-hidden"
+                id="{{ if $check }}monitors-{{ $check.MonitorID }}-checks-{{ $check.ID }}{{ else }}placeholder-{{ $i }}{{ end }}">
+                <div id="{{ if $check }}monitors-{{ $check.MonitorID }}-index-{{ $currentIndex }}{{ end }}"
+                    class="absolute w-full bottom-0 rounded-lg transition-all duration-300 ease-in-out {{ if $check }} {{ $check.HeightClass $.MaxTime }} {{ $check.ColorClass }} {{ else }}bg-neutral-200 {{ end }} {{ if and ($check) (eq $i 59) }} animate-pulse {{ end }}">
+                </div>
             </div>
         </div>
-    </div>
-    {{ end }}
+        {{ end }}
 
-    {{ if eq (len $.Checks ) 0}}
-    <div class="absolute inset-0 flex items-center justify-center z-[999999] opacity-80 text-xs animate-pulse">
-        waiting...
+        {{ if eq (len $.Checks ) 0}}
+        <div class="absolute inset-0 flex items-center justify-center z-[999999] opacity-80 text-xs animate-pulse">
+            waiting...
+        </div>
+        {{ end }}
     </div>
-    {{ end }}
+
+    <div class="w-full flex justify-between text-xs opacity-60">
+        <div>{{ .StartTime }}</div>
+        <div>{{ .EndTime }}</div>
+    </div>
 </div>
 {{ end }}

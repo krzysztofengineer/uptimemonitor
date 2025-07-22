@@ -22,12 +22,20 @@
                 </div>
             </h2>
             <div hx-get="/monitors/{{ .ID }}/checks" hx-swap="outerHTML" hx-trigger="intersect"
-                class="flex justify-between items-center w-full gap-1.5">
-                {{ range $i, $e := $.Skeletons }}
-                <div class="h-[64px] rounded-full w-[6px] bg-neutral-100 animate-pulse stagger {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
-                    style="--index: {{ $i }};">
+                class="flex flex-col gap-1">
+                <div class="flex justify-between items-center w-full gap-1.5">
+                    {{ range $i, $e := $.Skeletons }}
+                    <div class="h-[64px] rounded-full w-[6px] bg-neutral-100 animate-pulse stagger {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
+                        style="--index: {{ $i }};">
+                    </div>
+                    {{ end }}
                 </div>
-                {{ end }}
+
+
+                <div class="w-full flex justify-between text-xs opacity-60">
+                    <div>--:--</div>
+                    <div>--:--</div>
+                </div>
             </div>
         </div>
     </a>
@@ -62,12 +70,19 @@
                 </div>
                 <div>
                     <div hx-get="/monitors/{{ .Monitor.ID }}/checks" hx-swap="outerHTML" hx-trigger="intersect"
-                        class="flex justify-between items-center w-full gap-1.5">
-                        {{ range $i, $e := .Skeletons }}
-                        <div class="h-[64px] rounded-full w-[6px] bg-neutral-100 animate-pulse stagger {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
-                            style="--index: {{ $i }};">
+                        class="flex flex-col gap-1">
+                        <div class="flex justify-between items-center w-full gap-1.5">
+                            {{ range $i, $e := .Skeletons }}
+                            <div class="h-[64px] rounded-full w-[6px] bg-neutral-100 animate-pulse stagger {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }}"
+                                style="--index: {{ $i }};">
+                            </div>
+                            {{ end }}
                         </div>
-                        {{ end }}
+
+                        <div class="w-full flex justify-between text-xs opacity-60">
+                            <div>--:--</div>
+                            <div>--:--</div>
+                        </div>
                     </div>
                 </div>
             </div>
