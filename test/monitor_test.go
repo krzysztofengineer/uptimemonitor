@@ -90,7 +90,9 @@ func TestMonitor_CreateMonitor(t *testing.T) {
 			Get("/new").
 			AssertNoRedirect().
 			AssertStatusCode(http.StatusOK).
-			AssertElementVisible(`form[hx-post="/monitors"]`)
+			AssertElementVisible(`form[hx-post="/monitors"]`).
+			AssertElementVisible(`select[name="http_method"]`).
+			AssertElementVisible(`input[name="url"]`)
 	})
 
 	t.Run("url is required", func(t *testing.T) {
@@ -122,7 +124,8 @@ func TestMonitor_CreateMonitor(t *testing.T) {
 
 		res := tc.LogIn().
 			Post("/monitors", url.Values{
-				"url": []string{"https://example.com"},
+				"http_method": []string{"GET"},
+				"url":         []string{"https://example.com"},
 			}).
 			AssertStatusCode(http.StatusOK)
 
@@ -135,6 +138,19 @@ func TestMonitor_CreateMonitor(t *testing.T) {
 
 		tc.AssertDatabaseCount("monitors", 1)
 		tc.Get("/monitors").AssertSeeText("example.com")
+
+		monitor, err := tc.Store.GetMonitorByID(t.Context(), 1)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		if monitor.Url != "https://example.com" {
+			t.Fatalf("unexpected url value: %s", monitor.Url)
+		}
+
+		if monitor.HttpMethod != "GET" {
+			t.Fatalf("unexpected http method value: %s", monitor.HttpMethod)
+		}
 	})
 }
 

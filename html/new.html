@@ -20,11 +20,25 @@
         <legend class="fieldset-legend">
             Website URL
         </legend>
-        <input name="url" id="new_form--url" class="input {{ with .Form.Errors.Url }} input-error {{ end }} w-full"
-            autofocus required type="url" placeholder="https://example.com" />
-        {{ with .Form.Errors.Url }}
-        <div class="form-error">{{ . }}</div>
-        {{ end }}
+        <div class="join w-full flex">
+            <div>
+                <select class="select join-item" name="http_method">
+                    <option selected>GET</option>
+                    <option>POST</option>
+                    <option>PATCH</option>
+                    <option>PUT</option>
+                    <option>DELETE</option>
+                </select>
+            </div>
+            <div class="flex-1">
+                <input name="url" id="new_form--url"
+                    class="input join-item {{ with .Form.Errors.Url }} input-error {{ end }} w-full" autofocus required
+                    type="url" placeholder="https://example.com" />
+                {{ with .Form.Errors.Url }}
+                <div class="form-error">{{ . }}</div>
+                {{ end }}
+            </div>
+        </div>
     </fieldset>
     <div>
         <button type="submit" class="btn btn-neutral">

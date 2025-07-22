@@ -59,7 +59,8 @@ func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 		r.ParseForm()
 
 		f := form.MonitorForm{
-			Url: r.PostFormValue("url"),
+			HttpMethod: r.PostFormValue("http_method"),
+			Url:        r.PostFormValue("url"),
 		}
 
 		if !f.Validate() {
@@ -69,7 +70,8 @@ func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 		}
 
 		m, err := h.Store.CreateMonitor(r.Context(), uptimemonitor.Monitor{
-			Url: f.Url,
+			HttpMethod: f.HttpMethod,
+			Url:        f.Url,
 		})
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

@@ -22,6 +22,13 @@ CREATE TABLE monitors (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uuid TEXT NOT NULL UNIQUE,
     `url` TEXT NOT NULL,
+    http_method TEXT NOT NULL,
+    http_headers TEXT,
+    http_body TEXT,
+    webhook_url TEXT,
+    webhook_method TEXT,
+    webhook_headers TEXT,
+    webhook_body TEXT,
     created_at DATETIME NOT NULL
 );
 

@@ -2,13 +2,13 @@
 
 What's left to do:
 
+- [ ] Define method, headers and request body
+- [ ] Incident webhooks (method, headers, body)
 - [ ] Loading placeholders (skeletons)
-- [ ] Log out
 - [ ] Log in after setup automatically
 - [ ] Remove old checks
 - [ ] Graceful shutdown grace period
 - [ ] Secure cookies on prod
-- [ ] Incident webhooks (method, headers, body)
 - [ ] Remove monitor
 - [ ] Middlewares (recoverer, cache, etc.)
 - [ ] Edit monitor page
@@ -17,7 +17,6 @@ What's left to do:
 - [ ] Remove old incidents
 - [ ] Monitor status
 - [ ] Add test for redirect incidents
-- [ ] Define method, headers and request body
 - [ ] Test check timeout
 - [ ] Reset password via cli
 - [ ] Timezones
