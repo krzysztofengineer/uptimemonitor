@@ -46,7 +46,7 @@ func (s *Store) GetSessionByUuid(ctx context.Context, uuid string) (uptimemonito
 
 func (s *Store) RemoveSessionByID(ctx context.Context, id int64) error {
 	stmt := `
-		DELETE FROM sessions WHERE id = ? LIMIT 1
+		DELETE FROM sessions WHERE id = ?
 	`
 
 	_, err := s.db.ExecContext(ctx, stmt, id)

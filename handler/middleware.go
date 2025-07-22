@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"log/slog"
 	"net/http"
 	"uptimemonitor"
 )
@@ -52,8 +51,6 @@ func (m *Handler) UserFromCookie(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), sessionContextKey, session)
 		ctx = context.WithValue(ctx, userContextKey, session.User)
-
-		slog.Info("SETTING USER CONTEXT KEY")
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

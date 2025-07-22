@@ -23,6 +23,7 @@ What's left to do:
 - [ ] Timezones
 - [ ] Calculate overall uptime and response time (keep track of number of checks
       historically)
+- [ ] Session expiration
 
 Optional:
 
