@@ -37,10 +37,14 @@ func (h *Handler) CreateMonitorPage() http.HandlerFunc {
 
 	type data struct {
 		Form form.MonitorForm
+		User uptimemonitor.User
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		tmpl.Execute(w, data{Form: form.MonitorForm{}})
+		tmpl.Execute(w, data{
+			Form: form.MonitorForm{},
+			User: getUserFromRequest(r),
+		})
 	}
 }
 
@@ -82,6 +86,7 @@ func (h *Handler) ShowMonitor() http.HandlerFunc {
 	type data struct {
 		Monitor   uptimemonitor.Monitor
 		Skeletons []int
+		User      uptimemonitor.User
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -94,6 +99,7 @@ func (h *Handler) ShowMonitor() http.HandlerFunc {
 		tmpl.Execute(w, data{
 			Monitor:   m,
 			Skeletons: make([]int, 60),
+			User:      getUserFromRequest(r),
 		})
 	}
 }

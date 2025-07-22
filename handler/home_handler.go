@@ -3,11 +3,16 @@ package handler
 import (
 	"html/template"
 	"net/http"
+	"uptimemonitor"
 	"uptimemonitor/html"
 )
 
 func (h *Handler) HomePage() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "app.html", "home.html"))
+
+	type data struct {
+		User uptimemonitor.User
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		count := h.Store.CountMonitors(r.Context())
@@ -16,6 +21,8 @@ func (h *Handler) HomePage() http.HandlerFunc {
 			return
 		}
 
-		tmpl.Execute(w, nil)
+		tmpl.Execute(w, data{
+			User: getUserFromRequest(r),
+		})
 	}
 }
