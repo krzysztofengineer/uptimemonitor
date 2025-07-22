@@ -154,7 +154,7 @@ func TestMonitor_CreateMonitor(t *testing.T) {
 	})
 }
 
-func TestMonitor_ShowMonitor(t *testing.T) {
+func TestMonitor_MonitorPage(t *testing.T) {
 	t.Run("setup is required", func(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()

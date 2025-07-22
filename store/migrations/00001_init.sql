@@ -23,12 +23,12 @@ CREATE TABLE monitors (
     uuid TEXT NOT NULL UNIQUE,
     `url` TEXT NOT NULL,
     http_method TEXT NOT NULL,
-    http_headers TEXT,
-    http_body TEXT,
-    webhook_url TEXT,
-    webhook_method TEXT,
-    webhook_headers TEXT,
-    webhook_body TEXT,
+    http_headers TEXT NOT NULL,
+    http_body TEXT NOT NULL,
+    webhook_url TEXT NOT NULL,
+    webhook_method TEXT NOT NULL,
+    webhook_headers TEXT NOT NULL,
+    webhook_body TEXT NOT NULL,
     created_at DATETIME NOT NULL
 );
 

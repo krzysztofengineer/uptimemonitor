@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 	"uptimemonitor"
@@ -77,6 +78,7 @@ func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 			tmpl.ExecuteTemplate(w, "new_form", data{Form: f})
 			return
 		}
+
 		monitor := uptimemonitor.Monitor{
 			HttpMethod: f.HttpMethod,
 			Url:        f.Url,
@@ -92,6 +94,7 @@ func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 
 		m, err := h.Store.CreateMonitor(r.Context(), monitor)
 		if err != nil {
+			log.Printf("err: %v", err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -100,7 +103,7 @@ func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 	}
 }
 
-func (h *Handler) ShowMonitor() http.HandlerFunc {
+func (h *Handler) MonitorPage() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "app.html", "monitor.html"))
 
 	type data struct {
@@ -112,6 +115,7 @@ func (h *Handler) ShowMonitor() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m, err := h.Store.GetMonitorByUuid(r.Context(), r.PathValue("monitor"))
 		if err != nil || m.ID == 0 {
+			log.Printf("err: %v", err)
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			return
 		}
@@ -207,5 +211,105 @@ func (h *Handler) ListMonitorIncidents() http.HandlerFunc {
 			Monitor:   m,
 			Incidents: incidents,
 		})
+	}
+}
+
+func (h *Handler) EditMonitorPage() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "app.html", "edit.html"))
+
+	type data struct {
+		Form    form.MonitorForm
+		User    uptimemonitor.User
+		Monitor uptimemonitor.Monitor
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		m, err := h.Store.GetMonitorByUuid(r.Context(), r.PathValue("monitor"))
+		if err != nil {
+			log.Printf("err: %v", err)
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		f := form.MonitorForm{
+			Url:              m.Url,
+			HttpMethod:       m.HttpMethod,
+			HttpHeaders:      m.HttpHeaders,
+			HttpBody:         m.HttpBody,
+			HasCustomHeaders: m.HttpHeaders != "",
+			HasCustomBody:    m.HttpBody != "",
+		}
+
+		if !f.HasCustomBody {
+			f.HttpBody = "{}"
+		}
+
+		if !f.HasCustomHeaders {
+			f.HttpHeaders = "{}"
+		}
+
+		tmpl.Execute(w, data{
+			Monitor: m,
+			Form:    f,
+			User:    getUserFromRequest(r),
+		})
+	}
+}
+
+func (h *Handler) EditMonitorForm() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "edit.html"))
+
+	type data struct {
+		Form form.MonitorForm
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(r.PathValue("monitor"))
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		monitor, err := h.Store.GetMonitorByID(r.Context(), id)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		r.ParseForm()
+
+		f := form.MonitorForm{
+			HttpMethod:       r.PostFormValue("http_method"),
+			Url:              r.PostFormValue("url"),
+			HasCustomHeaders: r.PostFormValue("has_custom_headers") == "on",
+			HasCustomBody:    r.PostFormValue("has_custom_body") == "on",
+			HttpHeaders:      r.PostFormValue("http_headers"),
+			HttpBody:         r.PostFormValue("http_body"),
+		}
+
+		if !f.Validate() {
+			w.WriteHeader(http.StatusBadRequest)
+			tmpl.ExecuteTemplate(w, "edit_form", data{Form: f})
+			return
+		}
+
+		monitor.Url = f.Url
+		monitor.HttpMethod = f.HttpMethod
+
+		if f.HasCustomHeaders {
+			monitor.HttpHeaders = f.HttpHeaders
+		}
+
+		if f.HasCustomBody {
+			monitor.HttpBody = f.HttpBody
+		}
+
+		err = h.Store.UpdateMonitor(r.Context(), monitor)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("HX-Redirect", monitor.URI())
 	}
 }

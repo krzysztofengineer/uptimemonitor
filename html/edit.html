@@ -1,39 +1,33 @@
-{{ define "title" }}Create monitor{{end}}
+{{ define "title" }}Edit monitor{{end}}
 
 {{ define "content" }}
 <div class="mx-auto max-w-[1600px] w-full">
     <div class="md:flex md:items-center md:justify-center p-8 md:p-10">
-        {{template "new_form" . }}
+        {{template "edit_form" . }}
     </div>
 </div>
 {{ end }}
 
-{{ define "new_form" }}
-<form hx-post="/monitors" hx-swap="outerHTML" class="flex flex-col gap-4 w-full max-w-md">
+{{ define "edit_form" }}
+<form hx-patch="/monitors/{{ .Monitor.ID }}" hx-swap="outerHTML" class="flex flex-col gap-4 w-full max-w-md">
     <div>
-        <h1 class="font-semibold text-lg">Create monitor</h1>
-        <h5 class="text-sm">
-            The url you provide will be monitored every minute.
-        </h5>
+        <h1 class="font-semibold text-lg">Edit monitor</h1>
     </div>
     <fieldset class="fieldset">
-        <legend class="fieldset-legend">
-            Website URL
-        </legend>
         <div class="join w-full flex">
             <div>
                 <select class="select join-item" name="http_method">
-                    <option selected>GET</option>
-                    <option>POST</option>
-                    <option>PATCH</option>
-                    <option>PUT</option>
-                    <option>DELETE</option>
+                    <option {{ if eq .Form.HttpMethod "GET" }}selected{{ end }}>GET</option>
+                    <option {{ if eq .Form.HttpMethod "POST" }}selected{{ end }}>POST</option>
+                    <option {{ if eq .Form.HttpMethod "GPATCHET" }}selected{{ end }}>PATCH</option>
+                    <option {{ if eq .Form.HttpMethod "PUT" }}selected{{ end }}>PUT</option>
+                    <option {{ if eq .Form.HttpMethod "DELETE" }}selected{{ end }}>DELETE</option>
                 </select>
             </div>
-            <div class="flex-1">
-                <input name="url" id="new_form--url"
-                    class="input join-item {{ with .Form.Errors.Url }} input-error {{ end }} w-full" autofocus required
-                    type="url" placeholder="https://example.com" />
+            <div class="flex-1 ">
+                <input name="url" id="edit_form--url"
+                    class="input join-item {{ with .Form.Errors.Url }} input-error {{ end }} w-full" required type="url"
+                    placeholder="https://example.com" value="{{ .Form.Url }}" />
                 {{ with .Form.Errors.Url }}
                 <div class="form-error">{{ . }}</div>
                 {{ end }}
@@ -44,7 +38,8 @@
         <div class="card-body p-4">
             <div class="card-actions justify-start peer">
                 <label class="label">
-                    <input type="checkbox" class="toggle toggle-sm" name="has_custom_headers" />
+                    <input type="checkbox" class="toggle toggle-sm" name="has_custom_headers" {{ if
+                        .Form.HasCustomHeaders }} checked {{ end }} />
                     Custom Headers
                 </label>
             </div>
@@ -61,7 +56,8 @@
         <div class="card-body p-4">
             <div class="card-actions justify-start peer">
                 <label class="label">
-                    <input type="checkbox" class="toggle toggle-sm" name="has_custom_body" />
+                    <input type="checkbox" class="toggle toggle-sm" name="has_custom_body" {{ if .Form.HasCustomBody }}
+                        checked {{ end }} />
                     Custom Body
                 </label>
             </div>
