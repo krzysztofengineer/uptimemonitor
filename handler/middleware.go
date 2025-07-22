@@ -2,9 +2,9 @@ package handler
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"uptimemonitor"
-	"uptimemonitor/store"
 )
 
 type contextKey string
@@ -14,11 +14,7 @@ const (
 	userContextKey    contextKey = "user"
 )
 
-type Middleware struct {
-	Store *store.Store
-}
-
-func (m *Middleware) Installed(next http.Handler) http.Handler {
+func (m *Handler) Installed(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		count, err := m.Store.CountUsers(r.Context())
 		if err != nil {
@@ -40,7 +36,7 @@ func (m *Middleware) Installed(next http.Handler) http.Handler {
 	})
 }
 
-func (m *Middleware) UserFromCookie(next http.Handler) http.Handler {
+func (m *Handler) UserFromCookie(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c, err := r.Cookie("session")
 		if err != nil || c.Value == "" {
@@ -57,11 +53,13 @@ func (m *Middleware) UserFromCookie(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), sessionContextKey, session)
 		ctx = context.WithValue(ctx, userContextKey, session.User)
 
+		slog.Info("SETTING USER CONTEXT KEY")
+
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-func (m *Middleware) Authenticated(next http.Handler) http.Handler {
+func (m *Handler) Authenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		value := r.Context().Value(sessionContextKey)
 		if value == nil {
@@ -79,7 +77,7 @@ func (m *Middleware) Authenticated(next http.Handler) http.Handler {
 	})
 }
 
-func (m *Middleware) Guest(next http.Handler) http.Handler {
+func (m *Handler) Guest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		value := r.Context().Value(sessionContextKey)
 		if value != nil {

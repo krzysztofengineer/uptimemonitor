@@ -6,16 +6,11 @@ import (
 	"uptimemonitor"
 	"uptimemonitor/form"
 	"uptimemonitor/html"
-	"uptimemonitor/store"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-type SetupHandler struct {
-	Store *store.Store
-}
-
-func (h *SetupHandler) SetupPage() http.HandlerFunc {
+func (h *Handler) SetupPage() http.HandlerFunc {
 	type data struct {
 		Form form.SetupForm
 	}
@@ -40,7 +35,7 @@ func (h *SetupHandler) SetupPage() http.HandlerFunc {
 	}
 }
 
-func (h *SetupHandler) SetupForm() http.HandlerFunc {
+func (h *Handler) SetupForm() http.HandlerFunc {
 	type data struct {
 		Form form.SetupForm
 	}

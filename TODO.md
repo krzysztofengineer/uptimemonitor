@@ -2,7 +2,6 @@
 
 What's left to do:
 
-- [ ] Reset password via cli
 - [ ] Loading placeholders (skeletons)
 - [ ] Log out
 - [ ] Log in after setup automatically
@@ -20,3 +19,14 @@ What's left to do:
 - [ ] Add test for redirect incidents
 - [ ] Define method, headers and request body
 - [ ] Test check timeout
+- [ ] Reset password via cli
+- [ ] Timezones
+- [ ] Calculate overall uptime and response time (keep track of number of checks
+      historically)
+
+Optional:
+
+- [ ] Change password
+- [ ] Add users
+- [ ] Remove users
+- [ ] Change user passwords

@@ -2,22 +2,13 @@ package store
 
 import (
 	"context"
-	"database/sql"
 	"time"
 	"uptimemonitor"
 
 	"github.com/google/uuid"
 )
 
-type MonitorStore struct {
-	db *sql.DB
-}
-
-func NewMonitorStore(db *sql.DB) *MonitorStore {
-	return &MonitorStore{db: db}
-}
-
-func (s *MonitorStore) CountMonitors(ctx context.Context) int {
+func (s *Store) CountMonitors(ctx context.Context) int {
 	stmt := `SELECT COUNT(*) FROM monitors`
 
 	var count int
@@ -26,7 +17,7 @@ func (s *MonitorStore) CountMonitors(ctx context.Context) int {
 	return count
 }
 
-func (s *MonitorStore) CreateMonitor(ctx context.Context, monitor uptimemonitor.Monitor) (uptimemonitor.Monitor, error) {
+func (s *Store) CreateMonitor(ctx context.Context, monitor uptimemonitor.Monitor) (uptimemonitor.Monitor, error) {
 	stmt := `INSERT INTO monitors(url, uuid, created_at) VALUES(?,?,?)`
 	monitor.CreatedAt = time.Now()
 
@@ -43,7 +34,7 @@ func (s *MonitorStore) CreateMonitor(ctx context.Context, monitor uptimemonitor.
 	return monitor, nil
 }
 
-func (s *MonitorStore) ListMonitors(ctx context.Context) ([]uptimemonitor.Monitor, error) {
+func (s *Store) ListMonitors(ctx context.Context) ([]uptimemonitor.Monitor, error) {
 	stmt := "SELECT id, url, uuid, created_at FROM monitors ORDER BY created_at DESC"
 
 	rows, err := s.db.QueryContext(ctx, stmt)
@@ -70,14 +61,14 @@ func (s *MonitorStore) ListMonitors(ctx context.Context) ([]uptimemonitor.Monito
 	return monitors, nil
 }
 
-func (s *MonitorStore) GetMonitorByID(ctx context.Context, id int) (uptimemonitor.Monitor, error) {
+func (s *Store) GetMonitorByID(ctx context.Context, id int) (uptimemonitor.Monitor, error) {
 	stmt := `SELECT id, url, uuid, created_at FROM monitors WHERE id = ? LIMIT 1`
 	var m uptimemonitor.Monitor
 	err := s.db.QueryRowContext(ctx, stmt, id).Scan(&m.ID, &m.Url, &m.Uuid, &m.CreatedAt)
 	return m, err
 }
 
-func (s *MonitorStore) GetMonitorByUuid(ctx context.Context, uuid string) (uptimemonitor.Monitor, error) {
+func (s *Store) GetMonitorByUuid(ctx context.Context, uuid string) (uptimemonitor.Monitor, error) {
 	stmt := `SELECT id, url, uuid, created_at FROM monitors WHERE uuid = ? LIMIT 1`
 	var m uptimemonitor.Monitor
 	err := s.db.QueryRowContext(ctx, stmt, uuid).Scan(&m.ID, &m.Url, &m.Uuid, &m.CreatedAt)

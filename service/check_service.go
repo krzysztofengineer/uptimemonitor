@@ -109,6 +109,7 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		resBody, _ := io.ReadAll(res.Request.Response.Body)
 		defer res.Request.Response.Body.Close()
 		body = string(resBody)
+		headers = resHeaders
 	} else {
 		var resHeaders string
 		for k, v := range res.Header {
@@ -118,14 +119,15 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		resBody, _ := io.ReadAll(res.Body)
 		defer res.Body.Close()
 		body = string(resBody)
+		headers = resHeaders
 	}
 
 	s.createIncident(m, check, elapsed.Milliseconds(), statusCode, string(body), headers)
 }
 
 func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonitor.Check, responseTimeMs int64, statusCode int, body string, headers string) error {
-	if s.incidentAlreadyExists(context.Background(), m, statusCode) {
-		return nil
+	if exists, latest := s.incidentAlreadyExists(context.Background(), m, statusCode); exists {
+		return s.Store.UpdateIncidentBodyAndHeaders(context.Background(), latest, body, headers)
 	}
 
 	incident := uptimemonitor.Incident{
@@ -143,11 +145,11 @@ func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonit
 	return nil
 }
 
-func (s *CheckService) incidentAlreadyExists(ctx context.Context, m uptimemonitor.Monitor, statusCode int) bool {
+func (s *CheckService) incidentAlreadyExists(ctx context.Context, m uptimemonitor.Monitor, statusCode int) (bool, uptimemonitor.Incident) {
 	latest, err := s.Store.LastIncidentByStatusCode(ctx, m.ID, uptimemonitor.IncidentStatusOpen, statusCode)
 	if err != nil {
-		return false
+		return false, uptimemonitor.Incident{}
 	}
 
-	return latest.StatusCode == statusCode
+	return latest.StatusCode == statusCode, latest
 }

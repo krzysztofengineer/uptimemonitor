@@ -10,12 +10,6 @@ import (
 
 type Store struct {
 	db *sql.DB
-
-	*UserStore
-	*SessionStore
-	*MonitorStore
-	*CheckStore
-	*IncidentStore
 }
 
 func New(dsn string) *Store {
@@ -46,12 +40,7 @@ func New(dsn string) *Store {
 	}
 
 	return &Store{
-		db:            db,
-		UserStore:     NewUserStore(db),
-		SessionStore:  NewSessionStore(db),
-		MonitorStore:  NewMonitorStore(db),
-		CheckStore:    NewCheckStore(db),
-		IncidentStore: NewIncidentStore(db),
+		db: db,
 	}
 }
 

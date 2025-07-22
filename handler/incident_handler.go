@@ -5,14 +5,9 @@ import (
 	"net/http"
 	"uptimemonitor"
 	"uptimemonitor/html"
-	"uptimemonitor/store"
 )
 
-type IncidentHandler struct {
-	Store *store.Store
-}
-
-func (h *IncidentHandler) ListIncidents() http.HandlerFunc {
+func (h *Handler) ListIncidents() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "incident.html"))
 
 	type data struct {

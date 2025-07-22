@@ -8,14 +8,9 @@ import (
 	"uptimemonitor"
 	"uptimemonitor/form"
 	"uptimemonitor/html"
-	"uptimemonitor/store"
 )
 
-type MonitorHandler struct {
-	Store *store.Store
-}
-
-func (h *MonitorHandler) ListMonitors() http.HandlerFunc {
+func (h *Handler) ListMonitors() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "monitor.html"))
 
 	type data struct {
@@ -37,7 +32,7 @@ func (h *MonitorHandler) ListMonitors() http.HandlerFunc {
 	}
 }
 
-func (h *MonitorHandler) CreateMonitorPage() http.HandlerFunc {
+func (h *Handler) CreateMonitorPage() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "app.html", "new.html"))
 
 	type data struct {
@@ -49,7 +44,7 @@ func (h *MonitorHandler) CreateMonitorPage() http.HandlerFunc {
 	}
 }
 
-func (h *MonitorHandler) CreateMonitorForm() http.HandlerFunc {
+func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "new.html"))
 
 	type data struct {
@@ -81,7 +76,7 @@ func (h *MonitorHandler) CreateMonitorForm() http.HandlerFunc {
 	}
 }
 
-func (h *MonitorHandler) ShowMonitor() http.HandlerFunc {
+func (h *Handler) ShowMonitor() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "app.html", "monitor.html"))
 
 	type data struct {
@@ -103,7 +98,7 @@ func (h *MonitorHandler) ShowMonitor() http.HandlerFunc {
 	}
 }
 
-func (h *MonitorHandler) MonitorStats() http.HandlerFunc {
+func (h *Handler) MonitorStats() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "monitor.html"))
 
 	type data struct {
@@ -153,7 +148,7 @@ func (h *MonitorHandler) MonitorStats() http.HandlerFunc {
 	}
 }
 
-func (h *MonitorHandler) ListMonitorIncidents() http.HandlerFunc {
+func (h *Handler) ListMonitorIncidents() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "monitor.html"))
 
 	type data struct {

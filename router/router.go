@@ -1,9 +1,7 @@
 package router
 
 import (
-	"math/rand"
 	"net/http"
-	"time"
 	"uptimemonitor/handler"
 	"uptimemonitor/static"
 )
@@ -38,6 +36,7 @@ func New(handler *handler.Handler) *http.ServeMux {
 			authenticatedMux.HandleFunc("GET /monitors/{monitor}/stats", handler.MonitorStats())
 			authenticatedMux.HandleFunc("GET /monitors/{monitor}/incidents", handler.ListMonitorIncidents())
 			authenticatedMux.HandleFunc("GET /incidents", handler.ListIncidents())
+			authenticatedMux.HandleFunc("GET /logout", handler.Logout())
 
 			mux.Handle("/", handler.Authenticated(authenticatedMux))
 		}
@@ -48,23 +47,6 @@ func New(handler *handler.Handler) *http.ServeMux {
 	}
 
 	r.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
-
-	r.Handle("/random", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		randInt := rand.Intn(100)
-
-		time.Sleep(time.Duration(randInt) * time.Millisecond)
-
-		if randInt < 5 {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-	}))
-
-	r.Handle("GET /redirect", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "https://google.com", http.StatusSeeOther)
-	}))
 
 	return r
 }

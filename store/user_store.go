@@ -2,20 +2,11 @@ package store
 
 import (
 	"context"
-	"database/sql"
 	"time"
 	"uptimemonitor"
 )
 
-type UserStore struct {
-	db *sql.DB
-}
-
-func NewUserStore(db *sql.DB) *UserStore {
-	return &UserStore{db: db}
-}
-
-func (s *UserStore) CountUsers(ctx context.Context) (int, error) {
+func (s *Store) CountUsers(ctx context.Context) (int, error) {
 	stmt := `SELECT COUNT(*) FROM users`
 
 	var count int
@@ -25,7 +16,7 @@ func (s *UserStore) CountUsers(ctx context.Context) (int, error) {
 	return count, nil
 }
 
-func (s *UserStore) CreateUser(ctx context.Context, user uptimemonitor.User) (uptimemonitor.User, error) {
+func (s *Store) CreateUser(ctx context.Context, user uptimemonitor.User) (uptimemonitor.User, error) {
 	stmt := `INSERT INTO users (name, email, password_hash, created_at) VALUES (?, ?, ?, ?) RETURNING id`
 	user.CreatedAt = time.Now()
 
@@ -41,7 +32,7 @@ func (s *UserStore) CreateUser(ctx context.Context, user uptimemonitor.User) (up
 	return user, nil
 }
 
-func (s *UserStore) GetUserByEmail(ctx context.Context, email string) (uptimemonitor.User, error) {
+func (s *Store) GetUserByEmail(ctx context.Context, email string) (uptimemonitor.User, error) {
 	stmt := `SELECT id, name, email, password_hash, created_at FROM users WHERE email = ? LIMIT 1`
 
 	row := s.db.QueryRowContext(ctx, stmt, email)

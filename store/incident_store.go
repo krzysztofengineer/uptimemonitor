@@ -2,22 +2,13 @@ package store
 
 import (
 	"context"
-	"database/sql"
 	"time"
 	"uptimemonitor"
 
 	"github.com/google/uuid"
 )
 
-type IncidentStore struct {
-	db *sql.DB
-}
-
-func NewIncidentStore(db *sql.DB) *IncidentStore {
-	return &IncidentStore{db: db}
-}
-
-func (s *IncidentStore) CreateIncident(ctx context.Context, incident uptimemonitor.Incident) (uptimemonitor.Incident, error) {
+func (s *Store) CreateIncident(ctx context.Context, incident uptimemonitor.Incident) (uptimemonitor.Incident, error) {
 	stmt := `INSERT INTO incidents (uuid, monitor_id, status_text, status_code, response_time_ms, body, headers, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`
 
 	incident.CreatedAt = time.Now()
@@ -35,7 +26,19 @@ func (s *IncidentStore) CreateIncident(ctx context.Context, incident uptimemonit
 	return incident, err
 }
 
-func (s *IncidentStore) LastIncidentByStatusCode(ctx context.Context, monitorID int64, status string, statusCode int) (uptimemonitor.Incident, error) {
+func (s *Store) UpdateIncidentBodyAndHeaders(ctx context.Context, incident uptimemonitor.Incident, body, headers string) error {
+	stmt := `
+		UPDATE incidents
+		SET body = ?, headers = ?
+		WHERE id = ?
+	`
+
+	_, err := s.db.ExecContext(ctx, stmt, body, headers, incident.ID)
+
+	return err
+}
+
+func (s *Store) LastIncidentByStatusCode(ctx context.Context, monitorID int64, status string, statusCode int) (uptimemonitor.Incident, error) {
 	stmt := `
 		SELECT id, uuid, monitor_id, status_text, status_code, response_time_ms, body, headers, created_at
 		FROM incidents 
@@ -58,7 +61,7 @@ func (s *IncidentStore) LastIncidentByStatusCode(ctx context.Context, monitorID 
 	return incident, nil
 }
 
-func (s *IncidentStore) LastOpenIncident(ctx context.Context, monitorID int64) (uptimemonitor.Incident, error) {
+func (s *Store) LastOpenIncident(ctx context.Context, monitorID int64) (uptimemonitor.Incident, error) {
 	stmt := `
 		SELECT id, uuid, monitor_id, status_text, status_code, response_time_ms, body, headers, created_at
 		FROM incidents 
@@ -81,7 +84,7 @@ func (s *IncidentStore) LastOpenIncident(ctx context.Context, monitorID int64) (
 	return incident, nil
 }
 
-func (s *IncidentStore) ListOpenIncidents(ctx context.Context) ([]uptimemonitor.Incident, error) {
+func (s *Store) ListOpenIncidents(ctx context.Context) ([]uptimemonitor.Incident, error) {
 	stmt := `
 		SELECT incidents.id, incidents.uuid, incidents.monitor_id,
 			incidents.status_text, incidents.status_code, incidents.response_time_ms,
@@ -116,7 +119,7 @@ func (s *IncidentStore) ListOpenIncidents(ctx context.Context) ([]uptimemonitor.
 	return incidents, nil
 }
 
-func (s *IncidentStore) ListMonitorIncidents(ctx context.Context, id int64) ([]uptimemonitor.Incident, error) {
+func (s *Store) ListMonitorIncidents(ctx context.Context, id int64) ([]uptimemonitor.Incident, error) {
 	stmt := `
 		SELECT incidents.id, incidents.uuid, incidents.monitor_id,
 			incidents.status_text, incidents.status_code, incidents.response_time_ms,
@@ -151,7 +154,7 @@ func (s *IncidentStore) ListMonitorIncidents(ctx context.Context, id int64) ([]u
 
 	return incidents, nil
 }
-func (s *IncidentStore) CountMonitorIncidents(ctx context.Context, id int64) int64 {
+func (s *Store) CountMonitorIncidents(ctx context.Context, id int64) int64 {
 	stmt := `
 		SELECT COUNT(*)
 		FROM incidents
@@ -164,7 +167,7 @@ func (s *IncidentStore) CountMonitorIncidents(ctx context.Context, id int64) int
 	return count
 }
 
-func (s *IncidentStore) ListMonitorOpenIncidents(ctx context.Context, id int64) ([]uptimemonitor.Incident, error) {
+func (s *Store) ListMonitorOpenIncidents(ctx context.Context, id int64) ([]uptimemonitor.Incident, error) {
 	stmt := `
 		SELECT incidents.id, incidents.uuid, incidents.monitor_id,
 			incidents.status_text, incidents.status_code, incidents.response_time_ms,
@@ -199,7 +202,7 @@ func (s *IncidentStore) ListMonitorOpenIncidents(ctx context.Context, id int64) 
 	return incidents, nil
 }
 
-func (s *IncidentStore) ResolveIncident(ctx context.Context, incident uptimemonitor.Incident) error {
+func (s *Store) ResolveIncident(ctx context.Context, incident uptimemonitor.Incident) error {
 	stmt := `
 		UPDATE incidents SET status_text = ?, resolved_at = ? WHERE id = ?
 	`

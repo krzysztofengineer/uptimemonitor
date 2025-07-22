@@ -2,22 +2,13 @@ package store
 
 import (
 	"context"
-	"database/sql"
 	"time"
 	"uptimemonitor"
 
 	"github.com/google/uuid"
 )
 
-type SessionStore struct {
-	db *sql.DB
-}
-
-func NewSessionStore(db *sql.DB) *SessionStore {
-	return &SessionStore{db: db}
-}
-
-func (s *SessionStore) CreateSession(ctx context.Context, session uptimemonitor.Session) (uptimemonitor.Session, error) {
+func (s *Store) CreateSession(ctx context.Context, session uptimemonitor.Session) (uptimemonitor.Session, error) {
 	stmt := `INSERT INTO sessions (uuid, user_id, created_at, expires_at) VALUES(?, ?, ?, ?)`
 	uuid := uuid.NewString()
 	session.CreatedAt = time.Now()
@@ -34,7 +25,7 @@ func (s *SessionStore) CreateSession(ctx context.Context, session uptimemonitor.
 	return session, nil
 }
 
-func (s *SessionStore) GetSessionByUuid(ctx context.Context, uuid string) (uptimemonitor.Session, error) {
+func (s *Store) GetSessionByUuid(ctx context.Context, uuid string) (uptimemonitor.Session, error) {
 	stmt := `
 		SELECT sessions.id, sessions.user_id, sessions.created_at, sessions.expires_at,
 				users.id, users.name, users.email, users.created_at
@@ -51,4 +42,13 @@ func (s *SessionStore) GetSessionByUuid(ctx context.Context, uuid string) (uptim
 	)
 
 	return session, err
+}
+
+func (s *Store) RemoveSessionByID(ctx context.Context, id int64) error {
+	stmt := `
+		DELETE FROM sessions WHERE id = ? LIMIT 1
+	`
+
+	_, err := s.db.ExecContext(ctx, stmt, id)
+	return err
 }

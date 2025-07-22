@@ -127,3 +127,25 @@ func (ar *AssertableResponse) AssertCookieSet(name string) *AssertableResponse {
 
 	return ar
 }
+
+func (ar *AssertableResponse) AssertCookieMissing(name string) *AssertableResponse {
+	ar.T.Helper()
+
+	for _, c := range ar.Response.Cookies() {
+		if c.Name == name {
+			ar.T.Fatalf("expected not to find cookie with a name '%s'", name)
+			return ar
+		}
+	}
+
+	if ar.Response.Request != nil && ar.Response.Request.Response != nil {
+		for _, c := range ar.Response.Request.Response.Cookies() {
+			if c.Name == name {
+				ar.T.Fatalf("expected not to find cookie with a name '%s'", name)
+				return ar
+			}
+		}
+	}
+
+	return ar
+}

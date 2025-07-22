@@ -7,14 +7,9 @@ import (
 	"strconv"
 	"uptimemonitor"
 	"uptimemonitor/html"
-	"uptimemonitor/store"
 )
 
-type CheckHandler struct {
-	Store *store.Store
-}
-
-func (h *CheckHandler) ListChecks() http.HandlerFunc {
+func (h *Handler) ListChecks() http.HandlerFunc {
 	tmpl := template.Must(template.New("check.html").Funcs(template.FuncMap{
 		"sub": func(a, b int) int {
 			return a - b

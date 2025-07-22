@@ -2,22 +2,13 @@ package store
 
 import (
 	"context"
-	"database/sql"
 	"time"
 	"uptimemonitor"
 
 	"github.com/google/uuid"
 )
 
-type CheckStore struct {
-	db *sql.DB
-}
-
-func NewCheckStore(db *sql.DB) *CheckStore {
-	return &CheckStore{db: db}
-}
-
-func (s *CheckStore) CreateCheck(ctx context.Context, check uptimemonitor.Check) (uptimemonitor.Check, error) {
+func (s *Store) CreateCheck(ctx context.Context, check uptimemonitor.Check) (uptimemonitor.Check, error) {
 	stmt := `INSERT INTO checks(uuid, monitor_id, status_code, response_time_ms, created_at) VALUES(?, ?, ?, ?, ?)`
 	uuid := uuid.NewString()
 	check.CreatedAt = time.Now()
@@ -34,7 +25,7 @@ func (s *CheckStore) CreateCheck(ctx context.Context, check uptimemonitor.Check)
 	return check, nil
 }
 
-func (s *CheckStore) ListChecks(ctx context.Context, monitorID int64, limit int) ([]uptimemonitor.Check, error) {
+func (s *Store) ListChecks(ctx context.Context, monitorID int64, limit int) ([]uptimemonitor.Check, error) {
 	stmt := `
 		SELECT checks.id, checks.uuid, checks.monitor_id, checks.created_at,
 		checks.status_code, checks.response_time_ms,
