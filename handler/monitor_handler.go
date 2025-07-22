@@ -42,7 +42,12 @@ func (h *Handler) CreateMonitorPage() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		tmpl.Execute(w, data{
-			Form: form.MonitorForm{},
+			Form: form.MonitorForm{
+				HttpHeaders: `{
+	"Content-Type": "application/json"
+}`,
+				HttpBody: `{}`,
+			},
 			User: getUserFromRequest(r),
 		})
 	}
@@ -59,8 +64,12 @@ func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 		r.ParseForm()
 
 		f := form.MonitorForm{
-			HttpMethod: r.PostFormValue("http_method"),
-			Url:        r.PostFormValue("url"),
+			HttpMethod:       r.PostFormValue("http_method"),
+			Url:              r.PostFormValue("url"),
+			HasCustomHeaders: r.PostFormValue("has_custom_headers") == "on",
+			HasCustomBody:    r.PostFormValue("has_custom_body") == "on",
+			HttpHeaders:      r.PostFormValue("http_headers"),
+			HttpBody:         r.PostFormValue("http_body"),
 		}
 
 		if !f.Validate() {
@@ -68,11 +77,20 @@ func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 			tmpl.ExecuteTemplate(w, "new_form", data{Form: f})
 			return
 		}
-
-		m, err := h.Store.CreateMonitor(r.Context(), uptimemonitor.Monitor{
+		monitor := uptimemonitor.Monitor{
 			HttpMethod: f.HttpMethod,
 			Url:        f.Url,
-		})
+		}
+
+		if f.HasCustomHeaders {
+			monitor.HttpHeaders = f.HttpHeaders
+		}
+
+		if f.HasCustomBody {
+			monitor.HttpBody = f.HttpBody
+		}
+
+		m, err := h.Store.CreateMonitor(r.Context(), monitor)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return

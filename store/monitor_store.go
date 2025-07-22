@@ -18,11 +18,11 @@ func (s *Store) CountMonitors(ctx context.Context) int {
 }
 
 func (s *Store) CreateMonitor(ctx context.Context, monitor uptimemonitor.Monitor) (uptimemonitor.Monitor, error) {
-	stmt := `INSERT INTO monitors(url, uuid, http_method, created_at) VALUES(?,?,?,?)`
+	stmt := `INSERT INTO monitors(url, uuid, http_method, http_headers, http_body, created_at) VALUES(?,?,?,?,?,?)`
 	monitor.CreatedAt = time.Now()
 
 	uuid := uuid.NewString()
-	res, err := s.db.ExecContext(ctx, stmt, monitor.Url, uuid, monitor.HttpMethod, monitor.CreatedAt)
+	res, err := s.db.ExecContext(ctx, stmt, monitor.Url, uuid, monitor.HttpMethod, monitor.HttpHeaders, monitor.HttpBody, monitor.CreatedAt)
 	if err != nil {
 		return monitor, err
 	}

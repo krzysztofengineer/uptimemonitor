@@ -40,6 +40,40 @@
             </div>
         </div>
     </fieldset>
+    <div class="card border border-base-200">
+        <div class="card-body p-4">
+            <div class="card-actions justify-start peer">
+                <label class="label">
+                    <input type="checkbox" class="toggle toggle-sm" name="has_custom_headers" />
+                    Custom Headers
+                </label>
+            </div>
+            <div class="hidden peer-has-checked:block">
+                <textarea class="textarea w-full textarea" placeholder="{}"
+                    name="http_headers">{{ .Form.HttpHeaders }}</textarea>
+                {{ with .Form.Errors.HttpHeaders }}
+                <div class="form-error">{{ . }}</div>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+    <div class="card border border-base-200">
+        <div class="card-body p-4">
+            <div class="card-actions justify-start peer">
+                <label class="label">
+                    <input type="checkbox" class="toggle toggle-sm" name="has_custom_body" />
+                    Custom Body
+                </label>
+            </div>
+            <div class="hidden peer-has-checked:block">
+                <textarea class="textarea w-full textarea" placeholder="{}"
+                    name="http_body">{{ .Form.HttpBody }}</textarea>
+                {{ with .Form.Errors.HttpBody }}
+                <div class="form-error">{{ . }}</div>
+                {{ end }}
+            </div>
+        </div>
+    </div>
     <div>
         <button type="submit" class="btn btn-neutral">
             Submit

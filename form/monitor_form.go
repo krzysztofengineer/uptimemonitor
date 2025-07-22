@@ -7,8 +7,12 @@ import (
 )
 
 type MonitorForm struct {
-	Url        string
-	HttpMethod string
+	Url              string
+	HttpMethod       string
+	HasCustomHeaders bool
+	HttpHeaders      string
+	HasCustomBody    bool
+	HttpBody         string
 
 	Errors map[string]string
 }
