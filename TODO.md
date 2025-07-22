@@ -2,7 +2,9 @@
 
 What's left to do:
 
-- [ ] Define method, headers and request body
+- [x] Define method, headers and request body
+- [ ] test saving custom headers and body
+- [ ] check service should use custom method, headers and body
 - [ ] Incident webhooks (method, headers, body)
 - [ ] Loading placeholders (skeletons)
 - [ ] Log in after setup automatically
