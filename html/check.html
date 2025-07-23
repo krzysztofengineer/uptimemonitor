@@ -9,7 +9,7 @@
         {{ $check = index $.Checks $currentIndex }}
         {{ end }}
         <div
-            class="flex-1 tooltip inline-flex justify-center items-center {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:block{{ else }} hidden lg:block{{ end }} {{ if and (not $check) (eq $i 59) }} animate-ping {{ end }} ">
+            class="flex-1 tooltip justify-center items-center {{ if gt $i 30 }} {{ else if gt $i 25 }} hidden md:inline-flex  {{ else }} hidden lg:inline-flex  {{ end }} ">
             <div class="tooltip-content tooltip-bottom flex flex-col gap-1 bg-light">
                 {{ if $check }}
                 <div class="stats shadow bg-white">
@@ -49,7 +49,7 @@
         {{ end }}
     </div>
 
-    <div class="w-full flex justify-between text-xs opacity-60">
+    <div class="w-full  justify-between text-xs opacity-60 hidden lg:flex">
         <div>{{ .StartTime }}</div>
         <div>{{ .EndTime }}</div>
     </div>
