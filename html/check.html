@@ -31,11 +31,16 @@
             <div class="relative h-[64px] w-[6px] rounded-full bg-neutral-100 overflow-hidden"
                 id="{{ if $check }}monitors-{{ $check.MonitorID }}-checks-{{ $check.ID }}{{ else }}placeholder-{{ $i }}{{ end }}">
                 <div id="{{ if $check }}monitors-{{ $check.MonitorID }}-index-{{ $currentIndex }}{{ end }}"
-                    class="absolute w-full bottom-0 rounded-lg transition-all duration-300 ease-in-out {{ if $check }} {{ $check.HeightClass $.MaxTime }} {{ $check.ColorClass }} {{ else }}bg-neutral-200 {{ end }} {{ if and ($check) (eq $i 59) }} animate-pulse {{ end }}">
+                    class="absolute w-full bottom-0 rounded-lg transition-all duration-300 ease-in-out {{ if $check }} {{ $check.HeightClass $.MaxTime }} {{ $check.ColorClass }} {{ else }}bg-neutral-200 {{ end }} ">
                 </div>
             </div>
         </div>
         {{ end }}
+        <div class="relative h-[64px] w-[6px] overflow-x-hidden rounded-full bg-neutral-100 ">
+            <div
+                class="absolute w-[6px] bottom-0 rounded-lg transition-all duration-300 ease-in-out bg-neutral-200 h-full animate-pulse">
+            </div>
+        </div>
 
         {{ if eq (len $.Checks ) 0}}
         <div class="absolute inset-0 flex items-center justify-center z-[999999] opacity-80 text-xs animate-pulse">
