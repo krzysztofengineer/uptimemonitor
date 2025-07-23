@@ -66,3 +66,22 @@ func (s *Store) ListChecks(ctx context.Context, monitorID int64, limit int) ([]u
 
 	return checks, nil
 }
+
+func (s *Store) GetCheckByID(ctx context.Context, id int64) (uptimemonitor.Check, error) {
+	stmt := `
+		SELECT 
+		checks.id, checks.uuid, checks.monitor_id, checks.status_code, checks.response_time_ms, checks.created_at,
+		monitors.id, monitors.url, monitors.uuid, monitors.http_method, monitors.http_headers, monitors.http_body, monitors.created_at
+		FROM checks
+		LEFT JOIN monitors ON monitors.id = checks.monitor_id
+		WHERE checks.id = ?
+	`
+
+	var ch uptimemonitor.Check
+	err := s.db.QueryRowContext(ctx, stmt, id).Scan(
+		&ch.ID, &ch.Uuid, &ch.MonitorID, &ch.StatusCode, &ch.ResponseTimeMs, &ch.CreatedAt,
+		&ch.Monitor.ID, &ch.Monitor.Url, &ch.Monitor.Uuid, &ch.Monitor.HttpMethod, &ch.Monitor.HttpHeaders, &ch.Monitor.HttpBody, &ch.Monitor.CreatedAt,
+	)
+
+	return ch, err
+}

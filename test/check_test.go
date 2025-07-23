@@ -90,4 +90,41 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 		time.Sleep(1 * time.Second)
 		tc.AssertDatabaseCount("checks", 2)
 	})
+
+	t.Run("checks can use different http methods", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: tc.Server.URL + "/test/post", HttpMethod: http.MethodPost})
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: tc.Server.URL + "/test/patch", HttpMethod: http.MethodPatch})
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: tc.Server.URL + "/test/put", HttpMethod: http.MethodPut})
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: tc.Server.URL + "/test/delete", HttpMethod: http.MethodDelete})
+
+		service := service.CheckService{
+			Store: tc.Store,
+		}
+		ch := service.StartCheck()
+		service.RunCheck(t.Context(), ch)
+		time.Sleep(1 * time.Second)
+
+		tc.AssertDatabaseCount("checks", 4)
+		tc.AssertDatabaseCount("incidents", 0)
+
+		first, err := tc.Store.GetCheckByID(t.Context(), 1)
+		tc.AssertNoError(err)
+
+		second, err := tc.Store.GetCheckByID(t.Context(), 2)
+		tc.AssertNoError(err)
+
+		third, err := tc.Store.GetCheckByID(t.Context(), 3)
+		tc.AssertNoError(err)
+
+		fifth, err := tc.Store.GetCheckByID(t.Context(), 4)
+		tc.AssertNoError(err)
+
+		tc.AssertEqual(http.StatusOK, first.StatusCode)
+		tc.AssertEqual(http.StatusOK, second.StatusCode)
+		tc.AssertEqual(http.StatusOK, third.StatusCode)
+		tc.AssertEqual(http.StatusOK, fifth.StatusCode)
+	})
 }

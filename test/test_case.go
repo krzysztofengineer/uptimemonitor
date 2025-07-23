@@ -55,12 +55,27 @@ func NewTestCase(t *testing.T) *TestCase {
 
 	i := 0
 	router.HandleFunc("GET /test/even", func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			i++
+		}()
+
 		if i%2 == 0 {
 			w.WriteHeader(http.StatusInternalServerError)
-			i++
 			return
 		}
-		i++
+		w.WriteHeader(http.StatusOK)
+	})
+
+	router.HandleFunc("POST /test/post", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	router.HandleFunc("PATCH /test/patch", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	router.HandleFunc("PUT /test/put", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	router.HandleFunc("DELETE /test/delete", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
@@ -194,8 +209,20 @@ func (tc *TestCase) LogIn() *TestCase {
 }
 
 func (tc *TestCase) AssertEqual(a, b any) *TestCase {
+	tc.T.Helper()
+
 	if !reflect.DeepEqual(a, b) {
 		tc.T.Fatalf(`expected "%v" to be equal to "%v"`, a, b)
 	}
+	return tc
+}
+
+func (tc *TestCase) AssertNoError(err error) *TestCase {
+	tc.T.Helper()
+
+	if err != nil {
+		tc.T.Fatalf("unexpected error: %v", err)
+	}
+
 	return tc
 }

@@ -45,8 +45,18 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 
 	start := time.Now()
 
+	req, err := http.NewRequest(
+		m.HttpMethod,
+		m.Url,
+		nil,
+	)
+
+	if err != nil {
+		return
+	}
+
 	// todo: add timeout
-	res, err := http.Get(m.Url)
+	res, err := http.DefaultClient.Do(req)
 	elapsed := time.Since(start)
 
 	if err != nil {
