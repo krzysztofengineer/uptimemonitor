@@ -23,6 +23,10 @@ What's left to do:
 - [ ] Calculate overall uptime and response time (keep track of number of checks
       historically)
 - [ ] Session expiration
+- [ ] Save check response
+- [ ] Add check response modal (div#modals + append when clicked + destroy when
+      clicked)
+- [ ] Save incident request and add a way to preview it
 
 Optional:
 
