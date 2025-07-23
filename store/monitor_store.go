@@ -47,7 +47,7 @@ func (s *Store) ListMonitors(ctx context.Context) ([]uptimemonitor.Monitor, erro
 	stmt := `
 		SELECT 
 		id, url, uuid, created_at,
-		http_method
+		http_method, http_body, http_headers
 	 	FROM monitors 
 		ORDER BY created_at DESC
 	 `
@@ -62,7 +62,7 @@ func (s *Store) ListMonitors(ctx context.Context) ([]uptimemonitor.Monitor, erro
 
 	for rows.Next() {
 		var m uptimemonitor.Monitor
-		if err := rows.Scan(&m.ID, &m.Url, &m.Uuid, &m.CreatedAt, &m.HttpMethod); err != nil {
+		if err := rows.Scan(&m.ID, &m.Url, &m.Uuid, &m.CreatedAt, &m.HttpMethod, &m.HttpBody, &m.HttpHeaders); err != nil {
 			return monitors, err
 		}
 

@@ -2,6 +2,8 @@ package test
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -76,6 +78,23 @@ func NewTestCase(t *testing.T) *TestCase {
 		w.WriteHeader(http.StatusOK)
 	})
 	router.HandleFunc("DELETE /test/delete", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	router.HandleFunc("POST /test/body", func(w http.ResponseWriter, r *http.Request) {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+		defer r.Body.Close()
+
+		log.Printf("CUYSTOM BODY: %v", body)
+		if string(body) != `{"test":123}` {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
 		w.WriteHeader(http.StatusOK)
 	})
 

@@ -100,9 +100,7 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: tc.Server.URL + "/test/put", HttpMethod: http.MethodPut})
 		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: tc.Server.URL + "/test/delete", HttpMethod: http.MethodDelete})
 
-		service := service.CheckService{
-			Store: tc.Store,
-		}
+		service := service.CheckService{Store: tc.Store}
 		ch := service.StartCheck()
 		service.RunCheck(t.Context(), ch)
 		time.Sleep(1 * time.Second)
@@ -126,5 +124,20 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 		tc.AssertEqual(http.StatusOK, second.StatusCode)
 		tc.AssertEqual(http.StatusOK, third.StatusCode)
 		tc.AssertEqual(http.StatusOK, fifth.StatusCode)
+	})
+
+	t.Run("checks can send custom body", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: tc.Server.URL + "/test/body", HttpMethod: http.MethodPost, HttpBody: `{"test":123}`})
+
+		service := service.CheckService{Store: tc.Store}
+		ch := service.StartCheck()
+		service.RunCheck(t.Context(), ch)
+		time.Sleep(1 * time.Second)
+
+		check, _ := tc.Store.GetCheckByID(t.Context(), 1)
+		tc.AssertEqual(http.StatusOK, check.StatusCode)
 	})
 }

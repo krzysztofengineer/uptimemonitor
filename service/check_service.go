@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 	"uptimemonitor"
 	"uptimemonitor/store"
@@ -44,11 +45,16 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 	defer cancel()
 
 	start := time.Now()
+	var customBody io.Reader
+
+	if m.HttpBody != "" {
+		customBody = strings.NewReader(m.HttpBody)
+	}
 
 	req, err := http.NewRequest(
 		m.HttpMethod,
 		m.Url,
-		nil,
+		customBody,
 	)
 
 	if err != nil {
