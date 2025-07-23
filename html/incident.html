@@ -13,7 +13,10 @@
                 <div class="flex gap-2 justify-between items-center">
                     <div aria-label="error" class="status status-error animate-ping"></div>
                     <div class="text-xs font-semibold truncate flex-1">
-                        {{ .Monitor.Domain }}
+                        <div class="flex items-base gap-1 w-full">
+                            <span class="flex-none"> {{ .Monitor.Domain }}</span>
+                            <span class="flex-grow leader-dots hidden lg:block"></span>
+                        </div>
                     </div>
 
                 </div>
@@ -21,7 +24,7 @@
                     <div class="max-w-full overflow-hidden text-xs opacity-80 text-right">
                         {{ .CreatedAt.Format "2006-01-02 15:04" }}
                     </div>
-                    <div class="text-xs ">
+                    <div class="text-xs">
                         <div class="badge badge-soft truncate max-w-full inline-block text-xs py-1 {{ .BadgeClass }}">
                             {{ .StatusCode }}
                         </div>
