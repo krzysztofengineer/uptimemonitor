@@ -31,10 +31,14 @@
     </svg>
 
     <span class="hidden md:inline-block">
-        UPTIMEMONITOR <span class="text-neutral-400 text-xs font-normal">v.0.0.1-alpha</span>
+        UPTIMEMONITOR {{ template "version" . }}
     </span>
     <span class="md:hidden">
-        UM <span class="text-neutral-400 text-xs font-normal">v.0.0.1a</span>
+        UM {{ template "version" . }}
     </span>
 </a>
+{{ end }}
+
+{{ define "version" }}
+<span class="text-neutral-400 text-xs font-normal truncate">v0.1.0-alpha</span>
 {{ end }}
