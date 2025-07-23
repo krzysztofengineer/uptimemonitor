@@ -1,6 +1,7 @@
 package form
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"slices"
@@ -30,8 +31,18 @@ func (f *MonitorForm) Validate() bool {
 		http.MethodGet, http.MethodPost, http.MethodPut,
 		http.MethodPatch, http.MethodDelete,
 	}
+
 	if !slices.Contains(methods, f.HttpMethod) {
 		f.Errors["HttpMethod"] = "The http method is invalid"
+	}
+
+	if f.HasCustomHeaders {
+		headers := map[string]any{}
+		err := json.Unmarshal([]byte(f.HttpHeaders), &headers)
+
+		if err != nil {
+			f.Errors["HttpHeaders"] = "The http headers should be a valid JSON"
+		}
 	}
 
 	return len(f.Errors) == 0

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -190,4 +191,11 @@ func (tc *TestCase) LogIn() *TestCase {
 	}
 
 	return tc.WithCookie(c)
+}
+
+func (tc *TestCase) AssertEqual(a, b any) *TestCase {
+	if !reflect.DeepEqual(a, b) {
+		tc.T.Fatalf(`expected "%v" to be equal to "%v"`, a, b)
+	}
+	return tc
 }

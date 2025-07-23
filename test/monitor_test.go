@@ -124,33 +124,46 @@ func TestMonitor_CreateMonitor(t *testing.T) {
 
 		res := tc.LogIn().
 			Post("/monitors", url.Values{
+				"http_method":        []string{"GET"},
+				"has_custom_headers": []string{"on"},
+				"http_headers":       []string{`{"test":"abc"}`},
+				"has_custom_body":    []string{"on"},
+				"http_body":          []string{`{"test":"123"}`},
+				"url":                []string{"https://example.com"},
+			}).
+			AssertStatusCode(http.StatusOK)
+
+		m, _ := tc.Store.GetMonitorByID(t.Context(), 1)
+
+		res.AssertHeader("HX-Redirect", fmt.Sprintf("/m/%s", m.Uuid))
+		tc.AssertDatabaseCount("monitors", 1)
+		tc.Get("/monitors").AssertSeeText("example.com")
+
+		tc.AssertEqual(m.Url, "https://example.com")
+		tc.AssertEqual(m.HttpMethod, "GET")
+		tc.AssertEqual(m.HttpHeaders, `{"test":"abc"}`)
+		tc.AssertEqual(m.HttpBody, `{"test":"123"}`)
+	})
+
+	t.Run("custom headers are validated when present", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn().
+			Post("/monitors", url.Values{
 				"http_method": []string{"GET"},
 				"url":         []string{"https://example.com"},
 			}).
 			AssertStatusCode(http.StatusOK)
 
-		m, err := tc.Store.GetMonitorByID(t.Context(), 1)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-
-		res.AssertHeader("HX-Redirect", fmt.Sprintf("/m/%s", m.Uuid))
-
-		tc.AssertDatabaseCount("monitors", 1)
-		tc.Get("/monitors").AssertSeeText("example.com")
-
-		monitor, err := tc.Store.GetMonitorByID(t.Context(), 1)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-
-		if monitor.Url != "https://example.com" {
-			t.Fatalf("unexpected url value: %s", monitor.Url)
-		}
-
-		if monitor.HttpMethod != "GET" {
-			t.Fatalf("unexpected http method value: %s", monitor.HttpMethod)
-		}
+		tc.Post("/monitors", url.Values{
+			"http_method":        []string{"GET"},
+			"url":                []string{"https://example.com"},
+			"has_custom_headers": []string{"on"},
+			"http_headers":       []string{`INVALID JSON`},
+		}).
+			AssertStatusCode(http.StatusBadRequest).
+			AssertSeeText("The http headers should be a valid JSON")
 	})
 }
 

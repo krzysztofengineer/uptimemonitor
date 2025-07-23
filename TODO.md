@@ -2,9 +2,6 @@
 
 What's left to do:
 
-- [x] Define method, headers and request body
-- [ ] test saving custom headers and body
-- [ ] validate json form custom headers (send body as is)
 - [ ] check service should use custom method, headers and body
 - [ ] Incident webhooks (method, headers, body)
 - [ ] Loading placeholders (skeletons)
