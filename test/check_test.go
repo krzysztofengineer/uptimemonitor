@@ -140,4 +140,19 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 		check, _ := tc.Store.GetCheckByID(t.Context(), 1)
 		tc.AssertEqual(http.StatusOK, check.StatusCode)
 	})
+
+	t.Run("checks can send custom headers", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: tc.Server.URL + "/test/headers", HttpMethod: http.MethodPost, HttpHeaders: `{"test":"abc"}`})
+
+		service := service.CheckService{Store: tc.Store}
+		ch := service.StartCheck()
+		service.RunCheck(t.Context(), ch)
+		time.Sleep(1 * time.Second)
+
+		check, _ := tc.Store.GetCheckByID(t.Context(), 1)
+		tc.AssertEqual(http.StatusOK, check.StatusCode)
+	})
 }

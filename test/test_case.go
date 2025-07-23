@@ -3,7 +3,6 @@ package test
 import (
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -89,8 +88,16 @@ func NewTestCase(t *testing.T) *TestCase {
 		}
 		defer r.Body.Close()
 
-		log.Printf("CUYSTOM BODY: %v", body)
 		if string(body) != `{"test":123}` {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+	})
+
+	router.HandleFunc("POST /test/headers", func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("test") != "abc" {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}

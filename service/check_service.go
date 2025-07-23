@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -56,6 +57,16 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		m.Url,
 		customBody,
 	)
+
+	if m.HttpHeaders != "" {
+		customHeaders := map[string]string{}
+		err = json.Unmarshal([]byte(m.HttpHeaders), &customHeaders)
+		if err == nil {
+			for k, v := range customHeaders {
+				req.Header.Add(k, v)
+			}
+		}
+	}
 
 	if err != nil {
 		return

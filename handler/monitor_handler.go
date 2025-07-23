@@ -3,7 +3,6 @@ package handler
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 	"uptimemonitor"
@@ -94,7 +93,6 @@ func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 
 		m, err := h.Store.CreateMonitor(r.Context(), monitor)
 		if err != nil {
-			log.Printf("err: %v", err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -115,7 +113,6 @@ func (h *Handler) MonitorPage() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m, err := h.Store.GetMonitorByUuid(r.Context(), r.PathValue("monitor"))
 		if err != nil || m.ID == 0 {
-			log.Printf("err: %v", err)
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			return
 		}
@@ -226,7 +223,6 @@ func (h *Handler) EditMonitorPage() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m, err := h.Store.GetMonitorByUuid(r.Context(), r.PathValue("monitor"))
 		if err != nil {
-			log.Printf("err: %v", err)
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			return
 		}
