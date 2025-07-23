@@ -12,8 +12,8 @@ What's left to do:
 - [ ] Remove monitor
 - [ ] Middlewares (recoverer, cache, etc.)
 - [ ] Edit monitor page
-- [ ] Clean incidents
-- [ ] Clean checks
+- [ ] Clear incidents
+- [ ] Clear checks
 - [ ] Remove old incidents
 - [ ] Monitor status
 - [ ] Add test for redirect incidents
