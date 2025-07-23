@@ -29,7 +29,7 @@
                     class="input join-item {{ with .Form.Errors.Url }} input-error {{ end }} w-full" required type="url"
                     placeholder="https://example.com" value="{{ .Form.Url }}" />
                 {{ with .Form.Errors.Url }}
-                <div class="form-error">{{ . }}</div>
+                <div class="label text-red-500">{{ . }}</div>
                 {{ end }}
             </div>
         </div>
@@ -47,7 +47,7 @@
                 <textarea class="textarea bg-neutral text-neutral-content w-full textarea" placeholder="{}"
                     name="http_headers">{{ .Form.HttpHeaders }}</textarea>
                 {{ with .Form.Errors.HttpHeaders }}
-                <div class="form-error">{{ . }}</div>
+                <div class="label text-red-500">{{ . }}</div>
                 {{ end }}
             </div>
         </div>
@@ -65,7 +65,7 @@
                 <textarea class="textarea bg-neutral text-neutral-content w-full textarea" placeholder="{}"
                     name="http_body">{{ .Form.HttpBody }}</textarea>
                 {{ with .Form.Errors.HttpBody }}
-                <div class="form-error">{{ . }}</div>
+                <div class="label text-red-500">{{ . }}</div>
                 {{ end }}
             </div>
         </div>

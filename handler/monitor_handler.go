@@ -260,7 +260,9 @@ func (h *Handler) EditMonitorForm() http.HandlerFunc {
 	tmpl := template.Must(template.ParseFS(html.FS, "edit.html"))
 
 	type data struct {
-		Form form.MonitorForm
+		Form    form.MonitorForm
+		User    uptimemonitor.User
+		Monitor uptimemonitor.Monitor
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -289,7 +291,11 @@ func (h *Handler) EditMonitorForm() http.HandlerFunc {
 
 		if !f.Validate() {
 			w.WriteHeader(http.StatusBadRequest)
-			tmpl.ExecuteTemplate(w, "edit_form", data{Form: f})
+			tmpl.ExecuteTemplate(w, "edit_form", data{
+				Monitor: monitor,
+				Form:    f,
+				User:    getUserFromRequest(r),
+			})
 			return
 		}
 

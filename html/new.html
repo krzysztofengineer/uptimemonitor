@@ -33,9 +33,9 @@
             <div class="flex-1">
                 <input name="url" id="new_form--url"
                     class="input join-item {{ with .Form.Errors.Url }} input-error {{ end }} w-full" autofocus required
-                    type="url" placeholder="https://example.com" />
+                    type="url" placeholder="https://example.com" value="{{ .Form.Url }}" />
                 {{ with .Form.Errors.Url }}
-                <div class="form-error">{{ . }}</div>
+                <div class="label text-red-500">{{ . }}</div>
                 {{ end }}
             </div>
         </div>
@@ -44,7 +44,8 @@
         <div class="card-body p-4">
             <div class="card-actions justify-start peer">
                 <label class="label">
-                    <input type="checkbox" class="toggle toggle-sm" name="has_custom_headers" />
+                    <input type="checkbox" class="toggle toggle-sm" name="has_custom_headers" {{ if
+                        .Form.HasCustomHeaders }} checked {{ end }} />
                     Custom Headers
                 </label>
             </div>
@@ -52,7 +53,7 @@
                 <textarea class="textarea w-full textarea bg-neutral text-neutral-content" placeholder="{}"
                     name="http_headers">{{ .Form.HttpHeaders }}</textarea>
                 {{ with .Form.Errors.HttpHeaders }}
-                <div class="form-error">{{ . }}</div>
+                <div class="label text-red-500">{{ . }}</div>
                 {{ end }}
             </div>
         </div>
@@ -61,7 +62,8 @@
         <div class="card-body p-4">
             <div class="card-actions justify-start peer">
                 <label class="label">
-                    <input type="checkbox" class="toggle toggle-sm" name="has_custom_body" />
+                    <input type="checkbox" class="toggle toggle-sm" name="has_custom_body" {{ if .Form.HasCustomBody }}
+                        checked {{ end }} />
                     Custom Body
                 </label>
             </div>
@@ -69,7 +71,7 @@
                 <textarea class="textarea w-full textarea bg-neutral text-neutral-content" placeholder="{}"
                     name="http_body">{{ .Form.HttpBody }}</textarea>
                 {{ with .Form.Errors.HttpBody }}
-                <div class="form-error">{{ . }}</div>
+                <div class="label text-red-500">{{ . }}</div>
                 {{ end }}
             </div>
         </div>
