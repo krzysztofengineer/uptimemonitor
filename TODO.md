@@ -27,6 +27,8 @@ What's left to do:
 - [ ] Add check response modal (div#modals + append when clicked + destroy when
       clicked)
 - [ ] Save incident request and add a way to preview it
+- [ ] Move incident to separate page with request and response details
+- [ ] Store request url in incident and check (it could be updated in monitor)
 
 Optional:
 
