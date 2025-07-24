@@ -28,6 +28,7 @@ What's left to do:
 - [ ] Save incident request and add a way to preview it
 - [ ] Move incident to separate page with request and response details
 - [ ] Store request url in incident and check (it could be updated in monitor)
+- [ ] Use the same form for creation and editing of monitor
 
 Optional:
 

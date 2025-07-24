@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+	"time"
 	"uptimemonitor"
 	"uptimemonitor/form"
+	"uptimemonitor/service"
 )
 
 func TestWebhook_SaveWebhook(t *testing.T) {
@@ -107,5 +109,24 @@ func TestWebhook_SaveWebhook(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
+		service := service.New(tc.Store)
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url:            tc.Server.URL + "/test/500",
+			WebhookMethod:  http.MethodPost,
+			WebhookUrl:     tc.Server.URL + "/test/webhook",
+			WebhookHeaders: `{"test":"abc"}`,
+			WebhookBody:    `{"test":123}`,
+		})
+
+		ch := service.StartCheck()
+		service.RunCheck(t.Context(), ch)
+
+		time.Sleep(time.Second * 3)
+
+		tc.AssertDatabaseCount("incidents", 1)
+		tc.AssertDatabaseCount("checks", 1)
+
+		tc.AssertEqual(int64(TestWebhookCalledCount), int64(1))
 	})
 }

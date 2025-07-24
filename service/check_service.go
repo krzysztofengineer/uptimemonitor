@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -169,6 +170,14 @@ func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonit
 		return fmt.Errorf("failed to create incident for monitor %d: %w", m.ID, err)
 	}
 
+	log.Printf("WEBHOOK MONITOR DATA: %v", m.WebhookUrl)
+
+	if m.WebhookUrl != "" {
+		go func() {
+			s.callWebhook(m, incident)
+		}()
+	}
+
 	return nil
 }
 
@@ -179,4 +188,37 @@ func (s *CheckService) incidentAlreadyExists(ctx context.Context, m uptimemonito
 	}
 
 	return latest.StatusCode == statusCode, latest
+}
+
+func (s *CheckService) callWebhook(m uptimemonitor.Monitor, i uptimemonitor.Incident) {
+	var customBody io.Reader
+
+	// todo: parse url
+	if m.WebhookBody != "" {
+		customBody = strings.NewReader(m.WebhookBody)
+	}
+
+	req, err := http.NewRequest(
+		m.WebhookMethod,
+		m.WebhookUrl,
+		customBody,
+	)
+
+	if m.WebhookHeaders != "" {
+		customHeaders := map[string]string{}
+		err = json.Unmarshal([]byte(m.WebhookHeaders), &customHeaders)
+		if err == nil {
+			for k, v := range customHeaders {
+				req.Header.Add(k, v)
+			}
+		}
+	}
+
+	if err != nil {
+		return
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	log.Printf("webhook call error: %v", err)
+	log.Printf("webhook call status: %v", res.StatusCode)
 }

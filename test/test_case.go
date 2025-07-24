@@ -20,6 +20,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var TestWebhookCalledCount int64
+
 type TestCase struct {
 	T       *testing.T
 	Server  *httptest.Server
@@ -101,6 +103,29 @@ func NewTestCase(t *testing.T) *TestCase {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
+
+		w.WriteHeader(http.StatusOK)
+	})
+
+	router.HandleFunc("POST /test/webhook", func(w http.ResponseWriter, r *http.Request) {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+		defer r.Body.Close()
+
+		if string(body) != `{"test":123}` {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		if r.Header.Get("test") != "abc" {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		TestWebhookCalledCount++
 
 		w.WriteHeader(http.StatusOK)
 	})
