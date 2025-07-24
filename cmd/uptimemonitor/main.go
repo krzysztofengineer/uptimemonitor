@@ -69,7 +69,7 @@ func main() {
 
 	<-quit
 
-	done <- true
+	time.Sleep(3 * time.Second)
 
-	// todo add maximum time to wait
+	done <- true
 }

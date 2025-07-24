@@ -83,6 +83,18 @@
                     <input type="checkbox" class="toggle toggle-sm" name="has_webhook" {{ if .Form.HasWebhook }} checked
                         {{ end }} />
                     Webhook
+                    <div class="tooltip">
+                        <div class="tooltip-content tooltip-neutral bg-neutral text-white/90 text-xs">
+                            After each incident the given URL will be notified
+                        </div>
+                        <button class="btn btn-square btn-ghost btn-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                            </svg>
+                        </button>
+                    </div>
                 </label>
             </div>
             <div class="hidden peer-has-checked:block">
@@ -93,8 +105,8 @@
                     <div class="join w-full flex">
                         <div>
                             <select class="select join-item" name="webhook_method">
-                                <option selected>GET</option>
-                                <option>POST</option>
+                                <option>GET</option>
+                                <option selected>POST</option>
                                 <option>PATCH</option>
                                 <option>PUT</option>
                                 <option>DELETE</option>

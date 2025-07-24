@@ -1,12 +1,14 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
+	"text/template"
 	"time"
 	"uptimemonitor"
 	"uptimemonitor/store"
@@ -164,13 +166,13 @@ func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonit
 		Body:           body,
 		Headers:        headers,
 	}
-
-	if _, err := s.Store.CreateIncident(context.Background(), incident); err != nil {
+	saved, err := s.Store.CreateIncident(context.Background(), incident)
+	if err != nil {
 		return fmt.Errorf("failed to create incident for monitor %d: %w", m.ID, err)
 	}
 
 	if m.WebhookUrl != "" {
-		s.callWebhook(m, incident)
+		s.callWebhook(m, saved)
 	}
 
 	return nil
@@ -190,7 +192,26 @@ func (s *CheckService) callWebhook(m uptimemonitor.Monitor, i uptimemonitor.Inci
 
 	// todo: parse url
 	if m.WebhookBody != "" {
-		customBody = strings.NewReader(m.WebhookBody)
+		t, err := template.New("webhook").Parse(m.WebhookBody)
+		if err != nil {
+			customBody = strings.NewReader(m.WebhookBody)
+		} else {
+			var buf bytes.Buffer
+			err = t.Execute(&buf, struct {
+				Monitor  uptimemonitor.Monitor
+				Incident uptimemonitor.Incident
+			}{
+				Monitor:  m,
+				Incident: i,
+			})
+			if err != nil {
+
+				customBody = strings.NewReader(m.WebhookBody)
+			} else {
+				customBody = bytes.NewReader(buf.Bytes())
+			}
+		}
+
 	}
 
 	req, err := http.NewRequest(

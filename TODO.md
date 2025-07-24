@@ -2,18 +2,17 @@
 
 What's left to do:
 
-- [ ] Parse webhook body with monitor and incident data
-- [ ] Loading placeholders (skeletons)
-- [ ] Log in after setup automatically
-- [ ] Remove old checks
-- [ ] Graceful shutdown grace period
-- [ ] Secure cookies on prod
 - [ ] Remove monitor
 - [ ] Middlewares (recoverer, cache, etc.)
-- [ ] Edit monitor page
+- [ ] Secure cookies on prod
 - [ ] Clear incidents
 - [ ] Clear checks
+- [ ] Remove old checks
 - [ ] Remove old incidents
+- [ ] Log in after setup automatically
+- [ ] Change webhook body available variables (just .Url, .ResponseTimeMs,
+      .IncidentUrl, .MonitorUrl, .StatusCode, .Body, .Headers)
+- [ ] Loading placeholders (skeletons)
 - [ ] Monitor status
 - [ ] Add test for redirect incidents
 - [ ] Test check timeout
@@ -29,6 +28,11 @@ What's left to do:
 - [ ] Move incident to separate page with request and response details
 - [ ] Store request url in incident and check (it could be updated in monitor)
 - [ ] Use the same form for creation and editing of monitor
+- [ ] Add sponsors badges
+- [ ] Add documentation
+- [ ] Document how to install
+- [ ] Document webhook parsing and available variables
+- [ ] Add "Test Webhook" button with fake incident
 
 Optional:
 
