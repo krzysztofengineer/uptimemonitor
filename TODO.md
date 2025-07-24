@@ -2,7 +2,6 @@
 
 What's left to do:
 
-- [ ] check service should use custom method, headers and body
 - [ ] Incident webhooks (method, headers, body)
 - [ ] Loading placeholders (skeletons)
 - [ ] Log in after setup automatically

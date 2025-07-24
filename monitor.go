@@ -51,3 +51,19 @@ func (m Monitor) Domain() string {
 
 	return res
 }
+
+func (m Monitor) Host() string {
+	uri, err := url.ParseRequestURI(m.Url)
+	if err != nil {
+		return m.Url
+	}
+
+	host := uri.Host
+	maxLimit := 30
+
+	if len(host) > maxLimit {
+		return fmt.Sprintf("%s...", host[:maxLimit])
+	}
+
+	return host
+}
