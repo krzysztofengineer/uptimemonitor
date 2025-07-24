@@ -47,6 +47,10 @@ func (h *Handler) CreateMonitorPage() http.HandlerFunc {
 	"Content-Type": "application/json"
 }`,
 				HttpBody: `{}`,
+				WebhookHeaders: `{
+	"Content-Type": "application/json"
+}`,
+				WebhookBody: `{}`,
 			},
 			User: getUserFromRequest(r),
 		})
