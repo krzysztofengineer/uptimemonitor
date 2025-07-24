@@ -1,9 +1,11 @@
 package test
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"testing"
+	"uptimemonitor"
 	"uptimemonitor/form"
 )
 
@@ -46,5 +48,64 @@ func TestWebhook_SaveWebhook(t *testing.T) {
 		tc.AssertEqual(m.WebhookMethod, "POST")
 		tc.AssertEqual(m.WebhookHeaders, `{"test":"abc"}`)
 		tc.AssertEqual(m.WebhookBody, `{"test":"123"}`)
+	})
+
+	t.Run("webhook data can be updated", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		_, err := tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			HttpMethod: http.MethodGet,
+			Url:        "https://google.com",
+		})
+
+		tc.AssertNoError(err)
+
+		tc.LogIn().
+			Patch("/monitors/1", url.Values{
+				"http_method":     []string{"GET"},
+				"url":             []string{"https://example.com"},
+				"has_webhook":     []string{"on"},
+				"webhook_url":     []string{tc.Server.URL + "/test/webhook"},
+				"webhook_method":  []string{"POST"},
+				"webhook_headers": []string{`{"test":"abc"}`},
+				"webhook_body":    []string{`{"test":"123"}`},
+			}).AssertStatusCode(http.StatusOK)
+
+		m, err := tc.Store.GetMonitorByID(t.Context(), 1)
+		tc.AssertNoError(err)
+
+		tc.AssertEqual(m.WebhookUrl, tc.Server.URL+"/test/webhook")
+		tc.AssertEqual(m.WebhookMethod, "POST")
+		tc.AssertEqual(m.WebhookHeaders, `{"test":"abc"}`)
+		tc.AssertEqual(m.WebhookBody, `{"test":"123"}`)
+	})
+
+	t.Run("webhook fields are present in the forms", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn().Get("/new").
+			AssertElementVisible(`input[name="has_webhook"]`).
+			AssertElementVisible(`select[name="webhook_method"]`).
+			AssertElementVisible(`textarea[name="webhook_body"]`).
+			AssertElementVisible(`textarea[name="webhook_headers"]`)
+
+		m, _ := tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			HttpMethod: http.MethodGet,
+			Url:        "https://google.com",
+		})
+
+		tc.Get(fmt.Sprintf("/m/%s/edit", m.Uuid)).
+			AssertElementVisible(`input[name="has_webhook"]`).
+			AssertElementVisible(`select[name="webhook_method"]`).
+			AssertElementVisible(`textarea[name="webhook_body"]`).
+			AssertElementVisible(`textarea[name="webhook_headers"]`)
+	})
+
+	t.Run("webhook is called on incident", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
 	})
 }

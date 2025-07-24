@@ -172,6 +172,27 @@ func (tc *TestCase) Post(url string, data url.Values) *testutil.AssertableRespon
 	return testutil.NewAssertableResponse(tc.T, res)
 }
 
+func (tc *TestCase) Patch(url string, data url.Values) *testutil.AssertableResponse {
+	req, err := http.NewRequest(http.MethodPatch, tc.Server.URL+url, strings.NewReader(data.Encode()))
+	if err != nil {
+		tc.T.Fatalf("unexpected error: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	if len(tc.Cookies) > 0 {
+		for _, c := range tc.Cookies {
+			req.AddCookie(c)
+		}
+	}
+
+	res, err := tc.Client.Do(req)
+	if err != nil {
+		tc.T.Fatalf("failed to post %s: %v", url, err)
+	}
+
+	return testutil.NewAssertableResponse(tc.T, res)
+}
+
 func (tc *TestCase) AssertDatabaseCount(table string, expected int) *TestCase {
 	tc.T.Helper()
 

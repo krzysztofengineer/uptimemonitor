@@ -56,6 +56,13 @@ func (f *MonitorForm) Validate() bool {
 		} else if _, err := url.ParseRequestURI(f.WebhookUrl); err != nil {
 			f.Errors["WebhookUrl"] = "The webhook url is invalid"
 		}
+
+		headers := map[string]any{}
+		err := json.Unmarshal([]byte(f.WebhookHeaders), &headers)
+
+		if err != nil {
+			f.Errors["WebhookHeaders"] = "The webhook headers should be a valid JSON"
+		}
 	}
 
 	return len(f.Errors) == 0

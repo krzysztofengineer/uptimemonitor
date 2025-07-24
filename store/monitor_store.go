@@ -125,11 +125,16 @@ func (s *Store) GetMonitorByUuid(ctx context.Context, uuid string) (uptimemonito
 func (s *Store) UpdateMonitor(ctx context.Context, monitor uptimemonitor.Monitor) error {
 	stmt := `
 		UPDATE monitors SET 
-		url = ?, http_method = ?, http_headers = ?, http_body = ?
+		url = ?, http_method = ?, http_headers = ?, http_body = ?,
+		webhook_url = ?, webhook_method = ?, webhook_headers = ?, webhook_body = ?
 		WHERE id = ?
 	`
 
-	_, err := s.db.ExecContext(ctx, stmt, monitor.Url, monitor.HttpMethod, monitor.HttpHeaders, monitor.HttpBody, monitor.ID)
+	_, err := s.db.ExecContext(
+		ctx, stmt, monitor.Url, monitor.HttpMethod, monitor.HttpHeaders, monitor.HttpBody,
+		monitor.WebhookUrl, monitor.WebhookMethod, monitor.WebhookHeaders, monitor.WebhookBody,
+		monitor.ID,
+	)
 	if err != nil {
 		return err
 	}

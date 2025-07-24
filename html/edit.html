@@ -70,6 +70,67 @@
             </div>
         </div>
     </div>
+    <div class="card border border-base-200">
+        <div class="card-body p-4">
+            <div class="card-actions justify-start peer">
+                <label class="label">
+                    <input type="checkbox" class="toggle toggle-sm" name="has_webhook" {{ if .Form.HasWebhook }} checked
+                        {{ end }} />
+                    Webhook
+                </label>
+            </div>
+            <div class="hidden peer-has-checked:block">
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">
+                        Webhook URL
+                    </legend>
+                    <div class="join w-full flex">
+                        <div>
+                            <select class="select join-item" name="webhook_method">
+                                <option {{ if eq .Form.WebhookMethod "GET" }}selected{{ end }}>GET</option>
+                                <option {{ if eq .Form.WebhookMethod "POST" }}selected{{ end }}>POST</option>
+                                <option {{ if eq .Form.WebhookMethod "PATCH" }}selected{{ end }}>PATCH</option>
+                                <option {{ if eq .Form.WebhookMethod "PUT" }}selected{{ end }}>PUT</option>
+                                <option {{ if eq .Form.WebhookMethod "DELETE" }}selected{{ end }}>DELETE</option>
+                            </select>
+                        </div>
+                        <div class="flex-1">
+                            <input name="webhook_url" id="new_form--webhook_url"
+                                class="input join-item {{ with .Form.Errors.WebhookUrl }} input-error {{ end }} w-full"
+                                type="url" placeholder="https://example.com" value="{{ .Form.WebhookUrl }}" />
+                            {{ with .Form.Errors.WebhookUrl }}
+                            <div class="label text-red-500">{{ . }}</div>
+                            {{ end }}
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="hidden peer-has-checked:block">
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">
+                        Webhook Headers
+                    </legend>
+                    <textarea class="textarea w-full textarea bg-neutral text-neutral-content" placeholder="{}"
+                        name="webhook_headers">{{ .Form.WebhookHeaders }}</textarea>
+                    {{ with .Form.Errors.WebhookHeaders }}
+                    <div class="label text-red-500">{{ . }}</div>
+                    {{ end }}
+                </fieldset>
+            </div>
+            <div class="hidden peer-has-checked:block">
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">
+                        Webhook Body
+                    </legend>
+                    <textarea class="textarea w-full textarea bg-neutral text-neutral-content" placeholder="{}"
+                        name="webhook_body">{{ .Form.WebhookBody }}</textarea>
+                    {{ with .Form.Errors.WebhookBody }}
+                    <div class="label text-red-500">{{ . }}</div>
+                    {{ end }}
+                </fieldset>
+            </div>
+        </div>
+    </div>
     <div>
         <button type="submit" class="btn btn-neutral">
             Submit
