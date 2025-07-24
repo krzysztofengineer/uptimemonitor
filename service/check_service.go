@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -170,12 +169,8 @@ func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonit
 		return fmt.Errorf("failed to create incident for monitor %d: %w", m.ID, err)
 	}
 
-	log.Printf("WEBHOOK MONITOR DATA: %v", m.WebhookUrl)
-
 	if m.WebhookUrl != "" {
-		go func() {
-			s.callWebhook(m, incident)
-		}()
+		s.callWebhook(m, incident)
 	}
 
 	return nil
@@ -204,6 +199,10 @@ func (s *CheckService) callWebhook(m uptimemonitor.Monitor, i uptimemonitor.Inci
 		customBody,
 	)
 
+	if err != nil {
+		return
+	}
+
 	if m.WebhookHeaders != "" {
 		customHeaders := map[string]string{}
 		err = json.Unmarshal([]byte(m.WebhookHeaders), &customHeaders)
@@ -214,11 +213,5 @@ func (s *CheckService) callWebhook(m uptimemonitor.Monitor, i uptimemonitor.Inci
 		}
 	}
 
-	if err != nil {
-		return
-	}
-
-	res, err := http.DefaultClient.Do(req)
-	log.Printf("webhook call error: %v", err)
-	log.Printf("webhook call status: %v", res.StatusCode)
+	http.DefaultClient.Do(req)
 }

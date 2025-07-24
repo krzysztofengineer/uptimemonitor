@@ -2,7 +2,7 @@
 
 What's left to do:
 
-- [ ] Incident webhooks (method, headers, body)
+- [ ] Parse webhook body with monitor and incident data
 - [ ] Loading placeholders (skeletons)
 - [ ] Log in after setup automatically
 - [ ] Remove old checks
