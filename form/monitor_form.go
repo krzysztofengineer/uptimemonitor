@@ -50,5 +50,13 @@ func (f *MonitorForm) Validate() bool {
 		}
 	}
 
+	if f.HasWebhook {
+		if f.WebhookUrl == "" {
+			f.Errors["WebhookUrl"] = "The webhook url is required"
+		} else if _, err := url.ParseRequestURI(f.WebhookUrl); err != nil {
+			f.Errors["WebhookUrl"] = "The webhook url is invalid"
+		}
+	}
+
 	return len(f.Errors) == 0
 }

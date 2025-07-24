@@ -4,9 +4,27 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+	"uptimemonitor/form"
 )
 
 func TestWebhook_SaveWebhook(t *testing.T) {
+	t.Run("webhook is validated", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		f := form.MonitorForm{
+			Url:        "https://valid.url",
+			HttpMethod: http.MethodGet,
+
+			HasWebhook:     true,
+			WebhookUrl:     "invalid",
+			WebhookHeaders: "invalid json",
+			WebhookBody:    "data",
+		}
+
+		tc.AssertEqual(false, f.Validate())
+	})
+
 	t.Run("webhook info can be saved when creating a monitor", func(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
