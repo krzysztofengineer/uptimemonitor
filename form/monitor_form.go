@@ -14,6 +14,11 @@ type MonitorForm struct {
 	HttpHeaders      string
 	HasCustomBody    bool
 	HttpBody         string
+	HasWebhook       bool
+	WebhookMethod    string
+	WebhookUrl       string
+	WebhookBody      string
+	WebhookHeaders   string
 
 	Errors map[string]string
 }

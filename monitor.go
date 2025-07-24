@@ -15,7 +15,7 @@ type Monitor struct {
 	HttpHeaders    string
 	HttpBody       string
 	WebhookUrl     string
-	WehookMethod   string
+	WebhookMethod  string
 	WebhookHeaders string
 	WebhookBody    string
 	CreatedAt      time.Time

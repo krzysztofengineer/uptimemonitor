@@ -70,6 +70,11 @@ func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 			HasCustomBody:    r.PostFormValue("has_custom_body") == "on",
 			HttpHeaders:      r.PostFormValue("http_headers"),
 			HttpBody:         r.PostFormValue("http_body"),
+			HasWebhook:       r.PostFormValue("has_webhook") == "on",
+			WebhookMethod:    r.PostFormValue("webhook_method"),
+			WebhookUrl:       r.PostFormValue("webhook_url"),
+			WebhookHeaders:   r.PostFormValue("webhook_headers"),
+			WebhookBody:      r.PostFormValue("webhook_body"),
 		}
 
 		if !f.Validate() {
@@ -89,6 +94,13 @@ func (h *Handler) CreateMonitorForm() http.HandlerFunc {
 
 		if f.HasCustomBody {
 			monitor.HttpBody = f.HttpBody
+		}
+
+		if f.HasWebhook {
+			monitor.WebhookUrl = f.WebhookUrl
+			monitor.WebhookMethod = f.WebhookMethod
+			monitor.WebhookHeaders = f.WebhookHeaders
+			monitor.WebhookBody = f.WebhookBody
 		}
 
 		m, err := h.Store.CreateMonitor(r.Context(), monitor)
