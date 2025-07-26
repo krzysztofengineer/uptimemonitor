@@ -99,6 +99,10 @@ func (ar *AssertableResponse) AssertSeeText(text string) *AssertableResponse {
 func (ar *AssertableResponse) AssertHeader(header string, expected string) *AssertableResponse {
 	ar.T.Helper()
 
+	if value := ar.Response.Header.Get(header); value == "" {
+		ar.T.Fatalf(`no header "%s" found`, header)
+	}
+
 	if value := ar.Response.Header.Get(header); value != expected {
 		ar.T.Fatalf("expected header '%s' to have value of '%s' but got '%s' instead", header, expected, value)
 	}

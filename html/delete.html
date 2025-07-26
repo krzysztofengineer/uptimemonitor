@@ -1,0 +1,15 @@
+{{ define "title" }}Delete monitor{{end}}
+
+{{ define "content" }}
+<div class="mx-auto max-w-[1600px] w-full">
+    <div class="md:flex md:items-center md:justify-center p-8 md:p-10">
+        {{template "delete_form" . }}
+    </div>
+</div>
+{{ end }}
+
+{{ define "delete_form" }}
+<form hx-delete="/monitors/{{ .Monitor.ID }}" hx-swap="outerHTML" class="flex flex-col gap-4 w-full max-w-md">
+
+</form>
+{{ end }}

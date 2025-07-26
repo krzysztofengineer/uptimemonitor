@@ -348,3 +348,39 @@ func (h *Handler) EditMonitorForm() http.HandlerFunc {
 		w.Header().Set("HX-Redirect", monitor.URI())
 	}
 }
+
+func (h *Handler) DeleteMonitorPage() http.HandlerFunc {
+	tmpl := template.Must(template.ParseFS(html.FS, "layout.html", "app.html", "delete.html"))
+
+	type data struct {
+		User    uptimemonitor.User
+		Monitor uptimemonitor.Monitor
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		uuid := r.PathValue("monitor")
+		m, err := h.Store.GetMonitorByUuid(r.Context(), uuid)
+		if err != nil || m.ID == 0 {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		tmpl.Execute(w, data{
+			User:    getUserFromRequest(r),
+			Monitor: m,
+		})
+	}
+}
+
+func (h *Handler) DeleteMonitorForm() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, _ := strconv.Atoi(r.PathValue("monitor"))
+		m, err := h.Store.GetMonitorByID(r.Context(), id)
+		if err != nil || m.ID == 0 {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		w.Header().Add("HX-Redirect", "/")
+	}
+}

@@ -218,6 +218,20 @@ func (tc *TestCase) Patch(url string, data url.Values) *testutil.AssertableRespo
 	return testutil.NewAssertableResponse(tc.T, res)
 }
 
+func (tc *TestCase) Delete(url string) *testutil.AssertableResponse {
+	req, err := http.NewRequest(http.MethodDelete, tc.Server.URL+url, nil)
+	if err != nil {
+		tc.T.Fatalf("unexpected error: %v", err)
+	}
+
+	res, err := tc.Client.Do(req)
+	if err != nil {
+		tc.T.Fatalf("failed to delete %s: %v", url, err)
+	}
+
+	return testutil.NewAssertableResponse(tc.T, res)
+}
+
 func (tc *TestCase) AssertDatabaseCount(table string, expected int) *TestCase {
 	tc.T.Helper()
 

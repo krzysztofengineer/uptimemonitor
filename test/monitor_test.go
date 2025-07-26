@@ -202,3 +202,55 @@ func TestMonitor_MonitorPage(t *testing.T) {
 		tc.LogIn().Get(fmt.Sprintf("/m/%s", m.Uuid)).AssertStatusCode(http.StatusOK)
 	})
 }
+
+func TestMonitor_RemoveMonitor(t *testing.T) {
+	t.Run("guests cannot remove monitors", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Get("/m/uuid/delete").AssertRedirect(http.StatusSeeOther, "/setup")
+		tc.Delete("/monitors/1").AssertStatusCode(http.StatusForbidden)
+	})
+
+	t.Run("monitor has to exist", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.LogIn()
+
+		tc.Get("/m/uuid/delete").AssertStatusCode(http.StatusNotFound)
+		tc.Delete("/monitors/1").AssertStatusCode(http.StatusNotFound)
+	})
+
+	t.Run("delete monitor form is present", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		m, _ := tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			HttpMethod: http.MethodGet,
+			Url:        "http://example.com",
+		})
+
+		tc.LogIn().
+			Get(fmt.Sprintf("/m/%s/delete", m.Uuid)).
+			AssertStatusCode(http.StatusOK).
+			AssertElementVisible(fmt.Sprintf(`form[hx-delete="/monitors/%d"]`, m.ID))
+	})
+
+	t.Run("monitor can be removed", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			HttpMethod: http.MethodGet,
+			Url:        "http://example.com",
+		})
+
+		tc.LogIn().
+			Delete("/monitors/1").
+			AssertStatusCode(http.StatusOK).
+			AssertHeader("HX-Redirect", "/")
+
+		tc.AssertDatabaseCount("monitors", 0)
+	})
+}
