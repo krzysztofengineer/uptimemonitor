@@ -381,6 +381,8 @@ func (h *Handler) DeleteMonitorForm() http.HandlerFunc {
 			return
 		}
 
+		h.Store.DeleteMonitor(r.Context(), int64(id))
+
 		w.Header().Add("HX-Redirect", "/")
 	}
 }

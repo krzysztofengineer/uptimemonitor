@@ -224,6 +224,12 @@ func (tc *TestCase) Delete(url string) *testutil.AssertableResponse {
 		tc.T.Fatalf("unexpected error: %v", err)
 	}
 
+	if len(tc.Cookies) > 0 {
+		for _, c := range tc.Cookies {
+			req.AddCookie(c)
+		}
+	}
+
 	res, err := tc.Client.Do(req)
 	if err != nil {
 		tc.T.Fatalf("failed to delete %s: %v", url, err)

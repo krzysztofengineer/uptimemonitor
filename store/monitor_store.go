@@ -145,3 +145,10 @@ func (s *Store) UpdateMonitor(ctx context.Context, monitor uptimemonitor.Monitor
 
 	return nil
 }
+
+func (s *Store) DeleteMonitor(ctx context.Context, id int64) error {
+	stmt := `DELETE FROM monitors WHERE id = ?`
+
+	_, err := s.db.ExecContext(ctx, stmt, id)
+	return err
+}
