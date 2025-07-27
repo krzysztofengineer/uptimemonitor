@@ -5,7 +5,9 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+	"time"
 	"uptimemonitor"
+	"uptimemonitor/service"
 )
 
 func TestMonitor_ListMonitors(t *testing.T) {
@@ -252,5 +254,32 @@ func TestMonitor_RemoveMonitor(t *testing.T) {
 			AssertHeader("HX-Redirect", "/")
 
 		tc.AssertDatabaseCount("monitors", 0)
+	})
+
+	t.Run("whe monitor is removed, checks and incidents are also removed", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			HttpMethod: http.MethodGet,
+			Url:        tc.Server.URL + "/test/500",
+		})
+
+		service := service.New(tc.Store)
+		ch := service.StartCheck()
+		service.RunCheck(t.Context(), ch)
+
+		time.Sleep(time.Second)
+
+		tc.AssertDatabaseCount("checks", 1)
+		tc.AssertDatabaseCount("incidents", 1)
+
+		tc.LogIn().
+			Delete("/monitors/1").
+			AssertStatusCode(http.StatusOK).
+			AssertHeader("HX-Redirect", "/")
+
+		tc.AssertDatabaseCount("checks", 0)
+		tc.AssertDatabaseCount("incidents", 0)
 	})
 }

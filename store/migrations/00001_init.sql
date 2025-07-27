@@ -40,7 +40,7 @@ CREATE TABLE checks(
     status_code INTEGER NOT NULL,
     response_time_ms INTEGER NOT NULL,
     
-    FOREIGN KEY(monitor_id) REFERENCES monitors(id)
+    FOREIGN KEY(monitor_id) REFERENCES monitors(id) ON DELETE CASCADE
 );
 
 CREATE TABLE incidents(
@@ -55,6 +55,6 @@ CREATE TABLE incidents(
     created_at DATETIME NOT NULL,
     resolved_at DATETIME,
 
-    FOREIGN KEY(monitor_id) REFERENCES monitors(id)
+    FOREIGN KEY(monitor_id) REFERENCES monitors(id) ON DELETE CASCADE
 );
 -- +goose StatementEnd

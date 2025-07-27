@@ -27,6 +27,8 @@ func New(dsn string) *Store {
 		panic(fmt.Sprintf("Failed to enable WAL mode: %v", err))
 	}
 
+	db.Exec("PRAGMA foreign_keys = ON;")
+
 	db.SetMaxOpenConns(1)
 	db.SetMaxIdleConns(1)
 	db.SetConnMaxLifetime(0)
