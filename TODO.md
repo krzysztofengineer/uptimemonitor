@@ -2,7 +2,6 @@
 
 What's left to do:
 
-- [ ] Remove old checks
 - [ ] Remove old incidents
 - [ ] Log in after setup automatically
 - [ ] Change webhook body available variables (just .Url, .ResponseTimeMs,
@@ -28,6 +27,7 @@ What's left to do:
 - [ ] Document how to install
 - [ ] Document webhook parsing and available variables
 - [ ] Add "Test Webhook" button with fake incident
+- [ ] Add website command with a server homepage
 
 Optional:
 

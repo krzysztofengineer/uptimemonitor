@@ -32,6 +32,7 @@ func New(handler *handler.Handler, callback func(r *http.ServeMux)) http.Handler
 			authenticatedMux.HandleFunc("GET /monitors", handler.ListMonitors())
 			authenticatedMux.HandleFunc("POST /monitors", handler.CreateMonitorForm())
 			authenticatedMux.HandleFunc("GET /m/{monitor}", handler.MonitorPage())
+			authenticatedMux.HandleFunc("GET /m/{monitor}/i/{incident}", handler.IncidentPage())
 			authenticatedMux.HandleFunc("PATCH /monitors/{monitor}", handler.EditMonitorForm())
 			authenticatedMux.HandleFunc("DELETE /monitors/{monitor}", handler.DeleteMonitorForm())
 			authenticatedMux.HandleFunc("GET /m/{monitor}/edit", handler.EditMonitorPage())
@@ -40,6 +41,7 @@ func New(handler *handler.Handler, callback func(r *http.ServeMux)) http.Handler
 			authenticatedMux.HandleFunc("GET /monitors/{monitor}/stats", handler.MonitorStats())
 			authenticatedMux.HandleFunc("GET /monitors/{monitor}/incidents", handler.ListMonitorIncidents())
 			authenticatedMux.HandleFunc("GET /incidents", handler.ListIncidents())
+			authenticatedMux.HandleFunc("DELETE /incidents/{incident}", handler.DeleteIncident())
 			authenticatedMux.HandleFunc("GET /logout", handler.Logout())
 
 			mux.Handle("/", handler.Authenticated(authenticatedMux))

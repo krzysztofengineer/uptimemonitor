@@ -1,3 +1,7 @@
+{{ define "title" }}
+{{ .Monitor.Domain }}
+{{end}}
+
 {{ define "monitor_list" }}
 <div class="grid gap-4">
     {{ range .Monitors }}
@@ -180,65 +184,67 @@
 
     <div class="overflow-x-auto flex flex-col gap-4 md:gap-0 pb-2">
         {{ range .Incidents }}
-        <div class="p-0" id="incidents-{{ .ID }}">
-            <div class="px-4 py-2">
-                <div class="">
-                    <div class="flex flex-col md:flex-row gap-1.5 md:gap-4 md:items-start justify-between text-sm">
-                        <div>
-                            <div
-                                class="badge badge-soft truncate max-w-full inline-block text-xs py-1 {{ .StatusBadgeClass }}">
-                                {{ .StatusBadgeText }}
-                            </div>
-                        </div>
-                        <div class="flex-1 flex flex-col gap-1">
+        <a href="/m/{{ .Monitor.Uuid }}/i/{{ .Uuid }}" hx-boost preload>
+            <div class="p-0" id="incidents-{{ .ID }}">
+                <div class="px-4 py-2">
+                    <div class="">
+                        <div class="flex flex-col md:flex-row gap-1.5 md:gap-4 md:items-start justify-between text-sm">
                             <div>
-                                {{ .StatusCode }} {{ .StatusCodeText }}
+                                <div
+                                    class="badge badge-soft truncate max-w-full inline-block text-xs py-1 {{ .StatusBadgeClass }}">
+                                    {{ .StatusBadgeText }}
+                                </div>
                             </div>
-                            <div class="w-auto max-w-[350px] text-xs leading-[1.2rem] opacity-80">
-                                {{ .CreatedAt.Format "2006-01-02 15:04" }}
-                                {{ if .ResolvedAt }}
-                                (resolved at {{ .ResolvedAt.Format "2006-01-02 15:04" }})
-                                {{ end }}
+                            <div class="flex-1 flex flex-col gap-1">
+                                <div>
+                                    {{ .StatusCode }} {{ .StatusCodeText }}
+                                </div>
+                                <div class="w-auto max-w-[350px] text-xs leading-[1.2rem] opacity-80">
+                                    {{ .CreatedAt.Format "2006-01-02 15:04" }}
+                                    {{ if .ResolvedAt }}
+                                    (resolved at {{ .ResolvedAt.Format "2006-01-02 15:04" }})
+                                    {{ end }}
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <label for="incident-details-{{ .ID }}" class="btn btn-sm btn-outline btn-accent">
-                                Details
-                            </label>
+                            <div>
+                                <label for="incident-details-{{ .ID }}" class="btn btn-sm btn-outline btn-accent">
+                                    Details
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <input type="checkbox" id="incident-details-{{ .ID }}" class="modal-toggle" hx-preserve />
-        <div class="modal" role="dialog">
-            <div class="modal-box p-0 border-none">
-                <div class="text-sm">
-                    <div class="mockup-browser w-full bg-base-100 text-neutral-800">
-                        <div class="mockup-browser-toolbar">
-                            <div class="input">{{ $.Monitor.HttpMethod }} {{ $.Monitor.Url }}</div>
-                        </div>
-                        <div class="p-4 max-h-[600px] overflow-y-scroll overflow-x-scroll flex flex-col gap-2">
-                            {{ if .Headers }}
-                            <pre class="opacity-60">{{ .Headers }}</pre>
-                            {{ end}}
-                            {{ if .Body }}
-                            <pre>{{ .Body }}</pre>
-                            {{ else }}
-                            <pre>&lt;html&gt;&lt;/html&gt;</pre>
-                            {{ end}}
+            <!-- <input type="checkbox" id="incident-details-{{ .ID }}" class="modal-toggle" hx-preserve />
+            <div class="modal" role="dialog">
+                <div class="modal-box p-0 border-none">
+                    <div class="text-sm">
+                        <div class="mockup-browser w-full bg-base-100 text-neutral-800">
+                            <div class="mockup-browser-toolbar">
+                                <div class="input">{{ $.Monitor.HttpMethod }} {{ $.Monitor.Url }}</div>
+                            </div>
+                            <div class="p-4 max-h-[600px] overflow-y-scroll overflow-x-scroll flex flex-col gap-2">
+                                {{ if .Headers }}
+                                <pre class="opacity-60">{{ .Headers }}</pre>
+                                {{ end}}
+                                {{ if .Body }}
+                                <pre>{{ .Body }}</pre>
+                                {{ else }}
+                                <pre>&lt;html&gt;&lt;/html&gt;</pre>
+                                {{ end}}
+                            </div>
                         </div>
                     </div>
+                    <div class="modal-action p-4">
+                        <label for="incident-details-{{ .ID }}" class="btn">
+                            Close
+                        </label>
+                    </div>
                 </div>
-                <div class="modal-action p-4">
-                    <label for="incident-details-{{ .ID }}" class="btn">
-                        Close
-                    </label>
-                </div>
-            </div>
-            <label class="modal-backdrop" for="incident-details-{{ .ID }}"></label>
-        </div>
+                <label class="modal-backdrop" for="incident-details-{{ .ID }}"></label>
+            </div> -->
+        </a>
 
         {{ end }}
     </div>

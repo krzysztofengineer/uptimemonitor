@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -225,4 +226,131 @@ func TestIncident_ListMonitorIncidents(t *testing.T) {
 			AssertStatusCode(http.StatusOK).
 			AssertElementVisible(`[id="incidents-1"]`)
 	})
+}
+
+func TestIncident_RemoveIncidents(t *testing.T) {
+	t.Run("setup is required", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Delete("/incidents/1").AssertStatusCode(http.StatusForbidden)
+	})
+
+	t.Run("guests cannot remove incidents", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.CreateTestUser("test@example.com", "password")
+		tc.Delete("/incidents/1").AssertRedirect(http.StatusSeeOther, "/login")
+	})
+
+	t.Run("remove incident form is visible", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		m, _ := tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "http://example.com",
+		})
+
+		i, _ := tc.Store.CreateIncident(t.Context(), uptimemonitor.Incident{
+			MonitorID:      1,
+			StatusCode:     404,
+			ResponseTimeMs: 100,
+		})
+
+		tc.LogIn().
+			Get(fmt.Sprintf("/m/%s/i/%s", m.Uuid, i.Uuid)).
+			AssertStatusCode(http.StatusOK).
+			AssertElementVisible(`form[hx-delete="/incidents/1"]`)
+	})
+
+	t.Run("users can remove incidents", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "http://example.com",
+		})
+
+		tc.Store.CreateIncident(t.Context(), uptimemonitor.Incident{
+			MonitorID:      1,
+			StatusCode:     404,
+			ResponseTimeMs: 100,
+		})
+
+		tc.LogIn().
+			Delete("/incidents/1").
+			AssertStatusCode(http.StatusOK)
+
+		tc.AssertDatabaseCount("incidents", 0)
+	})
+}
+
+func TestIncident_IncidentPage(t *testing.T) {
+	t.Run("setup is required", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Get("/m/uuid/i/uuid").AssertRedirect(http.StatusSeeOther, "/setup")
+	})
+
+	t.Run("guests cannot view incidents", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.CreateTestUser("test@example.com", "password")
+
+		tc.Get("/m/uuid/i/uuid").AssertRedirect(http.StatusSeeOther, "/login")
+
+	})
+
+	t.Run("incident has to exist", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		m, _ := tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "http://example.com",
+		})
+
+		tc.LogIn().Get(fmt.Sprintf("/m/%s/i/uuid", m.Uuid)).
+			AssertStatusCode(http.StatusNotFound)
+	})
+
+	t.Run("monitor has to exist", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "http://example.com",
+		})
+
+		i, _ := tc.Store.CreateIncident(t.Context(), uptimemonitor.Incident{
+			MonitorID:      1,
+			StatusCode:     404,
+			ResponseTimeMs: 100,
+		})
+
+		tc.LogIn().Get(fmt.Sprintf("/m/uuid/i/%s", i.Uuid)).
+			AssertStatusCode(http.StatusNotFound)
+	})
+
+	t.Run("incident is visible", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		m, _ := tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url: "http://example.com",
+		})
+
+		i, _ := tc.Store.CreateIncident(t.Context(), uptimemonitor.Incident{
+			MonitorID:      1,
+			StatusCode:     404,
+			ResponseTimeMs: 100,
+		})
+
+		tc.LogIn().
+			Get(fmt.Sprintf("/m/%s/i/%s", m.Uuid, i.Uuid)).
+			AssertStatusCode(http.StatusOK).
+			AssertSeeText("404 Not Found")
+	})
+
 }
