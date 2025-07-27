@@ -52,27 +52,36 @@
 
 {{ define "content" }}
 <div class="max-w-[1600px] mx-auto px-4">
-    {{ with .Incident }}
-    <div class="flex flex-col md:flex-row gap-1.5 md:gap-4 md:items-start justify-between text-sm">
-        <div>
-            <div class="badge badge-soft truncate max-w-full inline-block text-xs py-1 {{ .StatusBadgeClass }}">
-                {{ .StatusBadgeText }}
+    <div class="flex justify-between gap-4 flex-col lg:flex-row">
+        {{ with .Incident }}
+        <div class="flex-1">
+            <div class="card card-border p-4 flex flex-col gap-4">
+                <div class="flex flex-col md:flex-row gap-1.5 md:gap-4 md:items-start justify-between text-sm">
+                    <div>
+                        <div
+                            class="badge badge-soft truncate max-w-full inline-block text-xs py-1 {{ .StatusBadgeClass }}">
+                            {{ .StatusBadgeText }}
+                        </div>
+                    </div>
+                    <div class="flex-1 flex flex-col gap-1">
+                        <div>
+                            {{ .StatusCode }} {{ .StatusCodeText }}
+                        </div>
+                        <div class="w-auto max-w-[350px] text-xs leading-[1.2rem] opacity-80">
+                            {{ .CreatedAt.Format "2006-01-02 15:04" }}
+                            {{ if .ResolvedAt }}
+                            (resolved at {{ .ResolvedAt.Format "2006-01-02 15:04" }})
+                            {{ end }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="flex-1 flex flex-col gap-1">
-            <div>
-                {{ .StatusCode }} {{ .StatusCodeText }}
-            </div>
-            <div class="w-auto max-w-[350px] text-xs leading-[1.2rem] opacity-80">
-                {{ .CreatedAt.Format "2006-01-02 15:04" }}
-                {{ if .ResolvedAt }}
-                (resolved at {{ .ResolvedAt.Format "2006-01-02 15:04" }})
-                {{ end }}
-            </div>
-        </div>
+        {{ end }}
+
         <div class="lg:w-[237px] flex flex-col gap-4">
             <ul class="list bg-base-100 rounded-box border border-base-200 p-2 text-left">
-                <form class="block list-row justify-stretch px-0 py-0" hx-delete="/incidents/{{ .ID }}"
+                <form class="block list-row justify-stretch px-0 py-0" hx-delete="/incidents/{{ .Incident.ID }}"
                     hx-confirm="Are you sure?" hx-swap="none">
                     <button type="submit">
                         <div class="list-col-grow">
@@ -90,9 +99,10 @@
                 </form>
             </ul>
         </div>
-    </div>
-    {{ end }}
 
+
+
+    </div>
 </div>
 {{end}}
 
