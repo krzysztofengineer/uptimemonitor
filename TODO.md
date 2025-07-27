@@ -10,12 +10,6 @@ What's left to do:
 - [ ] Calculate overall uptime and response time (keep track of number of checks
       historically)
 - [ ] Session expiration
-- [ ] Save check response
-- [ ] Add check response modal (div#modals + append when clicked + destroy when
-      clicked)
-- [ ] Save incident request and add a way to preview it
-- [ ] Move incident to separate page with request and response details
-- [ ] Store request url in incident and check (it could be updated in monitor)
 - [ ] Add sponsors badges
 - [ ] Add documentation
 - [ ] Document how to install
@@ -33,3 +27,6 @@ Optional:
 - [ ] Timezones
 - [ ] Reset password via cli
 - [ ] Use the same form for creation and editing of monitor
+- [ ] Save check response
+- [ ] Add check response modal (div#modals + append when clicked + destroy when
+      clicked)
