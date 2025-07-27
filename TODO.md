@@ -2,15 +2,15 @@
 
 What's left to do:
 
+- [ ] Calculate overall uptime and response time (keep track of number of checks
+      historically)
 - [ ] Change webhook body available variables (just .Url, .ResponseTimeMs,
       .IncidentUrl, .MonitorUrl, .StatusCode, .Body, .Headers)
+- [ ] Add sponsors badges
 - [ ] Add all available variables to the sample webhook body
 - [ ] Loading placeholders (skeletons)
 - [ ] Test check timeout
-- [ ] Calculate overall uptime and response time (keep track of number of checks
-      historically)
 - [ ] Session expiration
-- [ ] Add sponsors badges
 - [ ] Add documentation
 - [ ] Document how to install
 - [ ] Document webhook parsing and available variables
