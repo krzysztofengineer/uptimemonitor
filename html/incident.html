@@ -78,6 +78,25 @@
             </div>
 
             <div class="px-4">
+                <h2 class="font-semibold">Request</h2>
+            </div>
+
+            <div class="mockup-code w-full">
+                <div class="p-4 max-h-[600px] overflow-y-scroll overflow-x-scroll flex flex-col gap-2">
+                    {{ if and $.Incident.ReqMethod $.Incident.ReqUrl }}
+                    <pre>curl -X{{ $.Incident.ReqMethod }} {{ $.Incident.ReqUrl }}</pre>
+                    {{ end}}
+                    {{ if $.Incident.ReqHeaders }}
+                    <pre class="opacity-60">{{ $.Incident.ReqHeaders }}</pre> {{ end}}
+                    {{ if $.Incident.ReqBody }}
+                    <pre>{{ $.Incident.ReqBody }}</pre>
+                    {{ else }}
+                    <pre>//</pre>
+                    {{ end}}
+                </div>
+            </div>
+
+            <div class="px-4">
                 <h2 class="font-semibold">Response</h2>
             </div>
 
@@ -93,25 +112,6 @@
                     <pre>{{ $.Incident.Body }}</pre>
                     {{ else }}
                     <pre>&lt;html&gt;&lt;/html&gt;</pre>
-                    {{ end}}
-                </div>
-            </div>
-
-            <div class="px-4">
-                <h2 class="font-semibold">Request</h2>
-            </div>
-
-            <div class="mockup-code w-full">
-                <div class="p-4 max-h-[600px] overflow-y-scroll overflow-x-scroll flex flex-col gap-2">
-                    {{ if and $.Incident.ReqMethod $.Incident.ReqUrl }}
-                    <pre>curl -X{{ $.Incident.ReqMethod }} {{ $.Incident.ReqUrl }}</pre>
-                    {{ end}}
-                    {{ if $.Incident.ReqHeaders }}
-                    <pre class="opacity-60">{{ $.Incident.ReqHeaders }}</pre> {{ end}}
-                    {{ if $.Incident.ReqBody }}
-                    <pre>{{ $.Incident.ReqBody }}</pre>
-                    {{ else }}
-                    <pre>//</pre>
                     {{ end}}
                 </div>
             </div>
