@@ -94,10 +94,7 @@ func (s *Store) GetCheckByID(ctx context.Context, id int64) (uptimemonitor.Check
 func (s *Store) DeleteOldChecks(ctx context.Context) error {
 	stmt := `DELETE FROM checks WHERE created_at < ?`
 
-	res, err := s.db.ExecContext(ctx, stmt, time.Now().Add(-time.Hour))
-
-	count, _ := res.RowsAffected()
-	log.Printf("deleted %d checks", count)
+	_, err := s.db.ExecContext(ctx, stmt, time.Now().Add(-time.Hour))
 
 	return err
 

@@ -11,7 +11,10 @@ import (
 func (s *Store) CreateIncident(ctx context.Context, incident uptimemonitor.Incident) (uptimemonitor.Incident, error) {
 	stmt := `INSERT INTO incidents (uuid, monitor_id, status_text, status_code, response_time_ms, body, headers, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`
 
-	incident.CreatedAt = time.Now()
+	if incident.CreatedAt.IsZero() {
+		incident.CreatedAt = time.Now()
+	}
+
 	incident.Uuid = uuid.NewString()
 	incident.StatusText = uptimemonitor.IncidentStatusOpen
 
@@ -208,6 +211,14 @@ func (s *Store) ResolveIncident(ctx context.Context, incident uptimemonitor.Inci
 	`
 
 	_, err := s.db.ExecContext(ctx, stmt, uptimemonitor.IncidentStatusResolved, time.Now(), incident.ID)
+
+	return err
+}
+
+func (s *Store) DeleteOldIncidents(ctx context.Context) error {
+	stmt := `DELETE FROM incidents WHERE created_at < ?`
+
+	_, err := s.db.ExecContext(ctx, stmt, time.Now().Add(-time.Hour*24*7))
 
 	return err
 }

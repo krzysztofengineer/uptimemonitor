@@ -162,7 +162,7 @@ func TestCheck_Cleanup(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
-		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: "https://example.com", HttpMethod: http.MethodPost})
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: tc.Server.URL + "/test/200", HttpMethod: http.MethodGet})
 
 		tc.Store.CreateCheck(t.Context(), uptimemonitor.Check{
 			MonitorID: 1,
@@ -173,7 +173,17 @@ func TestCheck_Cleanup(t *testing.T) {
 			MonitorID: 1,
 		})
 
+		tc.Store.CreateIncident(t.Context(), uptimemonitor.Incident{
+			MonitorID: 1,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 8),
+		})
+
+		tc.Store.CreateIncident(t.Context(), uptimemonitor.Incident{
+			MonitorID: 1,
+		})
+
 		tc.AssertDatabaseCount("checks", 2)
+		tc.AssertDatabaseCount("incidents", 2)
 
 		service := service.CheckService{Store: tc.Store}
 		ch := service.StartCheck()
@@ -181,6 +191,7 @@ func TestCheck_Cleanup(t *testing.T) {
 		time.Sleep(1 * time.Second)
 
 		tc.AssertDatabaseCount("checks", 2) // one new, old one deleted
+		tc.AssertDatabaseCount("incidents", 1)
 
 		service.RunCheck(t.Context(), ch)
 		time.Sleep(1 * time.Second)

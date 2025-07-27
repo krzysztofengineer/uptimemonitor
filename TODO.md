@@ -2,8 +2,6 @@
 
 What's left to do:
 
-- [ ] Clear incidents
-- [ ] Clear checks
 - [ ] Remove old checks
 - [ ] Remove old incidents
 - [ ] Log in after setup automatically

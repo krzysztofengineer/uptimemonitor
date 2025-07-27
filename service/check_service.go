@@ -243,4 +243,5 @@ func (s *CheckService) callWebhook(m uptimemonitor.Monitor, i uptimemonitor.Inci
 
 func (s *CheckService) Cleanup() {
 	s.Store.DeleteOldChecks(context.Background())
+	s.Store.DeleteOldIncidents(context.Background())
 }
