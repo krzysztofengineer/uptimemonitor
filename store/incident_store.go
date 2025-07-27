@@ -216,6 +216,16 @@ func (s *Store) ResolveIncident(ctx context.Context, incident uptimemonitor.Inci
 	return err
 }
 
+func (s *Store) ResolveMonitorIncidents(ctx context.Context, monitor uptimemonitor.Monitor) error {
+	stmt := `
+		UPDATE incidents SET status_text = ?, resolved_at = ? WHERE monitor_id = ?
+	`
+
+	_, err := s.db.ExecContext(ctx, stmt, uptimemonitor.IncidentStatusResolved, time.Now(), monitor.ID)
+
+	return err
+}
+
 func (s *Store) DeleteOldIncidents(ctx context.Context) error {
 	stmt := `DELETE FROM incidents WHERE created_at < ?`
 
