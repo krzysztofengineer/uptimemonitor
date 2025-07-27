@@ -36,9 +36,20 @@ func NewTestCase(t *testing.T) *TestCase {
 	store := store.New(":memory:")
 	service := service.New(store)
 	handler := handler.New(store, service)
-	router := router.New(handler)
+	router := router.New(handler, registerRoutes)
 	server := httptest.NewServer(router)
 
+	return &TestCase{
+		T:       t,
+		Server:  server,
+		Client:  server.Client(),
+		Store:   store,
+		Headers: map[string]string{},
+		Cookies: []*http.Cookie{},
+	}
+}
+
+func registerRoutes(router *http.ServeMux) {
 	router.HandleFunc("GET /test/200", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
@@ -54,6 +65,10 @@ func NewTestCase(t *testing.T) *TestCase {
 	router.HandleFunc("GET /test/timeout", func(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(30 * time.Second)
 		w.WriteHeader(http.StatusOK)
+	})
+
+	router.HandleFunc("GET /test/panic", func(w http.ResponseWriter, r *http.Request) {
+		panic("test")
 	})
 
 	i := 0
@@ -129,15 +144,6 @@ func NewTestCase(t *testing.T) *TestCase {
 
 		w.WriteHeader(http.StatusOK)
 	})
-
-	return &TestCase{
-		T:       t,
-		Server:  server,
-		Client:  server.Client(),
-		Store:   store,
-		Headers: map[string]string{},
-		Cookies: []*http.Cookie{},
-	}
 }
 
 func (tc *TestCase) Close() {

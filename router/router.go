@@ -6,7 +6,7 @@ import (
 	"uptimemonitor/static"
 )
 
-func New(handler *handler.Handler) *http.ServeMux {
+func New(handler *handler.Handler, callback func(r *http.ServeMux)) http.Handler {
 	r := http.NewServeMux()
 
 	r.HandleFunc("GET /setup", handler.SetupPage())
@@ -45,12 +45,20 @@ func New(handler *handler.Handler) *http.ServeMux {
 			mux.Handle("/", handler.Authenticated(authenticatedMux))
 		}
 
-		r.Handle("/", handler.UserFromCookie(
-			handler.Installed(mux),
-		))
+		r.Handle(
+			"/",
+			handler.UserFromCookie(
+				handler.Installed(
+					mux,
+				),
+			),
+		)
+
 	}
 
 	r.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
 
-	return r
+	callback(r)
+
+	return handler.Recoverer(r)
 }

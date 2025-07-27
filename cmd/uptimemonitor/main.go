@@ -30,7 +30,7 @@ func main() {
 	store := store.New(dsn)
 	service := service.New(store)
 	handler := handler.New(store, service)
-	router := router.New(handler)
+	router := router.New(handler, func(r *http.ServeMux) {})
 
 	server := &http.Server{
 		Addr:    addr,
