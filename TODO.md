@@ -2,7 +2,6 @@
 
 What's left to do:
 
-- [ ] Middlewares (recoverer, cache, etc.)
 - [ ] Secure cookies on prod
 - [ ] Clear incidents
 - [ ] Clear checks

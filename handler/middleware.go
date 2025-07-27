@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strings"
 	"uptimemonitor"
 )
 
@@ -100,5 +101,21 @@ func (m *Handler) Recoverer(next http.Handler) http.Handler {
 		log.Printf("Before")
 		next.ServeHTTP(w, r)
 		log.Printf("After")
+	})
+}
+
+func (m *Handler) NoCache(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet && strings.HasPrefix(r.URL.Path, "/static") {
+			w.Header().Set("Cache-Control", "public, max-age=31536000")
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
+
+		next.ServeHTTP(w, r)
 	})
 }

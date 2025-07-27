@@ -60,5 +60,7 @@ func New(handler *handler.Handler, callback func(r *http.ServeMux)) http.Handler
 
 	callback(r)
 
-	return handler.Recoverer(r)
+	return handler.Recoverer(
+		handler.NoCache(r),
+	)
 }
