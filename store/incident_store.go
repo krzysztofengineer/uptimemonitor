@@ -257,3 +257,30 @@ func (s *Store) GetIncidentByUuid(ctx context.Context, uuid string) (uptimemonit
 
 	return incident, nil
 }
+
+func (s *Store) GetIncidentByID(ctx context.Context, id int64) (uptimemonitor.Incident, error) {
+	stmt := `
+		SELECT 
+			incidents.id, incidents.uuid, incidents.monitor_id,
+			incidents.status_text, incidents.status_code, incidents.response_time_ms,
+			incidents.body, incidents.headers, incidents.created_at, incidents.resolved_at,
+			monitors.id, monitors.url, monitors.uuid, monitors.created_at
+		FROM incidents
+		LEFT JOIN monitors ON monitors.id = incidents.monitor_id
+		WHERE incidents.id = ?
+	`
+
+	row := s.db.QueryRowContext(ctx, stmt, id)
+
+	var incident uptimemonitor.Incident
+	if err := row.Scan(
+		&incident.ID, &incident.Uuid, &incident.MonitorID,
+		&incident.StatusText, &incident.StatusCode, &incident.ResponseTimeMs,
+		&incident.Body, &incident.Headers, &incident.CreatedAt, &incident.ResolvedAt,
+		&incident.Monitor.ID, &incident.Monitor.Url, &incident.Monitor.Uuid, &incident.Monitor.CreatedAt,
+	); err != nil {
+		return incident, err
+	}
+
+	return incident, nil
+}

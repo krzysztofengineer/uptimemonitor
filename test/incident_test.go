@@ -268,7 +268,7 @@ func TestIncident_RemoveIncidents(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
-		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+		m, _ := tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
 			Url: "http://example.com",
 		})
 
@@ -280,7 +280,8 @@ func TestIncident_RemoveIncidents(t *testing.T) {
 
 		tc.LogIn().
 			Delete("/incidents/1").
-			AssertStatusCode(http.StatusOK)
+			AssertStatusCode(http.StatusOK).
+			AssertHeader("HX-Redirect", fmt.Sprintf("/m/%s", m.Uuid))
 
 		tc.AssertDatabaseCount("incidents", 0)
 	})

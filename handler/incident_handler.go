@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -36,7 +37,15 @@ func (h *Handler) DeleteIncident() http.HandlerFunc {
 			return
 		}
 
+		i, err := h.Store.GetIncidentByID(r.Context(), int64(id))
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
 		h.Store.DeleteIncident(r.Context(), int64(id))
+
+		w.Header().Set("HX-Redirect", fmt.Sprintf("/m/%s", i.Monitor.Uuid))
 	}
 }
 
