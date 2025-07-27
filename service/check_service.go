@@ -40,6 +40,10 @@ func (s *CheckService) RunCheck(ctx context.Context, ch chan uptimemonitor.Monit
 		ch <- m
 	}
 
+	go func() {
+		s.Cleanup()
+	}()
+
 	return nil
 }
 
@@ -235,4 +239,8 @@ func (s *CheckService) callWebhook(m uptimemonitor.Monitor, i uptimemonitor.Inci
 	}
 
 	http.DefaultClient.Do(req)
+}
+
+func (s *CheckService) Cleanup() {
+	s.Store.DeleteOldChecks(context.Background())
 }

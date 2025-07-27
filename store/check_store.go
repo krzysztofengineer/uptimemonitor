@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"log"
 	"time"
 	"uptimemonitor"
 
@@ -11,7 +12,11 @@ import (
 func (s *Store) CreateCheck(ctx context.Context, check uptimemonitor.Check) (uptimemonitor.Check, error) {
 	stmt := `INSERT INTO checks(uuid, monitor_id, status_code, response_time_ms, created_at) VALUES(?, ?, ?, ?, ?)`
 	uuid := uuid.NewString()
-	check.CreatedAt = time.Now()
+	if check.CreatedAt.IsZero() {
+		check.CreatedAt = time.Now()
+	}
+
+	log.Printf("create query: %s, %s, %d, %d, %s", stmt, uuid, check.MonitorID, check.StatusCode, check.CreatedAt.Format(time.RFC3339))
 
 	res, err := s.db.ExecContext(ctx, stmt, uuid, check.MonitorID, check.StatusCode, check.ResponseTimeMs, check.CreatedAt)
 	if err != nil {
@@ -84,4 +89,16 @@ func (s *Store) GetCheckByID(ctx context.Context, id int64) (uptimemonitor.Check
 	)
 
 	return ch, err
+}
+
+func (s *Store) DeleteOldChecks(ctx context.Context) error {
+	stmt := `DELETE FROM checks WHERE created_at < ?`
+
+	res, err := s.db.ExecContext(ctx, stmt, time.Now().Add(-time.Hour))
+
+	count, _ := res.RowsAffected()
+	log.Printf("deleted %d checks", count)
+
+	return err
+
 }

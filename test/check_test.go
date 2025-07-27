@@ -156,3 +156,35 @@ func TestCheck_PeriodicChecks(t *testing.T) {
 		tc.AssertEqual(http.StatusOK, check.StatusCode)
 	})
 }
+
+func TestCheck_Cleanup(t *testing.T) {
+	t.Run("old cleanups are removed", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{Url: "https://example.com", HttpMethod: http.MethodPost})
+
+		tc.Store.CreateCheck(t.Context(), uptimemonitor.Check{
+			MonitorID: 1,
+			CreatedAt: time.Now().Add(-time.Hour).Add(-15 * time.Minute),
+		})
+
+		tc.Store.CreateCheck(t.Context(), uptimemonitor.Check{
+			MonitorID: 1,
+		})
+
+		tc.AssertDatabaseCount("checks", 2)
+
+		service := service.CheckService{Store: tc.Store}
+		ch := service.StartCheck()
+		service.RunCheck(t.Context(), ch)
+		time.Sleep(1 * time.Second)
+
+		tc.AssertDatabaseCount("checks", 2) // one new, old one deleted
+
+		service.RunCheck(t.Context(), ch)
+		time.Sleep(1 * time.Second)
+
+		tc.AssertDatabaseCount("checks", 3)
+	})
+}
