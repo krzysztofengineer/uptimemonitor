@@ -17,10 +17,6 @@
         <div class="hidden lg:block flex-1">
             <div class="breadcrumbs text-xs">
                 <ul>
-                    <li>
-                        {{ template "logo" . }}
-                    </li>
-
                     {{ block "breadcrumbs" . }}{{ end }}
                 </ul>
             </div>
@@ -70,10 +66,13 @@
         </nav>
     </footer>
     <footer class="footer text-base-content p-4">
-        <aside class="grid-flow-col items-center">
-            <p>
+        <aside class="flex flex-col gap-3">
+            <div>
+                {{ template "logo" . }}
+            </div>
+            <div>
                 © 2025 AIR Labs
-            </p>
+            </div>
         </aside>
     </footer>
 </div>

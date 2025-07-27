@@ -1,5 +1,5 @@
 {{ define "incident_list" }}
-<ul class="list card card-border {{ if .Incidents }} bg-neutral text-neutral-content {{ end }} bg-base-100 w-full w-full rounded-box"
+<ul class="list card card-border {{ if .Incidents }} bg-neutral text-neutral-content {{ end }} bg-base-100 w-full w-full rounded-box lg:max-w-sm"
     hx-get="/incidents" hx-trigger="every 60s" hx-swap="outerHTML">
     {{ if .Incidents }}
     <li class="p-4 pb-2 tracking-wide font-semibold">
@@ -11,10 +11,10 @@
         <li class="list-row w-full max-w-full block" id="incidents-{{ .ID }}">
             <div class="flex flex-col gap-1.5">
                 <div class="flex gap-2 justify-between items-center">
-                    <div aria-label="error" class="status status-error animate-ping"></div>
-                    <div class="text-xs font-semibold truncate flex-1">
-                        <div class="flex items-base gap-1 w-full">
-                            <span class="flex-none"> {{ .Monitor.Domain }}</span>
+                    <div aria-label="error" class="status status-error animate-ping shrink-0"></div>
+                    <div class="text-xs font-semibold truncate flex-1 shrink-0">
+                        <div class="flex items-base gap-1 w-full max-w-full">
+                            <span class="flex-none truncate"> {{ .Monitor.Domain }}</span>
                             <span class="flex-grow leader-dots hidden lg:block"></span>
                         </div>
                     </div>
