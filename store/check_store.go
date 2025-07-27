@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"log"
 	"time"
 	"uptimemonitor"
 
@@ -15,8 +14,6 @@ func (s *Store) CreateCheck(ctx context.Context, check uptimemonitor.Check) (upt
 	if check.CreatedAt.IsZero() {
 		check.CreatedAt = time.Now()
 	}
-
-	log.Printf("create query: %s, %s, %d, %d, %s", stmt, uuid, check.MonitorID, check.StatusCode, check.CreatedAt.Format(time.RFC3339))
 
 	res, err := s.db.ExecContext(ctx, stmt, uuid, check.MonitorID, check.StatusCode, check.ResponseTimeMs, check.CreatedAt)
 	if err != nil {

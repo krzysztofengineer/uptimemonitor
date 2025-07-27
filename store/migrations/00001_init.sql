@@ -52,6 +52,10 @@ CREATE TABLE incidents(
     response_time_ms INTEGER NOT NULL,
     body TEXT,
     headers TEXT,
+    req_method TEXT,
+    req_url TEXT,
+    req_headers TEXT,
+    req_body TEXT,
     created_at DATETIME NOT NULL,
     resolved_at DATETIME,
 

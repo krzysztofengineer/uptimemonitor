@@ -9,7 +9,7 @@ import (
 )
 
 func (s *Store) CreateIncident(ctx context.Context, incident uptimemonitor.Incident) (uptimemonitor.Incident, error) {
-	stmt := `INSERT INTO incidents (uuid, monitor_id, status_text, status_code, response_time_ms, body, headers, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`
+	stmt := `INSERT INTO incidents (uuid, monitor_id, status_text, status_code, response_time_ms, body, headers, req_method, req_url, req_headers, req_body, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`
 
 	if incident.CreatedAt.IsZero() {
 		incident.CreatedAt = time.Now()
@@ -18,7 +18,8 @@ func (s *Store) CreateIncident(ctx context.Context, incident uptimemonitor.Incid
 	incident.Uuid = uuid.NewString()
 	incident.StatusText = uptimemonitor.IncidentStatusOpen
 
-	res, err := s.db.ExecContext(ctx, stmt, incident.Uuid, incident.MonitorID, incident.StatusText, incident.StatusCode, incident.ResponseTimeMs, incident.Body, incident.Headers, incident.CreatedAt)
+	res, err := s.db.ExecContext(ctx, stmt, incident.Uuid, incident.MonitorID, incident.StatusText, incident.StatusCode, incident.ResponseTimeMs, incident.Body, incident.Headers,
+		incident.ReqMethod, incident.ReqUrl, incident.ReqHeaders, incident.ReqBody, incident.CreatedAt)
 	if err != nil {
 		return uptimemonitor.Incident{}, err
 	}
@@ -29,14 +30,14 @@ func (s *Store) CreateIncident(ctx context.Context, incident uptimemonitor.Incid
 	return incident, err
 }
 
-func (s *Store) UpdateIncidentBodyAndHeaders(ctx context.Context, incident uptimemonitor.Incident, body, headers string) error {
+func (s *Store) UpdateIncidentBodyAndHeaders(ctx context.Context, incident uptimemonitor.Incident, body, headers, reqMethod, reqUrl, reqHeaders, reqBody string) error {
 	stmt := `
 		UPDATE incidents
-		SET body = ?, headers = ?
+		SET body = ?, headers = ?, req_method = ?, req_url = ?, req_headers = ?, req_body = ?
 		WHERE id = ?
 	`
 
-	_, err := s.db.ExecContext(ctx, stmt, body, headers, incident.ID)
+	_, err := s.db.ExecContext(ctx, stmt, body, headers, reqMethod, reqUrl, reqHeaders, reqBody, incident.ID)
 
 	return err
 }
@@ -237,6 +238,7 @@ func (s *Store) GetIncidentByUuid(ctx context.Context, uuid string) (uptimemonit
 			incidents.id, incidents.uuid, incidents.monitor_id,
 			incidents.status_text, incidents.status_code, incidents.response_time_ms,
 			incidents.body, incidents.headers, incidents.created_at, incidents.resolved_at,
+			incidents.req_method, incidents.req_url, incidents.req_headers, incidents.req_body,
 			monitors.id, monitors.url, monitors.uuid, monitors.created_at
 		FROM incidents
 		LEFT JOIN monitors ON monitors.id = incidents.monitor_id
@@ -250,6 +252,7 @@ func (s *Store) GetIncidentByUuid(ctx context.Context, uuid string) (uptimemonit
 		&incident.ID, &incident.Uuid, &incident.MonitorID,
 		&incident.StatusText, &incident.StatusCode, &incident.ResponseTimeMs,
 		&incident.Body, &incident.Headers, &incident.CreatedAt, &incident.ResolvedAt,
+		&incident.ReqMethod, &incident.ReqUrl, &incident.ReqHeaders, &incident.ReqBody,
 		&incident.Monitor.ID, &incident.Monitor.Url, &incident.Monitor.Uuid, &incident.Monitor.CreatedAt,
 	); err != nil {
 		return incident, err
@@ -264,6 +267,7 @@ func (s *Store) GetIncidentByID(ctx context.Context, id int64) (uptimemonitor.In
 			incidents.id, incidents.uuid, incidents.monitor_id,
 			incidents.status_text, incidents.status_code, incidents.response_time_ms,
 			incidents.body, incidents.headers, incidents.created_at, incidents.resolved_at,
+			incidents.req_method, incidents.req_url, incidents.req_headers, incidents.req_body,
 			monitors.id, monitors.url, monitors.uuid, monitors.created_at
 		FROM incidents
 		LEFT JOIN monitors ON monitors.id = incidents.monitor_id
@@ -277,6 +281,7 @@ func (s *Store) GetIncidentByID(ctx context.Context, id int64) (uptimemonitor.In
 		&incident.ID, &incident.Uuid, &incident.MonitorID,
 		&incident.StatusText, &incident.StatusCode, &incident.ResponseTimeMs,
 		&incident.Body, &incident.Headers, &incident.CreatedAt, &incident.ResolvedAt,
+		&incident.ReqMethod, &incident.ReqUrl, &incident.ReqHeaders, &incident.ReqBody,
 		&incident.Monitor.ID, &incident.Monitor.Url, &incident.Monitor.Uuid, &incident.Monitor.CreatedAt,
 	); err != nil {
 		return incident, err

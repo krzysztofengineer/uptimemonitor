@@ -22,6 +22,10 @@ type Incident struct {
 	Headers        string
 	StatusText     string
 	ResolvedAt     *time.Time
+	ReqMethod      string
+	ReqUrl         string
+	ReqHeaders     string
+	ReqBody        string
 
 	Monitor Monitor
 }

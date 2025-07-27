@@ -159,8 +159,13 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 }
 
 func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonitor.Check, responseTimeMs int64, statusCode int, body string, headers string) error {
+	reqURL := m.Url
+	reqMethod := m.HttpMethod
+	reqHeaders := m.HttpHeaders
+	reqBody := m.HttpBody
+
 	if exists, latest := s.incidentAlreadyExists(context.Background(), m, statusCode); exists {
-		return s.Store.UpdateIncidentBodyAndHeaders(context.Background(), latest, body, headers)
+		return s.Store.UpdateIncidentBodyAndHeaders(context.Background(), latest, body, headers, reqMethod, reqURL, reqHeaders, reqBody)
 	}
 
 	incident := uptimemonitor.Incident{
@@ -169,6 +174,10 @@ func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonit
 		ResponseTimeMs: responseTimeMs,
 		Body:           body,
 		Headers:        headers,
+		ReqUrl:         reqURL,
+		ReqHeaders:     reqHeaders,
+		ReqBody:        reqBody,
+		ReqMethod:      reqMethod,
 	}
 	saved, err := s.Store.CreateIncident(context.Background(), incident)
 	if err != nil {
