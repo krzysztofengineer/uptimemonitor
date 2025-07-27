@@ -16,6 +16,7 @@ What's left to do:
 - [ ] Document webhook parsing and available variables
 - [ ] Add "Test Webhook" button with fake incident
 - [ ] Add website command with a server homepage
+- [ ] Get app version from git tag
 
 Optional:
 
