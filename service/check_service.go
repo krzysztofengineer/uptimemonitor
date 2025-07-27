@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 	"text/template"
@@ -34,12 +33,10 @@ func (s *CheckService) StartCheck() chan uptimemonitor.Monitor {
 func (s *CheckService) RunCheck(ctx context.Context, ch chan uptimemonitor.Monitor) error {
 	monitors, err := s.Store.ListMonitors(ctx)
 	if err != nil {
-		log.Printf("err: %v", err)
 		return err
 	}
 
 	for _, m := range monitors {
-		log.Printf("check it: %v", m)
 		ch <- m
 	}
 
@@ -68,7 +65,6 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 	)
 
 	if err != nil {
-		log.Printf("err: %v", err)
 		return
 	}
 
@@ -85,8 +81,6 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 	// todo: add timeout
 	res, err := http.DefaultClient.Do(req)
 	elapsed := time.Since(start)
-
-	log.Printf("response: %v", res.StatusCode)
 
 	if err != nil {
 		check, err := s.Store.CreateCheck(c, uptimemonitor.Check{
@@ -161,12 +155,7 @@ func (s *CheckService) handleCheck(m uptimemonitor.Monitor) {
 		headers = resHeaders
 	}
 
-	log.Printf("create incident!!!")
-
-	err = s.createIncident(m, check, elapsed.Milliseconds(), statusCode, string(body), headers)
-	if err != nil {
-		log.Printf("err: %v", err)
-	}
+	s.createIncident(m, check, elapsed.Milliseconds(), statusCode, string(body), headers)
 }
 
 func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonitor.Check, responseTimeMs int64, statusCode int, body string, headers string) error {
@@ -176,7 +165,6 @@ func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonit
 	reqBody := m.HttpBody
 
 	if exists, latest := s.incidentAlreadyExists(context.Background(), m, statusCode); exists {
-		log.Printf("existing: %v", latest)
 		return s.Store.UpdateIncidentBodyAndHeaders(context.Background(), latest, body, headers, reqMethod, reqURL, reqHeaders, reqBody)
 	}
 
@@ -193,7 +181,7 @@ func (s *CheckService) createIncident(m uptimemonitor.Monitor, check uptimemonit
 		ReqBody:        reqBody,
 		ReqMethod:      reqMethod,
 	}
-	log.Printf("new: %v", incident)
+
 	saved, err := s.Store.CreateIncident(context.Background(), incident)
 	if err != nil {
 		return fmt.Errorf("failed to create incident for monitor %d: %w", m.ID, err)
