@@ -200,6 +200,12 @@ func (tc *TestCase) Post(url string, data url.Values) *testutil.AssertableRespon
 		tc.T.Fatalf("failed to post %s: %v", url, err)
 	}
 
+	for _, c := range res.Cookies() {
+		if c.Name == "session" {
+			tc.Cookies = append(tc.Cookies, c)
+		}
+	}
+
 	return testutil.NewAssertableResponse(tc.T, res)
 }
 

@@ -77,6 +77,6 @@ func TestSetup(t *testing.T) {
 		res.AssertHeader("HX-Redirect", "/")
 		tc.AssertDatabaseCount("users", 1)
 
-		tc.Get("/setup").AssertRedirect(http.StatusSeeOther, "/login")
+		tc.Get("/setup").AssertRedirect(http.StatusSeeOther, "/new")
 	})
 }

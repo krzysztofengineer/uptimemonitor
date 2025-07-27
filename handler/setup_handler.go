@@ -3,6 +3,7 @@ package handler
 import (
 	"html/template"
 	"net/http"
+	"time"
 	"uptimemonitor"
 	"uptimemonitor/form"
 	"uptimemonitor/html"
@@ -65,10 +66,37 @@ func (h *Handler) SetupForm() http.HandlerFunc {
 			return
 		}
 
-		h.Store.CreateUser(r.Context(), uptimemonitor.User{
+		user, err := h.Store.CreateUser(r.Context(), uptimemonitor.User{
 			Name:         f.Name,
 			Email:        f.Email,
 			PasswordHash: string(hash),
+		})
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		session, err := h.Store.CreateSession(r.Context(), uptimemonitor.Session{
+			UserID:    user.ID,
+			ExpiresAt: time.Now().Add(time.Hour * 24 * 30),
+			User:      user,
+		})
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			f.Errors["Email"] = "Something went wrong, try again later"
+			tmpl.ExecuteTemplate(w, "login_form", data{
+				Form: f,
+			})
+			return
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session",
+			Value:    session.Uuid,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+			Secure:   h.Secure,
+			Expires:  session.ExpiresAt,
 		})
 
 		w.Header().Set("HX-Redirect", "/")

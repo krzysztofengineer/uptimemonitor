@@ -2,7 +2,6 @@
 
 What's left to do:
 
-- [ ] Log in after setup automatically
 - [ ] Change webhook body available variables (just .Url, .ResponseTimeMs,
       .IncidentUrl, .MonitorUrl, .StatusCode, .Body, .Headers)
 - [ ] Add all available variables to the sample webhook body

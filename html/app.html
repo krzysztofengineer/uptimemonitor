@@ -39,20 +39,20 @@
 
 {{ define "footer" }}
 <div class="max-w-[1600px] mx-auto w-full p-4 pt-10">
-    <footer class="footer sm:footer-horizontal text-base-content p-4">
-        <nav>
-            <h6 class="footer-title">{{ .User.Name }}</h6>
+    <footer class="text-sm text-base-content p-4 flex flex-col md:flex-row gap-12 md:gap-4">
+        <nav class="flex flex-col gap-2 flex-1">
+            <h6 class="footer-title truncate">{{ .User.Name }}</h6>
             <a class="link link-hover">Account settings</a>
             <a class="link link-hover">Manage users</a>
             <a class="link link-hover" href="/logout">Log out</a>
         </nav>
-        <nav>
+        <nav class="flex flex-col gap-2 flex-1">
             <h6 class="footer-title">UPTIMEMONITOR</h6>
             <a class="link link-hover">Documentation</a>
             <a class="link link-hover">Pricing</a>
             <a class="link link-hover">Terms of use</a>
         </nav>
-        <nav>
+        <nav class="flex flex-col gap-2 flex-1">
             <h6 class="footer-title">AIR Labs</h6>
             <a class="link link-hover">About us</a>
             <a class="link link-hover">Other products</a>
