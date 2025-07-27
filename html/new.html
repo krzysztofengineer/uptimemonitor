@@ -8,6 +8,23 @@
 </div>
 {{ end }}
 
+{{ define "breadcrumbs" }}
+<li class="">
+    <a href="/" hx-boost preload>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-4 w-4 stroke-current shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+        </svg>
+        Monitors
+    </a>
+</li>
+<li class="">
+    <div class="flex items-center gap-2 ">
+        New
+    </div>
+</li>
+{{ end }}
+
 {{ define "new_form" }}
 <form hx-post="/monitors" hx-swap="outerHTML" class="flex flex-col gap-4 w-full max-w-md">
     <div>
