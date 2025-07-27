@@ -297,13 +297,24 @@ func (h *Handler) EditMonitorForm() http.HandlerFunc {
 
 		r.ParseForm()
 
+		customHeaders := r.PostFormValue("http_headers")
+		customBody := r.PostFormValue("http_body")
+
+		if r.PostFormValue("has_custom_headers") != "on" {
+			customHeaders = ""
+		}
+
+		if r.PostFormValue("has_custom_body") != "on" {
+			customBody = ""
+		}
+
 		f := form.MonitorForm{
 			HttpMethod:       r.PostFormValue("http_method"),
 			Url:              r.PostFormValue("url"),
 			HasCustomHeaders: r.PostFormValue("has_custom_headers") == "on",
 			HasCustomBody:    r.PostFormValue("has_custom_body") == "on",
-			HttpHeaders:      r.PostFormValue("http_headers"),
-			HttpBody:         r.PostFormValue("http_body"),
+			HttpHeaders:      customHeaders,
+			HttpBody:         customBody,
 			HasWebhook:       r.PostFormValue("has_webhook") == "on",
 			WebhookMethod:    r.PostFormValue("webhook_method"),
 			WebhookUrl:       r.PostFormValue("webhook_url"),
@@ -326,10 +337,14 @@ func (h *Handler) EditMonitorForm() http.HandlerFunc {
 
 		if f.HasCustomHeaders {
 			monitor.HttpHeaders = f.HttpHeaders
+		} else {
+			monitor.HttpHeaders = ""
 		}
 
 		if f.HasCustomBody {
 			monitor.HttpBody = f.HttpBody
+		} else {
+			monitor.HttpBody = ""
 		}
 
 		if f.HasWebhook {
@@ -337,6 +352,11 @@ func (h *Handler) EditMonitorForm() http.HandlerFunc {
 			monitor.WebhookMethod = f.WebhookMethod
 			monitor.WebhookHeaders = f.WebhookHeaders
 			monitor.WebhookBody = f.WebhookBody
+		} else {
+			monitor.WebhookUrl = ""
+			monitor.WebhookMethod = ""
+			monitor.WebhookHeaders = ""
+			monitor.WebhookBody = ""
 		}
 
 		err = h.Store.UpdateMonitor(r.Context(), monitor)
