@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"strings"
 	"uptimemonitor"
@@ -90,17 +89,13 @@ func (m *Handler) Guest(next http.Handler) http.Handler {
 
 func (m *Handler) Recoverer(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Registering recocverer")
 		defer func() {
-			log.Printf("DEfer")
 			if err := recover(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
 		}()
 
-		log.Printf("Before")
 		next.ServeHTTP(w, r)
-		log.Printf("After")
 	})
 }
 

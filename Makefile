@@ -3,6 +3,7 @@ watch:
 	go tool air \
 		-build.cmd="make build" \
 		-build.include_ext="go,sql,css,html,js" \
+		-build.full_bin="./tmp/main -secure=false" \
 		-proxy.enabled="true" \
 		-proxy.proxy_port="3001" \
 		-proxy.app_port="3000"

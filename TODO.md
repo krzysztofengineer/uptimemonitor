@@ -2,7 +2,6 @@
 
 What's left to do:
 
-- [ ] Secure cookies on prod
 - [ ] Clear incidents
 - [ ] Clear checks
 - [ ] Remove old checks

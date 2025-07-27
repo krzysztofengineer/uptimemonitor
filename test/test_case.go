@@ -35,7 +35,7 @@ type TestCase struct {
 func NewTestCase(t *testing.T) *TestCase {
 	store := store.New(":memory:")
 	service := service.New(store)
-	handler := handler.New(store, service)
+	handler := handler.New(store, service, false)
 	router := router.New(handler, registerRoutes)
 	server := httptest.NewServer(router)
 

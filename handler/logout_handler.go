@@ -25,7 +25,7 @@ func (h *Handler) Logout() http.HandlerFunc {
 			Value:    "",
 			HttpOnly: true,
 			SameSite: http.SameSiteLaxMode,
-			Secure:   false, // todo
+			Secure:   h.Secure,
 			Expires:  time.Now().Add(time.Hour * 24 * 30 * -1),
 		})
 

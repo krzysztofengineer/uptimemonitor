@@ -86,7 +86,7 @@ func (h *Handler) LoginForm() http.HandlerFunc {
 			Value:    session.Uuid,
 			HttpOnly: true,
 			SameSite: http.SameSiteLaxMode,
-			Secure:   false, // todo
+			Secure:   h.Secure,
 			Expires:  session.ExpiresAt,
 		})
 

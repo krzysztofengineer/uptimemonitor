@@ -8,12 +8,14 @@ import (
 )
 
 type Handler struct {
-	Store *store.Store
+	Store  *store.Store
+	Secure bool
 }
 
-func New(store *store.Store, service *service.Service) *Handler {
+func New(store *store.Store, service *service.Service, secure bool) *Handler {
 	return &Handler{
-		Store: store,
+		Store:  store,
+		Secure: secure,
 	}
 }
 
