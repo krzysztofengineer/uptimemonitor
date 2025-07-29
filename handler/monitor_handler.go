@@ -149,6 +149,8 @@ func (h *Handler) MonitorStats() http.HandlerFunc {
 		AvgResponseTime int64
 		Uptime          string
 		Count           int64
+		ChecksCount     int64
+		FailureCount    int64
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -158,35 +160,19 @@ func (h *Handler) MonitorStats() http.HandlerFunc {
 			return
 		}
 
-		count := h.Store.CountMonitorIncidents(r.Context(), int64(id))
-
-		checks, err := h.Store.ListChecks(r.Context(), int64(id), 60)
-		if err != nil || id == 0 {
+		m, err := h.Store.GetMonitorByID(r.Context(), id)
+		if err != nil {
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			return
 		}
 
-		uptime := float32(0)
-		avgResTime := int64(0)
-
-		for _, ch := range checks {
-			avgResTime += ch.ResponseTimeMs
-
-			if ch.StatusCode < 400 {
-				uptime++
-			}
-		}
-
-		if len(checks) > 0 {
-			avgResTime = avgResTime / int64(len(checks))
-			uptime = uptime / float32(len(checks)) * 100.0
-		}
-
 		tmpl.ExecuteTemplate(w, "monitor_stats", data{
 			ID:              int64(id),
-			AvgResponseTime: int64(avgResTime),
-			Uptime:          fmt.Sprintf("%.1f", uptime),
-			Count:           count,
+			AvgResponseTime: int64(m.AvgResponseTimeMs),
+			Uptime:          fmt.Sprintf("%.1f", m.Uptime),
+			Count:           m.IncidentsCount,
+			ChecksCount:     m.N,
+			FailureCount:    m.IncidentsCount,
 		})
 	}
 }
