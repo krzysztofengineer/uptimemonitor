@@ -3,7 +3,6 @@ package store
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 	"uptimemonitor"
 
@@ -59,11 +58,6 @@ func (s *Store) CreateCheck(ctx context.Context, check uptimemonitor.Check) (upt
 	newN := n + 1
 	newUptime := fmt.Sprintf("%.1f", float32(float32(newN-newIncidentCount)/float32(newN)*float32(100)))
 	newAvgResponseTimeMs := (avgResponseTimeMs*n + check.ResponseTimeMs) / newN
-
-	log.Printf("incidentCount %v", incidentsCount)
-	log.Printf("uptime before: %v, after: %v", uptime, newUptime)
-	log.Printf("avg_response_time_ms before: %v, after: %v", avgResponseTimeMs, newAvgResponseTimeMs)
-	log.Printf("n before: %v, after: %v", n, newN)
 
 	_, err = tx.ExecContext(ctx, stmt, newUptime, newAvgResponseTimeMs, newN, newIncidentCount, check.MonitorID)
 	if err != nil {
