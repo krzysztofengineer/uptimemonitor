@@ -82,14 +82,17 @@
             </div>
 
             <div class="mockup-code w-full">
-                <div class="p-4 max-h-[600px] overflow-y-scroll overflow-x-scroll flex flex-col gap-2">
+                <div class="p-4 max-h-[600px] overflow-y-scroll overflow-x-scroll flex flex-col gap-1">
                     {{ if and $.Incident.ReqMethod $.Incident.ReqUrl }}
-                    <pre>curl -X{{ $.Incident.ReqMethod }} {{ $.Incident.ReqUrl }}</pre>
+                    <pre>curl -X{{ $.Incident.ReqMethod }} {{ $.Incident.ReqUrl }} \</pre>
                     {{ end}}
                     {{ if $.Incident.ReqHeaders }}
-                    <pre class="opacity-60">{{ $.Incident.ReqHeaders }}</pre> {{ end}}
+                    {{ range $key, $value := $.Incident.ReqHeadersMap }}
+                    <pre class="opacity-60 pl-4">-H '{{ $key }}: {{ $value }}' \</pre>
+                    {{ end }}
+                    {{ end}}
                     {{ if $.Incident.ReqBody }}
-                    <pre>{{ $.Incident.ReqBody }}</pre>
+                    <pre class="pl-4">-d '{{ $.Incident.ReqBody }}'</pre>
                     {{ end}}
                 </div>
             </div>

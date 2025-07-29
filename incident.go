@@ -1,6 +1,7 @@
 package uptimemonitor
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -66,4 +67,19 @@ func (i Incident) StatusBadgeText() string {
 	}
 
 	return "Open"
+}
+
+func (i Incident) ReqHeadersMap() map[string]string {
+	if i.ReqHeaders == "" {
+		return map[string]string{}
+	}
+
+	customHeaders := map[string]string{}
+	err := json.Unmarshal([]byte(i.ReqHeaders), &customHeaders)
+	if err != nil {
+		return map[string]string{}
+
+	}
+
+	return customHeaders
 }
