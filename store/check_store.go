@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"log"
 	"time"
 	"uptimemonitor"
 
@@ -15,14 +16,57 @@ func (s *Store) CreateCheck(ctx context.Context, check uptimemonitor.Check) (upt
 		check.CreatedAt = time.Now()
 	}
 
-	res, err := s.db.ExecContext(ctx, stmt, uuid, check.MonitorID, check.StatusCode, check.ResponseTimeMs, check.CreatedAt)
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return check, err
+	}
+
+	defer tx.Rollback()
+
+	res, err := tx.ExecContext(ctx, stmt, uuid, check.MonitorID, check.StatusCode, check.ResponseTimeMs, check.CreatedAt)
 	if err != nil {
 		return check, err
 	}
 
 	id, _ := res.LastInsertId()
-
 	check.ID = id
+
+	stmt = `
+		SELECT uptime, avg_response_time_ms, n 
+		FROM monitors 
+		WHERE id = ?
+	`
+	var n int64
+	var uptime float32
+	var avgResponseTimeMs int64
+	err = tx.QueryRowContext(ctx, stmt, check.MonitorID).Scan(&uptime, &avgResponseTimeMs, &n)
+	if err != nil {
+		return check, err
+	}
+
+	check.Monitor.Uptime = uptime
+	check.Monitor.AvgResponseTimeMs = avgResponseTimeMs
+	check.Monitor.N = n
+
+	stmt = `
+		UPDATE monitors 
+		SET uptime = ?, avg_response_time_ms = ?, n = ?
+		WHERE id = ?
+	`
+	newN := check.Monitor.N + 1
+	newUptime := 100 // todo
+	newAvgResponseTimeMs := (check.Monitor.AvgResponseTimeMs*check.Monitor.N + check.ResponseTimeMs) / newN
+
+	log.Printf("uptime before: %v, after: %v", check.Monitor.Uptime, newUptime)
+	log.Printf("avg_response_time_ms before: %v, after: %v", check.Monitor.AvgResponseTimeMs, newAvgResponseTimeMs)
+	log.Printf("n before: %v, after: %v", check.Monitor.N, newN)
+
+	_, err = tx.ExecContext(ctx, stmt, newUptime, newAvgResponseTimeMs, newN, check.MonitorID)
+	if err != nil {
+		return check, err
+	}
+
+	tx.Commit()
 
 	return check, nil
 }

@@ -8,17 +8,20 @@ import (
 )
 
 type Monitor struct {
-	ID             int64
-	Uuid           string
-	Url            string
-	HttpMethod     string
-	HttpHeaders    string
-	HttpBody       string
-	WebhookUrl     string
-	WebhookMethod  string
-	WebhookHeaders string
-	WebhookBody    string
-	CreatedAt      time.Time
+	ID                int64
+	Uuid              string
+	Url               string
+	HttpMethod        string
+	HttpHeaders       string
+	HttpBody          string
+	WebhookUrl        string
+	WebhookMethod     string
+	WebhookHeaders    string
+	WebhookBody       string
+	Uptime            float32
+	AvgResponseTimeMs int64
+	N                 int64
+	CreatedAt         time.Time
 }
 
 func (m Monitor) URI() string {

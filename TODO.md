@@ -17,6 +17,7 @@ What's left to do:
 - [ ] Add "Test Webhook" button with fake incident
 - [ ] Add website command with a server homepage
 - [ ] Get app version from git tag
+- [ ] Sort monitors option (with localstorage sync) by created_at/name(domain)
 
 Optional:
 
