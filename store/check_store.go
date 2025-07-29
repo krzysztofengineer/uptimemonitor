@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 	"uptimemonitor"
@@ -32,36 +33,39 @@ func (s *Store) CreateCheck(ctx context.Context, check uptimemonitor.Check) (upt
 	check.ID = id
 
 	stmt = `
-		SELECT uptime, avg_response_time_ms, n 
+		SELECT uptime, avg_response_time_ms, n, incidents_count
 		FROM monitors 
 		WHERE id = ?
 	`
 	var n int64
 	var uptime float32
 	var avgResponseTimeMs int64
-	err = tx.QueryRowContext(ctx, stmt, check.MonitorID).Scan(&uptime, &avgResponseTimeMs, &n)
+	var incidentsCount int64
+	err = tx.QueryRowContext(ctx, stmt, check.MonitorID).Scan(&uptime, &avgResponseTimeMs, &n, &incidentsCount)
 	if err != nil {
 		return check, err
 	}
 
-	check.Monitor.Uptime = uptime
-	check.Monitor.AvgResponseTimeMs = avgResponseTimeMs
-	check.Monitor.N = n
+	if check.StatusCode >= 300 {
+		incidentsCount++
+	}
 
 	stmt = `
 		UPDATE monitors 
-		SET uptime = ?, avg_response_time_ms = ?, n = ?
+		SET uptime = ?, avg_response_time_ms = ?, n = ?, incidents_count = ?
 		WHERE id = ?
 	`
-	newN := check.Monitor.N + 1
-	newUptime := 100 // todo
-	newAvgResponseTimeMs := (check.Monitor.AvgResponseTimeMs*check.Monitor.N + check.ResponseTimeMs) / newN
+	newIncidentCount := incidentsCount
+	newN := n + 1
+	newUptime := fmt.Sprintf("%.1f", float32(float32(newN-newIncidentCount)/float32(newN)*float32(100)))
+	newAvgResponseTimeMs := (avgResponseTimeMs*n + check.ResponseTimeMs) / newN
 
-	log.Printf("uptime before: %v, after: %v", check.Monitor.Uptime, newUptime)
-	log.Printf("avg_response_time_ms before: %v, after: %v", check.Monitor.AvgResponseTimeMs, newAvgResponseTimeMs)
-	log.Printf("n before: %v, after: %v", check.Monitor.N, newN)
+	log.Printf("incidentCount %v", incidentsCount)
+	log.Printf("uptime before: %v, after: %v", uptime, newUptime)
+	log.Printf("avg_response_time_ms before: %v, after: %v", avgResponseTimeMs, newAvgResponseTimeMs)
+	log.Printf("n before: %v, after: %v", n, newN)
 
-	_, err = tx.ExecContext(ctx, stmt, newUptime, newAvgResponseTimeMs, newN, check.MonitorID)
+	_, err = tx.ExecContext(ctx, stmt, newUptime, newAvgResponseTimeMs, newN, newIncidentCount, check.MonitorID)
 	if err != nil {
 		return check, err
 	}

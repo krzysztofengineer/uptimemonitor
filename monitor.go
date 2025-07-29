@@ -21,6 +21,7 @@ type Monitor struct {
 	Uptime            float32
 	AvgResponseTimeMs int64
 	N                 int64
+	IncidentsCount    int64
 	CreatedAt         time.Time
 }
 

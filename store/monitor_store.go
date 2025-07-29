@@ -90,7 +90,7 @@ func (s *Store) GetMonitorByID(ctx context.Context, id int) (uptimemonitor.Monit
 		SELECT 
 		id, url, uuid, http_method, http_headers, http_body, 
 		webhook_url, webhook_method, webhook_headers, webhook_body,
-		uptime, avg_response_time_ms, n,
+		uptime, avg_response_time_ms, n, incidents_count,
 		created_at 
 		FROM monitors 
 		WHERE id = ?
@@ -101,7 +101,7 @@ func (s *Store) GetMonitorByID(ctx context.Context, id int) (uptimemonitor.Monit
 		Scan(
 			&m.ID, &m.Url, &m.Uuid, &m.HttpMethod, &m.HttpHeaders, &m.HttpBody,
 			&m.WebhookUrl, &m.WebhookMethod, &m.WebhookHeaders, &m.WebhookBody,
-			&m.Uptime, &m.AvgResponseTimeMs, &m.N,
+			&m.Uptime, &m.AvgResponseTimeMs, &m.N, &m.IncidentsCount,
 			&m.CreatedAt,
 		)
 
@@ -113,6 +113,7 @@ func (s *Store) GetMonitorByUuid(ctx context.Context, uuid string) (uptimemonito
 		SELECT 
 		id, url, uuid, http_method, http_headers, http_body, 
 		webhook_url, webhook_method, webhook_headers, webhook_body,
+		uptime, avg_response_time_ms, n, incidents_count,
 		created_at 
 		FROM monitors 
 		WHERE uuid = ?
@@ -123,6 +124,7 @@ func (s *Store) GetMonitorByUuid(ctx context.Context, uuid string) (uptimemonito
 		Scan(
 			&m.ID, &m.Url, &m.Uuid, &m.HttpMethod, &m.HttpHeaders, &m.HttpBody,
 			&m.WebhookUrl, &m.WebhookMethod, &m.WebhookHeaders, &m.WebhookBody,
+			&m.Uptime, &m.AvgResponseTimeMs, &m.N, &m.IncidentsCount,
 			&m.CreatedAt,
 		)
 	return m, err

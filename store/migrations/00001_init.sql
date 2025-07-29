@@ -31,6 +31,7 @@ CREATE TABLE monitors (
     webhook_body TEXT NOT NULL,
     uptime FLOAT DEFAULT 0,
     avg_response_time_ms INTEGER DEFAULT 0,
+    incidents_count INTEGER DEFAULT 0,
     n INTEGER DEFAULT 0,
     created_at DATETIME NOT NULL
 );
