@@ -2,8 +2,6 @@
 
 What's left to do:
 
-- [ ] Calculate overall uptime and response time (keep track of number of checks
-      historically)
 - [ ] Change webhook body available variables (just .Url, .ResponseTimeMs,
       .IncidentUrl, .MonitorUrl, .StatusCode, .Body, .Headers)
 - [ ] Add sponsors badges
