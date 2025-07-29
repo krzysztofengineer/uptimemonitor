@@ -90,26 +90,26 @@
                     </div>
                 </div>
             </div>
-            <div class="stats  w-full" hx-get="/monitors/{{ .Monitor.ID }}/stats" hx-trigger="intersect"
-                hx-swap="outerHTML">
-                <div class="stat place-items-center">
+            <div class="stats w-full flex flex-col md:flex-row gap-1.5 px-4" hx-get="/monitors/{{ .Monitor.ID }}/stats"
+                hx-trigger="intersect" hx-swap="outerHTML">
+                <div class="stat md:place-items-center p-0">
                     <div class="stat-title">Avg. response time</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value text-lg md:text-3xl ">-</div>
                 </div>
 
-                <div class="stat place-items-center">
+                <div class="stat md:place-items-center p-0">
                     <div class="stat-title">Uptime</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value text-lg md:text-3xl ">-</div>
                 </div>
 
-                <div class="stat place-items-center">
+                <div class="stat md:place-items-center p-0">
                     <div class="stat-title">Checks</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value text-lg md:text-3xl ">-</div>
                 </div>
 
-                <div class="stat place-items-center">
+                <div class="stat md:place-items-center p-0">
                     <div class="stat-title">Fails</div>
-                    <div class="stat-value">-</div>
+                    <div class="stat-value text-lg md:text-3xl ">-</div>
                 </div>
             </div>
             <div>
@@ -155,25 +155,26 @@
 {{ end }}
 
 {{ define "monitor_stats" }}
-<div class="stats  w-full" hx-get="/monitors/{{ .ID }}/stats" hx-trigger="every 60s" hx-swap="outerHTML">
-    <div class="stat place-items-center">
+<div class="stats w-full flex flex-col md:flex-row gap-1.5 px-4" hx-get="/monitors/{{ .ID }}/stats"
+    hx-trigger="every 60s" hx-swap="outerHTML">
+    <div class="stat md:place-items-center p-0">
         <div class="stat-title">Avg. response time</div>
-        <div class="stat-value">{{ .AvgResponseTime }}ms</div>
+        <div class="stat-value text-lg md:text-3xl ">{{ .AvgResponseTime }}ms</div>
     </div>
 
-    <div class="stat place-items-center">
+    <div class="stat md:place-items-center p-0">
         <div class="stat-title">Uptime</div>
-        <div class="stat-value">{{ .Uptime }}%</div>
+        <div class="stat-value text-lg md:text-3xl ">{{ .Uptime }}%</div>
     </div>
 
-    <div class="stat place-items-center">
+    <div class="stat md:place-items-center p-0">
         <div class="stat-title">Checks</div>
-        <div class="stat-value">{{ .ChecksCount }}</div>
+        <div class="stat-value text-lg md:text-3xl ">{{ .ChecksCount }}</div>
     </div>
 
-    <div class="stat place-items-center">
+    <div class="stat md:place-items-center p-0">
         <div class="stat-title">Fails</div>
-        <div class="stat-value">{{ .FailureCount }}</div>
+        <div class="stat-value text-lg md:text-3xl ">{{ .FailureCount }}</div>
     </div>
 </div>
 {{ end }}
