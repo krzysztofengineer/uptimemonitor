@@ -85,17 +85,17 @@
                 </div>
 
                 <div class="stat md:place-items-center p-0">
-                    <div class="stat-title">Uptime</div>
-                    <div class="stat-value text-lg md:text-3xl ">-</div>
-                </div>
-
-                <div class="stat md:place-items-center p-0">
                     <div class="stat-title">Checks</div>
                     <div class="stat-value text-lg md:text-3xl ">-</div>
                 </div>
 
                 <div class="stat md:place-items-center p-0">
                     <div class="stat-title">Fails</div>
+                    <div class="stat-value text-lg md:text-3xl ">-</div>
+                </div>
+
+                <div class="stat md:place-items-center p-0">
+                    <div class="stat-title">Uptime</div>
                     <div class="stat-value text-lg md:text-3xl ">-</div>
                 </div>
             </div>
@@ -150,11 +150,6 @@
     </div>
 
     <div class="stat md:place-items-center p-0">
-        <div class="stat-title">Uptime</div>
-        <div class="stat-value text-lg md:text-3xl ">{{ .Uptime }}%</div>
-    </div>
-
-    <div class="stat md:place-items-center p-0">
         <div class="stat-title">Checks</div>
         <div class="stat-value text-lg md:text-3xl ">{{ .ChecksCount }}</div>
     </div>
@@ -162,6 +157,11 @@
     <div class="stat md:place-items-center p-0">
         <div class="stat-title">Fails</div>
         <div class="stat-value text-lg md:text-3xl ">{{ .FailureCount }}</div>
+    </div>
+
+    <div class="stat md:place-items-center p-0">
+        <div class="stat-title">Uptime</div>
+        <div class="stat-value text-lg md:text-3xl ">{{ .Uptime }}%</div>
     </div>
 </div>
 {{ end }}
