@@ -159,7 +159,7 @@
 </li>
 <li class="">
     <a href="/m/{{ .Monitor.Uuid }}" hx-boost preload>
-        <div class="flex items-center gap-2 ">
+        <div class="flex items-center gap-2 hidden lg:flex">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-4! stroke-current shrink-0">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -167,6 +167,7 @@
             </svg>
             <span class="truncate">{{ .Monitor.Host }}</span>
         </div>
+        <span class="lg:hidden opacity-40">...</span>
     </a>
 </li>
 <li class="">

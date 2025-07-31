@@ -11,10 +11,7 @@
 {{ define "nav" }}
 <div class="max-w-[1600px] w-full mx-auto">
     <div class="flex justify-between gap-8 items-center py-2 p-4 pb-0">
-        <div class="lg:hidden">
-            {{ template "logo" . }}
-        </div>
-        <div class="hidden lg:block flex-1">
+        <div class="flex-1">
             <div class="breadcrumbs text-xs">
                 <ul>
                     {{ block "breadcrumbs" . }}{{ end }}
