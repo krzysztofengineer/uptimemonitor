@@ -9,7 +9,7 @@
 {{ end }}
 
 {{ define "edit_form" }}
-<form hx-patch="/monitors/{{ .Monitor.ID }}" hx-swap="outerHTML" class="flex flex-col gap-4 w-full max-w-md">
+<form hx-patch="/monitors/{{ .Monitor.ID }}" hx-swap="outerHTML" class="flex flex-col gap-4 w-full md:max-w-md">
     <div>
         <h1 class="font-semibold text-lg">Edit monitor</h1>
     </div>

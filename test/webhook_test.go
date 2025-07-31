@@ -109,6 +109,10 @@ func TestWebhook_SaveWebhook(t *testing.T) {
 		tc := NewTestCase(t)
 		defer tc.Close()
 
+		ExpectedWebhookBody = `{"test":123}`
+		ExpectedWebhookHeaderKey = "test"
+		ExpectedWebhookHeaderValue = "abc"
+
 		service := service.New(tc.Store)
 
 		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
@@ -128,5 +132,31 @@ func TestWebhook_SaveWebhook(t *testing.T) {
 		tc.AssertDatabaseCount("checks", 1)
 
 		tc.AssertEqual(int64(TestWebhookCalledCount), int64(1))
+	})
+
+	t.Run("webhook can have parsed body", func(t *testing.T) {
+		tc := NewTestCase(t)
+		defer tc.Close()
+
+		service := service.New(tc.Store)
+		url := tc.Server.URL + "/test/500"
+
+		tc.Store.CreateMonitor(t.Context(), uptimemonitor.Monitor{
+			Url:           url,
+			WebhookMethod: http.MethodPost,
+			WebhookUrl:    tc.Server.URL + "/test/webhook",
+			WebhookBody:   `{{.Url}},{{ .StatusCode}}`,
+		})
+
+		ch := service.StartCheck()
+		service.RunCheck(t.Context(), ch)
+
+		time.Sleep(time.Second * 3)
+
+		tc.AssertDatabaseCount("incidents", 1)
+		tc.AssertDatabaseCount("checks", 1)
+
+		tc.AssertEqual(int64(TestWebhookCalledCount), int64(1))
+		tc.AssertEqual(TestWebhookBody, fmt.Sprintf("%s,%d", url, 500))
 	})
 }

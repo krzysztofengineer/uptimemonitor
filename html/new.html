@@ -26,7 +26,7 @@
 {{ end }}
 
 {{ define "new_form" }}
-<form hx-post="/monitors" hx-swap="outerHTML" class="flex flex-col gap-4 w-full max-w-md">
+<form hx-post="/monitors" hx-swap="outerHTML" class="flex flex-col gap-4 w-full md:max-w-md">
     <div>
         <h1 class="font-semibold text-lg">Create monitor</h1>
         <h5 class="text-sm">
@@ -157,7 +157,7 @@
                     <legend class="fieldset-legend">
                         Webhook Body
                     </legend>
-                    <textarea class="textarea w-full textarea bg-neutral text-neutral-content" placeholder="{}"
+                    <textarea class="textarea w-full textarea bg-neutral text-neutral-content" rows="4" placeholder="{}"
                         name="webhook_body">{{ .Form.WebhookBody }}</textarea>
                     {{ with .Form.Errors.WebhookBody }}
                     <div class="label text-red-500">{{ . }}</div>

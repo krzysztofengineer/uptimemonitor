@@ -214,17 +214,16 @@ func (s *CheckService) callWebhook(m uptimemonitor.Monitor, i uptimemonitor.Inci
 		} else {
 			var buf bytes.Buffer
 			err = t.Execute(&buf, struct {
-				Monitor  uptimemonitor.Monitor
-				Incident uptimemonitor.Incident
+				Url        string
+				StatusCode int
 			}{
-				Monitor:  m,
-				Incident: i,
+				Url:        m.Url,
+				StatusCode: i.StatusCode,
 			})
 			if err != nil {
-
 				customBody = strings.NewReader(m.WebhookBody)
 			} else {
-				customBody = bytes.NewReader(buf.Bytes())
+				customBody = strings.NewReader(buf.String())
 			}
 		}
 

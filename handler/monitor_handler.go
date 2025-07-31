@@ -50,7 +50,10 @@ func (h *Handler) CreateMonitorPage() http.HandlerFunc {
 				WebhookHeaders: `{
 	"Content-Type": "application/json"
 }`,
-				WebhookBody: `{}`,
+				WebhookBody: `{
+		"url": "{{ .Url }}",
+		"code": "{{ .StatusCode }}"
+}`,
 			},
 			User: getUserFromRequest(r),
 		})

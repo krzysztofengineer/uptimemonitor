@@ -2,10 +2,7 @@
 
 What's left to do:
 
-- [ ] Change webhook body available variables (just .Url, .ResponseTimeMs,
-      .IncidentUrl, .MonitorUrl, .StatusCode, .Body, .Headers)
 - [ ] Add sponsors badges
-- [ ] Add all available variables to the sample webhook body
 - [ ] Loading placeholders (skeletons)
 - [ ] Test check timeout
 - [ ] Session expiration

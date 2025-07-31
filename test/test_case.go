@@ -21,6 +21,10 @@ import (
 )
 
 var TestWebhookCalledCount int64
+var TestWebhookBody string
+var ExpectedWebhookBody string
+var ExpectedWebhookHeaderKey string
+var ExpectedWebhookHeaderValue string
 
 type TestCase struct {
 	T       *testing.T
@@ -38,6 +42,12 @@ func NewTestCase(t *testing.T) *TestCase {
 	handler := handler.New(store, service, false)
 	router := router.New(handler, registerRoutes)
 	server := httptest.NewServer(router)
+
+	TestWebhookBody = ""
+	TestWebhookCalledCount = 0
+	ExpectedWebhookBody = ""
+	ExpectedWebhookHeaderKey = ""
+	ExpectedWebhookHeaderValue = ""
 
 	return &TestCase{
 		T:       t,
@@ -130,17 +140,18 @@ func registerRoutes(router *http.ServeMux) {
 		}
 		defer r.Body.Close()
 
-		if string(body) != `{"test":123}` {
+		if ExpectedWebhookBody != "" && string(body) != ExpectedWebhookBody {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
 
-		if r.Header.Get("test") != "abc" {
+		if ExpectedWebhookHeaderKey != "" && r.Header.Get(ExpectedWebhookHeaderKey) != ExpectedWebhookHeaderValue {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
 
 		TestWebhookCalledCount++
+		TestWebhookBody = string(body)
 
 		w.WriteHeader(http.StatusOK)
 	})
