@@ -24,3 +24,23 @@ svg {
   width: 0;
   height: 0;
 }
+
+.breadcrumbs ul li:before {
+  content: "/" ;
+  border: none ;
+  opacity: .4;
+  background-color: #0000;
+  width: auto;
+  height: auto;
+  margin-left: .5rem;
+  margin-right: .75rem;
+  display: block;
+  rotate: 0deg;
+}
+
+.breadcrumbs ul li:nth-child(1):before {
+    content: "";
+    width: 0;
+    height: 0;
+    margin: 0;
+} 
