@@ -2,17 +2,11 @@
 
 What's left to do:
 
-- [ ] Add sponsors badges
-- [ ] Loading placeholders (skeletons)
-- [ ] Test check timeout
-- [ ] Session expiration
+- [ ] Add sponsors badges (sponsors.uptimemonitor.dev api)
 - [ ] Add documentation
 - [ ] Document how to install
 - [ ] Document webhook parsing and available variables
-- [ ] Add "Test Webhook" button with fake incident
-- [ ] Add website command with a server homepage
 - [ ] Get app version from git tag
-- [ ] Sort monitors option (with localstorage sync) by created_at/name(domain)
 
 Optional:
 
@@ -28,3 +22,8 @@ Optional:
 - [ ] Add check response modal (div#modals + append when clicked + destroy when
       clicked)
 - [ ] Mobile breadcrumbs (dropdown/select)
+- [ ] Add "Test Webhook" button with fake incident
+- [ ] Sort monitors option (with localstorage sync) by created_at/name(domain)
+- [ ] Session expiration
+- [ ] Test check timeout
+- [ ] Loading placeholders (skeletons)
