@@ -185,6 +185,12 @@ func (tc *TestCase) Get(url string) *testutil.AssertableResponse {
 		}
 	}
 
+	if len(tc.Headers) > 0 {
+		for k, v := range tc.Headers {
+			req.Header.Set(k, v)
+		}
+	}
+
 	res, err := tc.Client.Do(req)
 	if err != nil {
 		tc.T.Fatalf("failed to get %s: %v", url, err)

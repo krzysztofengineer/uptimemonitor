@@ -39,3 +39,7 @@
 {{ define "version" }}
 <span class="text-neutral-400 text-xs font-normal truncate">v0.5.0-alpha</span>
 {{ end }}
+
+{{ define "sponsors" }}
+<div hx-get="/sponsors" hx-trigger="intersect" hx-swap="outerHTML"></div>
+{{ end }}

@@ -6,8 +6,10 @@
         <div hx-get="/monitors" hx-trigger="intersect" hx-swap="outerHTML"></div>
     </div>
 
-    <div class="min-w-[300px]!">
+    <div class="min-w-[300px]! flex flex-col gap-4">
         <div hx-get="/incidents" hx-trigger="intersect" hx-swap="outerHTML"></div>
+
+        {{ template "sponsors" . }}
     </div>
 </div>
 {{ end }}

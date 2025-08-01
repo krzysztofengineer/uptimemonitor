@@ -11,6 +11,7 @@ func New(handler *handler.Handler, callback func(r *http.ServeMux)) http.Handler
 
 	r.HandleFunc("GET /setup", handler.SetupPage())
 	r.HandleFunc("POST /setup", handler.SetupForm())
+	r.HandleFunc("GET /sponsors", handler.ListSponsors())
 
 	{
 		mux := http.NewServeMux()
